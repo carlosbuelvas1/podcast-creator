@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { useStore } from '../context'
-import Sheet from '../Sheet'
+import { useStore, useProject } from '../context'
+import { ProjectEditor } from './Projects'
 import { CalendarIcon, CheckIcon, EditIcon } from '../icons'
 import { byDueDate, daysUntil, dueLabel, longDate } from '../dates'
-import { PEOPLE, personClass } from '../constants'
+import { PEOPLE, personClass, progressOf } from '../constants'
 
 function countdown(date) {
   const days = daysUntil(date)
-  if (days === null) return 'Elige la fecha de lanzamiento'
+  if (days === null) return 'Elijan la fecha de lanzamiento'
   if (days > 1) return `Faltan ${days} días`
   if (days === 1) return '¡Es mañana!'
   if (days === 0) return '¡Hoy es el lanzamiento!'
@@ -32,14 +32,13 @@ function Ring({ value }) {
 }
 
 export default function Inicio({ go }) {
-  const { settings, tasks, items, me, actions } = useStore()
+  const { me, actions } = useStore()
+  const { project, phases, tasks } = useProject()
   const [editing, setEditing] = useState(false)
 
-  const doneTasks = tasks.filter((t) => t.status === 'done').length
-  const doneItems = items.filter((i) => i.done).length
-  const total = tasks.length + items.length
-  const progress = total ? Math.round(((doneTasks + doneItems) / total) * 100) : 0
+  const overall = progressOf(tasks)
   const people = [me, ...PEOPLE.filter((p) => p !== me)]
+  const unassigned = tasks.filter((t) => !t.owner && t.status !== 'done').length
 
   return (
     <>
@@ -47,42 +46,80 @@ export default function Inicio({ go }) {
 
       <section className="hero">
         <div className="hero-top">
-          <span className="eyebrow">Nuestra meta</span>
-          <button className="icon-btn on-dark" onClick={() => setEditing(true)} aria-label="Editar meta">
+          <span className="eyebrow">Su podcast</span>
+          <button className="icon-btn on-dark" onClick={() => setEditing(true)} aria-label="Editar proyecto">
             <EditIcon width={18} height={18} />
           </button>
         </div>
         <div className="hero-body">
           <div>
-            <h2 className="hero-goal">{settings?.goal || 'Escribe aquí su gran meta'}</h2>
+            <h2 className="hero-goal">{project.name}</h2>
+            {project.goal && <p className="hero-sub">{project.goal}</p>}
             <p className="hero-date">
               <CalendarIcon width={16} height={16} />
-              {settings?.launch_date ? longDate(settings.launch_date) : 'Sin fecha todavía'}
+              {project.launch_date ? longDate(project.launch_date) : 'Sin fecha todavía'}
             </p>
-            <span className="countdown">{countdown(settings?.launch_date)}</span>
+            <span className="countdown">{countdown(project.launch_date)}</span>
           </div>
-          <Ring value={progress} />
+          <Ring value={overall.pct} />
         </div>
         <p className="hero-foot">
-          {doneTasks} de {tasks.length} tareas hechas · {doneItems} de {items.length} pasos de metas
+          {overall.done} de {overall.total} pasos hechos
         </p>
+      </section>
+
+      <section className="card phase-progress">
+        <h3>Progreso por fase</h3>
+        <ul>
+          {phases.map((ph) => {
+            const { done, total, pct } = progressOf(tasks.filter((t) => t.phase_id === ph.id))
+            return (
+              <li key={ph.id}>
+                <button onClick={() => go('fases', ph.id)}>
+                  <span className={`num small ${pct === 100 && total ? 'complete' : ''}`}>
+                    {pct === 100 && total ? <CheckIcon width={13} height={13} /> : ph.position}
+                  </span>
+                  <span className="pp-text">
+                    <span className="pp-title">{ph.title}</span>
+                    <span className="bar thin">
+                      <span className="bar-fill" style={{ width: `${pct}%` }} />
+                    </span>
+                  </span>
+                  <span className="pp-pct">
+                    {pct}%<small>{done}/{total}</small>
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
       </section>
 
       <div className="people">
         {people.map((name) => (
-          <NextTasks key={name} name={name} tasks={tasks} onDone={(id) => actions.updateTask(id, { status: 'done' })} go={go} />
+          <NextTasks key={name} name={name} tasks={tasks} phases={phases} onDone={(id) => actions.updateTask(id, { status: 'done' })} go={go} />
         ))}
       </div>
 
-      {editing && <GoalEditor settings={settings} onClose={() => setEditing(false)} onSave={actions.saveSettings} />}
+      {unassigned > 0 && (
+        <button className="notice" onClick={() => go('fases')}>
+          Hay {unassigned} {unassigned === 1 ? 'paso' : 'pasos'} sin responsable. Asígnenlos en Fases.
+        </button>
+      )}
+
+      {editing && <ProjectEditor project={project} onClose={() => setEditing(false)} />}
     </>
   )
 }
 
-function NextTasks({ name, tasks, onDone, go }) {
+function NextTasks({ name, tasks, phases, onDone, go }) {
+  const phaseOrder = Object.fromEntries(phases.map((p) => [p.id, p.position]))
   const next = tasks
     .filter((t) => t.owner === name && t.status !== 'done')
-    .sort(byDueDate)
+    .sort((a, b) => {
+      if (a.due_date || b.due_date) return byDueDate(a, b)
+      return phaseOrder[a.phase_id] - phaseOrder[b.phase_id] || a.position - b.position
+    })
     .slice(0, 3)
 
   return (
@@ -97,12 +134,16 @@ function NextTasks({ name, tasks, onDone, go }) {
         <ul className="next-list">
           {next.map((t) => {
             const late = daysUntil(t.due_date) < 0
+            const phase = phases.find((p) => p.id === t.phase_id)
             return (
               <li key={t.id}>
-                <button className="check" onClick={() => onDone(t.id)} aria-label={`Marcar "${t.title}" como hecha`}>
+                <button className="check" onClick={() => onDone(t.id)} aria-label={`Marcar "${t.title}" como hecho`}>
                   <CheckIcon width={14} height={14} />
                 </button>
-                <span className="next-title">{t.title}</span>
+                <span className="next-title">
+                  {t.title}
+                  {phase && <small>{phase.title}</small>}
+                </span>
                 {t.status === 'doing' && <span className="tag doing">En progreso</span>}
                 {t.due_date && <span className={`due ${late ? 'late' : ''}`}>{dueLabel(t.due_date)}</span>}
               </li>
@@ -114,32 +155,5 @@ function NextTasks({ name, tasks, onDone, go }) {
         Ver todas las tareas
       </button>
     </section>
-  )
-}
-
-function GoalEditor({ settings, onClose, onSave }) {
-  const [goal, setGoal] = useState(settings?.goal ?? '')
-  const [date, setDate] = useState(settings?.launch_date ?? '')
-
-  const submit = (e) => {
-    e.preventDefault()
-    onSave({ goal: goal.trim() || 'Lanzar el podcast Cuadrando', launch_date: date || null })
-    onClose()
-  }
-
-  return (
-    <Sheet title="Nuestra meta" onClose={onClose}>
-      <form onSubmit={submit}>
-        <label className="field">
-          <span>¿Cuál es la meta del lanzamiento?</span>
-          <textarea rows={2} value={goal} onChange={(e) => setGoal(e.target.value)} />
-        </label>
-        <label className="field">
-          <span>Fecha de lanzamiento</span>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-        </label>
-        <button className="btn primary full">Guardar</button>
-      </form>
-    </Sheet>
   )
 }

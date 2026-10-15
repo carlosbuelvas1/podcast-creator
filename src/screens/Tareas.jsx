@@ -10,14 +10,21 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { useStore } from '../context'
-import Sheet, { Segmented } from '../Sheet'
-import { PlusIcon, TrashIcon } from '../icons'
+import { useStore, useProject } from '../context'
+import StepSheet from './StepSheet'
+import { Segmented } from '../Sheet'
+import { PlusIcon } from '../icons'
 import { byDueDate, daysUntil, dueLabel } from '../dates'
-import { COLUMNS, PEOPLE, personClass } from '../constants'
+import { COLUMNS, PEOPLE, personClass, progressOf } from '../constants'
 
 export default function Tareas() {
-  const { tasks, actions, me } = useStore()
+  const { actions, me } = useStore()
+  const { tasks, phases } = useProject()
+  const current = phases.find((ph) => progressOf(tasks.filter((t) => t.phase_id === ph.id)).pct < 100) ?? phases[0]
+  const phaseName = Object.fromEntries(phases.map((p) => [p.id, p.title]))
+  const phaseOrder = Object.fromEntries(phases.map((p) => [p.id, p.position]))
+  const byPlan = (a, b) =>
+    a.due_date || b.due_date ? byDueDate(a, b) : phaseOrder[a.phase_id] - phaseOrder[b.phase_id] || a.position - b.position
   const [filter, setFilter] = useState('all')
   const [activeId, setActiveId] = useState(null)
   const [editing, setEditing] = useState(null)
@@ -40,7 +47,7 @@ export default function Tareas() {
     <>
       <div className="page-head">
         <h1>Tareas</h1>
-        <button className="btn primary" onClick={() => setEditing({ status: 'todo', owner: me })}>
+        <button className="btn primary" onClick={() => setEditing({ status: 'todo', owner: me, phase_id: current?.id })}>
           <PlusIcon width={18} height={18} /> Nueva
         </button>
       </div>
@@ -65,21 +72,22 @@ export default function Tareas() {
             <Column
               key={col.id}
               column={col}
-              tasks={visible.filter((t) => t.status === col.id).sort(byDueDate)}
+              tasks={visible.filter((t) => t.status === col.id).sort(byPlan)}
               onOpen={setEditing}
-              onAdd={() => setEditing({ status: col.id, owner: filter === 'all' ? me : filter })}
+              phaseName={phaseName}
+              onAdd={() => setEditing({ status: col.id, owner: filter === 'all' ? me : filter, phase_id: current?.id })}
             />
           ))}
         </div>
-        <DragOverlay dropAnimation={null}>{active ? <TaskCard task={active} overlay /> : null}</DragOverlay>
+        <DragOverlay dropAnimation={null}>{active ? <TaskCard task={active} phase={phaseName[active.phase_id]} overlay /> : null}</DragOverlay>
       </DndContext>
 
-      {editing && <TaskEditor task={editing} onClose={() => setEditing(null)} />}
+      {editing && <StepSheet task={editing} onClose={() => setEditing(null)} />}
     </>
   )
 }
 
-function Column({ column, tasks, onOpen, onAdd }) {
+function Column({ column, tasks, onOpen, onAdd, phaseName }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id })
   return (
     <section ref={setNodeRef} className={`column ${column.id} ${isOver ? 'over' : ''}`}>
@@ -92,7 +100,7 @@ function Column({ column, tasks, onOpen, onAdd }) {
       </div>
       <div className="column-body">
         {tasks.map((t) => (
-          <DraggableTask key={t.id} task={t} onOpen={onOpen} />
+          <DraggableTask key={t.id} task={t} onOpen={onOpen} phase={phaseName[t.phase_id]} />
         ))}
         {tasks.length === 0 && <p className="drop-empty">Suelta una tarea aquí</p>}
       </div>
@@ -100,16 +108,16 @@ function Column({ column, tasks, onOpen, onAdd }) {
   )
 }
 
-function DraggableTask({ task, onOpen }) {
+function DraggableTask({ task, onOpen, phase }) {
   const { setNodeRef, attributes, listeners, isDragging } = useDraggable({ id: task.id })
   return (
     <div ref={setNodeRef} {...attributes} {...listeners} className={`drag ${isDragging ? 'ghost' : ''}`}>
-      <TaskCard task={task} onClick={() => onOpen(task)} />
+      <TaskCard task={task} phase={phase} onClick={() => onOpen(task)} />
     </div>
   )
 }
 
-function TaskCard({ task, onClick, overlay }) {
+function TaskCard({ task, onClick, overlay, phase }) {
   const late = task.status !== 'done' && daysUntil(task.due_date) < 0
   return (
     <div
@@ -117,70 +125,12 @@ function TaskCard({ task, onClick, overlay }) {
       onClick={onClick}
       onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
     >
+      {phase && <p className="task-phase">{phase}</p>}
       <p className="task-title">{task.title}</p>
       <div className="task-meta">
-        <span className={`owner ${personClass(task.owner)}`}>{task.owner}</span>
+        <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? 'Sin asignar'}</span>
         {task.due_date && <span className={`due ${late ? 'late' : ''}`}>{dueLabel(task.due_date)}</span>}
       </div>
     </div>
-  )
-}
-
-function TaskEditor({ task, onClose }) {
-  const { actions } = useStore()
-  const [title, setTitle] = useState(task.title ?? '')
-  const [owner, setOwner] = useState(task.owner ?? PEOPLE[0])
-  const [due, setDue] = useState(task.due_date ?? '')
-  const [status, setStatus] = useState(task.status ?? 'todo')
-  const isNew = !task.id
-
-  const submit = (e) => {
-    e.preventDefault()
-    if (!title.trim()) return
-    const fields = { title: title.trim(), owner, due_date: due || null, status }
-    if (isNew) actions.addTask(fields)
-    else actions.updateTask(task.id, fields)
-    onClose()
-  }
-
-  const remove = () => {
-    if (window.confirm('¿Borrar esta tarea?')) {
-      actions.deleteTask(task.id)
-      onClose()
-    }
-  }
-
-  return (
-    <Sheet title={isNew ? 'Nueva tarea' : 'Editar tarea'} onClose={onClose}>
-      <form onSubmit={submit}>
-        <label className="field">
-          <span>¿Qué hay que hacer?</span>
-          <input autoFocus={isNew} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ej. Grabar la intro" required />
-        </label>
-        <div className="field">
-          <span>¿Quién se encarga?</span>
-          <Segmented
-            name="Responsable"
-            value={owner}
-            onChange={setOwner}
-            options={PEOPLE.map((p) => ({ value: p, label: p, className: personClass(p) }))}
-          />
-        </div>
-        <label className="field">
-          <span>Fecha límite</span>
-          <input type="date" value={due} onChange={(e) => setDue(e.target.value)} />
-        </label>
-        <div className="field">
-          <span>Estado</span>
-          <Segmented name="Estado" value={status} onChange={setStatus} options={COLUMNS.map((c) => ({ value: c.id, label: c.label }))} />
-        </div>
-        <button className="btn primary full">{isNew ? 'Crear tarea' : 'Guardar'}</button>
-        {!isNew && (
-          <button type="button" className="btn danger-ghost full" onClick={remove}>
-            <TrashIcon width={18} height={18} /> Borrar tarea
-          </button>
-        )}
-      </form>
-    </Sheet>
   )
 }

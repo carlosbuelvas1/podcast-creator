@@ -4,16 +4,17 @@ import { DataProvider } from './store'
 import { useStore } from './context'
 import Login from './screens/Login'
 import Inicio from './screens/Inicio'
+import Fases from './screens/Fases'
 import Tareas from './screens/Tareas'
-import Metas from './screens/Metas'
 import Account from './screens/Account'
-import { BoardIcon, HomeIcon, TargetIcon } from './icons'
+import { ProjectSwitcher, Welcome } from './screens/Projects'
+import { BoardIcon, ChevronIcon, HomeIcon, StepsIcon } from './icons'
 import { personClass } from './constants'
 
 const TABS = [
   { id: 'inicio', label: 'Inicio', Icon: HomeIcon, Screen: Inicio },
+  { id: 'fases', label: 'Fases', Icon: StepsIcon, Screen: Fases },
   { id: 'tareas', label: 'Tareas', Icon: BoardIcon, Screen: Tareas },
-  { id: 'metas', label: 'Metas', Icon: TargetIcon, Screen: Metas },
 ]
 
 const tabFromHash = () => {
@@ -49,9 +50,11 @@ function Splash() {
 }
 
 function Shell() {
-  const { ready, me, session } = useStore()
+  const { ready, me, session, project } = useStore()
   const [tab, setTab] = useState(tabFromHash)
+  const [focus, setFocus] = useState(null)
   const [account, setAccount] = useState(false)
+  const [switcher, setSwitcher] = useState(false)
 
   useEffect(() => {
     const onHash = () => setTab(tabFromHash())
@@ -59,8 +62,9 @@ function Shell() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
-  const go = (id) => {
+  const go = (id, phaseId = null) => {
     window.history.replaceState(null, '', `#${id}`)
+    setFocus(phaseId)
     setTab(id)
     window.scrollTo({ top: 0 })
   }
@@ -73,7 +77,7 @@ function Shell() {
         <div className="card narrow">
           <div className="logo" />
           <h1>Sin acceso</h1>
-          <p className="muted">La cuenta {session.user.email} no tiene acceso a Cuadrando.</p>
+          <p className="muted">La cuenta {session.user.email} no tiene acceso a Podcast Creator.</p>
           <button className="btn primary full" onClick={() => supabase.auth.signOut()}>
             Salir
           </button>
@@ -89,34 +93,50 @@ function Shell() {
       <header className="topbar">
         <div className="brand">
           <div className="logo" />
-          <span>Cuadrando</span>
-        </div>
-        <nav className="tabs-top">
-          {TABS.map(({ id, label }) => (
-            <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
-              {label}
+          <span className="brand-name">Podcast Creator</span>
+          {project && (
+            <button className="switcher" onClick={() => setSwitcher(true)} aria-label="Cambiar de proyecto">
+              <span>{project.name}</span>
+              <ChevronIcon width={16} height={16} />
             </button>
-          ))}
-        </nav>
+          )}
+        </div>
+        {project && (
+          <nav className="tabs-top">
+            {TABS.map(({ id, label }) => (
+              <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
+                {label}
+              </button>
+            ))}
+          </nav>
+        )}
         <button className={`avatar ${personClass(me)}`} onClick={() => setAccount(true)} aria-label="Mi cuenta">
           {me[0]}
         </button>
       </header>
 
-      <main className="page" key={tab}>
-        <Screen go={go} />
-      </main>
-
-      <nav className="tabbar">
-        {TABS.map(({ id, label, Icon }) => (
-          <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
-            <Icon />
-            <span>{label}</span>
-          </button>
-        ))}
-      </nav>
+      {project ? (
+        <>
+          <main className="page" key={`${tab}-${project.id}`}>
+            <Screen go={go} focus={focus} />
+          </main>
+          <nav className="tabbar">
+            {TABS.map(({ id, label, Icon }) => (
+              <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
+                <Icon />
+                <span>{label}</span>
+              </button>
+            ))}
+          </nav>
+        </>
+      ) : (
+        <main className="page">
+          <Welcome />
+        </main>
+      )}
 
       {account && <Account onClose={() => setAccount(false)} />}
+      {switcher && <ProjectSwitcher onClose={() => setSwitcher(false)} onPick={() => go('inicio')} />}
     </div>
   )
 }

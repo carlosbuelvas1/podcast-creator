@@ -16,9 +16,6 @@ export const HomeIcon = (p) => (
 export const BoardIcon = (p) => (
   <svg {...base} {...p}><rect x="3" y="4" width="5" height="16" rx="1.5" /><rect x="10" y="4" width="5" height="11" rx="1.5" /><rect x="17" y="4" width="4" height="7" rx="1.5" /></svg>
 )
-export const TargetIcon = (p) => (
-  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></svg>
-)
 export const PlusIcon = (p) => (
   <svg {...base} {...p}><path d="M12 5v14M5 12h14" /></svg>
 )
@@ -37,6 +34,12 @@ export const CloseIcon = (p) => (
 export const EditIcon = (p) => (
   <svg {...base} {...p}><path d="M4 20h4L19 9l-4-4L4 16v4Z" /><path d="m13.5 6.5 4 4" /></svg>
 )
-export const RocketIcon = (p) => (
-  <svg {...base} {...p}><path d="M5 15c-1.5 1-2 4-2 6 2 0 5-.5 6-2" /><path d="M9 15 6.5 12.5C8 7 12 3.5 20.5 3.5 20.5 12 17 16 11.5 17.5L9 15Z" /><circle cx="15" cy="9" r="1.6" /></svg>
+export const MicIcon = (p) => (
+  <svg {...base} {...p}><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6" /></svg>
+)
+export const StepsIcon = (p) => (
+  <svg {...base} {...p}><path d="M9 6h11M9 12h11M9 18h11" /><circle cx="4.5" cy="6" r="1.5" /><circle cx="4.5" cy="12" r="1.5" /><circle cx="4.5" cy="18" r="1.5" /></svg>
+)
+export const ChevronIcon = (p) => (
+  <svg {...base} {...p}><path d="m6 9 6 6 6-6" /></svg>
 )

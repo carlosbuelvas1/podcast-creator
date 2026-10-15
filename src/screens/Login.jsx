@@ -26,8 +26,8 @@ export default function Login() {
     <div className="center-page login">
       <form className="card narrow" onSubmit={submit}>
         <div className="logo big" />
-        <h1>Cuadrando</h1>
-        <p className="muted">El plan de Carlos y Michelle para lanzar el podcast.</p>
+        <h1>Podcast Creator</h1>
+        <p className="muted">Su sistema paso a paso para crear un podcast, de la idea al lanzamiento.</p>
 
         <label className="field">
           <span>Correo</span>
