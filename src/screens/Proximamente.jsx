@@ -1,17 +1,10 @@
 import { useState } from 'react'
+import { CAL_STATUS, KINDS, kindLabel } from '../trackers'
 import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
-import { KINDS, kindLabel } from './Ideas'
 import { PlusIcon, TrashIcon } from '../icons'
 import { shortDate } from '../dates'
 
-export const CAL_STATUS = [
-  { id: 'planned', label: 'Planeado' },
-  { id: 'recorded', label: 'Grabado' },
-  { id: 'edited', label: 'Editado' },
-  { id: 'scheduled', label: 'Programado' },
-  { id: 'published', label: 'Publicado' },
-]
 
 const monthName = (iso) => {
   if (!iso) return 'Sin fecha'

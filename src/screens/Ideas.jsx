@@ -1,15 +1,10 @@
 import { useState } from 'react'
+import { KINDS, kindLabel } from '../trackers'
 import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
 import { aiEnabled } from '../ai'
 import { CalendarIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
 
-export const KINDS = [
-  { id: 'episode', label: 'Episodio' },
-  { id: 'short', label: 'Short' },
-  { id: 'vlog', label: 'Vlog' },
-]
-export const kindLabel = (k) => KINDS.find((x) => x.id === k)?.label ?? k
 
 const score = (i) => (i.vote_carlos ?? 0) + (i.vote_michelle ?? 0)
 

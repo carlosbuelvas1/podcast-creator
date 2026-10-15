@@ -2,24 +2,9 @@ import { useState } from 'react'
 import { useStore, useProject, useNav } from '../context'
 import { aiEnabled } from '../ai'
 import { LinkIcon, SparkIcon } from '../icons'
+import { nameLinks, slug } from '../trackers'
 
-const slug = (s) => (s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')
 
-export const nameLinks = (name, handle) => {
-  const q = encodeURIComponent(name)
-  const h = slug(handle || name)
-  return [
-    { key: 'spotify', label: 'Spotify', url: `https://open.spotify.com/search/${q}/podcasts` },
-    { key: 'apple', label: 'Apple Podcasts', url: `https://podcasts.apple.com/search?term=${q}` },
-    { key: 'domain', label: `Dominio ${h}.com`, url: `https://www.namecheap.com/domains/registration/results/?domain=${h}.com` },
-    { key: 'instagram', label: 'Instagram', url: `https://www.instagram.com/${h}/` },
-    { key: 'x', label: 'X', url: `https://x.com/${h}` },
-    { key: 'tiktok', label: 'TikTok', url: `https://www.tiktok.com/@${h}` },
-    { key: 'youtube', label: 'YouTube', url: `https://www.youtube.com/@${h}` },
-    { key: 'uspto', label: 'Marcas (USPTO)', url: 'https://tmsearch.uspto.gov/search/search-information' },
-    { key: 'sunbiz', label: 'Empresas en Florida', url: 'https://search.sunbiz.org/Inquiry/CorporationSearch/ByName' },
-  ]
-}
 
 function useBrief() {
   const { actions } = useStore()

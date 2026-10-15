@@ -1,17 +1,11 @@
 import { useState } from 'react'
+import { GUEST_STATUS, today as todayIso } from '../trackers'
 import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
 import { aiEnabled } from '../ai'
 import { PlusIcon, SparkIcon, TrashIcon } from '../icons'
 import { shortDate } from '../dates'
 
-export const GUEST_STATUS = [
-  { id: 'idea', label: 'Idea' },
-  { id: 'contacted', label: 'Contactado' },
-  { id: 'confirmed', label: 'Confirmado' },
-  { id: 'recorded', label: 'Grabado' },
-  { id: 'published', label: 'Publicado' },
-]
 
 export default function Invitados() {
   const { actions } = useStore()
@@ -29,7 +23,7 @@ export default function Invitados() {
   }
 
   const visible = guests.filter((g) => filter === 'all' || g.status === filter)
-  const setStatus = (g, status) => actions.update('guests', g.id, { status, ...(status === 'contacted' && !g.contacted_on ? { contacted_on: new Date().toISOString().slice(0, 10) } : {}) })
+  const setStatus = (g, status) => actions.update('guests', g.id, { status, ...(status === 'contacted' && !g.contacted_on ? { contacted_on: todayIso() } : {}) })
 
   return (
     <>
