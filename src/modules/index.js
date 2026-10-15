@@ -33,10 +33,15 @@ export function moduleProgress(progressRows) {
   })
 }
 
-export function moduleRecommendations(progressRows, limit = 3) {
+export function moduleRecommendations(progressRows, limit = 3, { provisionalName = false } = {}) {
   const byCode = Object.fromEntries(progressRows.map((r) => [r.step_code, r]))
   const out = []
+  const nameStep = MODULES[0].steps[0]
+  if (provisionalName && !byCode[nameStep.code]?.done) {
+    out.push({ module: MODULES[0], step: nameStep, score: 100, reasons: ['Nombre provisional', 'Lo primero es el nombre'] })
+  }
   for (const m of MODULES) {
+    if (out.some((r) => r.module.key === m.key)) continue
     const next = m.steps.find((s) => !byCode[s.code]?.done)
     if (!next) continue
     const started = (byCode[next.code]?.done_items ?? []).length > 0

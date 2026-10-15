@@ -5,6 +5,8 @@ import StepSheet from './StepSheet'
 import { BriefCard } from './Brief'
 import { moduleRecommendations } from '../modules'
 import { useSkips } from '../skips'
+import { aiEnabled } from '../ai'
+import { NAME_FOCUS, NAME_STEP, isProvisional } from '../naming'
 import { guideFor, formatMinutes } from '../guide'
 import { autoAssign, ownerBalance, phaseProgress, recommend } from '../recommend'
 import { CalendarIcon, CheckIcon, EditIcon } from '../icons'
@@ -47,8 +49,10 @@ export default function Inicio({ go }) {
   const partner = PEOPLE.find((p) => p !== me)
   const ranked = useMemo(() => recommend({ phases, tasks, items, me, partner, skipped }), [phases, tasks, items, me, partner, skipped])
   const available = ranked.filter((r) => !r.blockedBy.length && (!r.task.owner || r.task.owner === me))
+  const provisional = isProvisional(project)
+  const [nameRec] = provisional ? moduleRecommendations(modules, 1, { provisionalName: true }).filter((r) => r.step.code === NAME_STEP) : []
   const [top, ...rest] = available
-  const alternatives = rest.slice(0, 2)
+  const alternatives = nameRec ? available.slice(0, 2) : rest.slice(0, 2)
   const partnerTop = recommend({ phases, tasks, items, me: partner, partner: me }).find((r) => !r.blockedBy.length && r.task.owner === partner)
 
   const overall = progressOf(tasks)
@@ -75,7 +79,10 @@ export default function Inicio({ go }) {
     <>
       <div className="page-head">
         <div>
-          <p className="eyebrow-muted">{project.name}</p>
+          <p className="eyebrow-muted">
+            {project.name}
+            {provisional && <span className="badge-prov">Nombre provisional</span>}
+          </p>
           <h1 className="greeting">Hola, {me}</h1>
         </div>
         <button className="icon-btn" onClick={() => setEditing(true)} aria-label="Editar proyecto">
@@ -83,7 +90,22 @@ export default function Inicio({ go }) {
         </button>
       </div>
 
-      {top ? (
+      {nameRec ? (
+        <section className="hero rec">
+          <span className="eyebrow">Siguiente paso recomendado</span>
+          <h2 className="hero-goal">{nameRec.step.title}</h2>
+          <p className="hero-sub">{nameRec.step.why}</p>
+          <div className="chips">
+            <span className="chip on-hero">⏱ {formatMinutes(nameRec.step.minutes)}</span>
+            {nameRec.reasons.map((r) => (
+              <span key={r} className="chip on-hero">{r}</span>
+            ))}
+          </div>
+          <div className="hero-actions">
+            <button className="btn on-hero" onClick={() => go('modulos', NAME_FOCUS)}>{aiEnabled() ? 'Crear nombre con IA' : 'Empezar'}</button>
+          </div>
+        </section>
+      ) : top ? (
         <RecommendCard rec={top} onOpen={() => setOpen(top.task)} onSkip={() => skip(top.task.id)} onStart={() => { actions.updateTask(top.task.id, { status: 'doing', owner: top.task.owner ?? me }); setOpen({ ...top.task, status: 'doing' }) }} />
       ) : (
         <section className="hero rec">
@@ -108,7 +130,7 @@ export default function Inicio({ go }) {
 
       {(() => {
         const [m] = moduleRecommendations(modules, 1)
-        return m && !overdue.length ? (
+        return m && !nameRec && !overdue.length ? (
           <section className="card">
             <h3 className="card-title">Módulo sugerido</h3>
             <ul className="mini-list">

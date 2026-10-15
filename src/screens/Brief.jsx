@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useStore, useProject, useNav } from '../context'
 import { aiEnabled } from '../ai'
-import { LinkIcon, SparkIcon } from '../icons'
+import { CheckIcon, LinkIcon, SparkIcon } from '../icons'
+import { isProvisional, useChooseName } from '../naming'
 import { nameLinks, slug } from '../trackers'
 
-
+const NAME_PROMPT = 'Dame 10 opciones de nombre para nuestro podcast, cortas y fáciles de decir, con una frase de por qué funciona cada una.'
 
 function useBrief() {
   const { actions } = useStore()
@@ -13,8 +14,51 @@ function useBrief() {
   return { brief, save }
 }
 
+export function NamePicker() {
+  const { project } = useProject()
+  const { ask } = useNav()
+  const choose = useChooseName()
+  const provisional = isProvisional(project)
+  const [name, setName] = useState(provisional ? '' : project.name)
+  const [chosen, setChosen] = useState(false)
+  const submit = (e) => {
+    e.preventDefault()
+    if (choose(name)) setChosen(true)
+  }
+  return (
+    <section className="guide-block name-picker">
+      <h4>Nombre del podcast</h4>
+      <p className="muted small">
+        Ahora: <b>{project.name}</b>
+        {provisional && <span className="badge-prov">Nombre provisional</span>}
+      </p>
+      {aiEnabled() && (
+        <button type="button" className="btn ghost full" onClick={() => ask(NAME_PROMPT)}>
+          <SparkIcon width={18} height={18} /> Pedir 10 nombres a la IA
+        </button>
+      )}
+      <form onSubmit={submit} className="name-form">
+        <label className="field">
+          <span>El nombre que eligieron</span>
+          <input value={name} onChange={(e) => { setName(e.target.value); setChosen(false) }} placeholder="Ej. Entre Nos" />
+        </label>
+        <button className="btn primary full" disabled={!name.trim() || name.trim() === project.name}>
+          Usar este nombre
+        </button>
+      </form>
+      {chosen && (
+        <p className="alert success" role="status">
+          <CheckIcon width={16} height={16} /> ¡Listo! Ahora su podcast se llama {name.trim()} en toda la app.
+        </p>
+      )}
+    </section>
+  )
+}
+
 export function NameCheck() {
   const { brief, save } = useBrief()
+  const { project } = useProject()
+  const choose = useChooseName()
   const [name, setName] = useState(brief.name ?? '')
   const availability = brief.availability ?? {}
   const mark = (key, value) => save({ name: name || brief.name, availability: { ...availability, [key]: availability[key] === value ? null : value } })
@@ -41,6 +85,11 @@ export function NameCheck() {
         </ul>
       ) : (
         <p className="muted small">Escribe un nombre y te damos los enlaces de búsqueda ya listos.</p>
+      )}
+      {name.trim() && name.trim() !== project.name && (
+        <button type="button" className="btn ghost full" onClick={() => choose(name)}>
+          <CheckIcon width={18} height={18} /> Elegir “{name.trim()}” como nombre
+        </button>
       )}
     </section>
   )
@@ -71,6 +120,8 @@ const BRAND = [
 
 export default function Brief() {
   const { brief, save } = useBrief()
+  const { actions } = useStore()
+  const { project } = useProject()
   const { ask } = useNav()
   const [draft, setDraft] = useState(() => ({ ...brief, persona: { ...(brief.persona ?? {}) } }))
   const [saved, setSaved] = useState(false)
@@ -85,6 +136,7 @@ export default function Brief() {
   const submit = (e) => {
     e.preventDefault()
     save(draft)
+    if (draft.name?.trim() && draft.name.trim() !== project.name) actions.updateProject(project.id, { name: draft.name.trim() })
     setSaved(true)
   }
 
@@ -107,7 +159,7 @@ export default function Brief() {
         {field(['handle', '@ en redes', 'Ej. entrenospod'], draft.handle, set)}
         {field(['domain', 'Dominio', 'Ej. entrenos.com'], draft.domain, set)}
         {aiEnabled() && (
-          <button type="button" className="btn ghost" onClick={() => ask('Dame 10 opciones de nombre para nuestro podcast, cortas y fáciles de decir, con una frase de por qué funciona cada una.')}>
+          <button type="button" className="btn ghost" onClick={() => ask(NAME_PROMPT)}>
             <SparkIcon width={18} height={18} /> Pedir 10 nombres a la IA
           </button>
         )}

@@ -14,6 +14,7 @@ import Account from './screens/Account'
 import { ProjectSwitcher, Welcome } from './screens/Projects'
 import Onboarding from './screens/Onboarding'
 import { onboardingKey } from './skips'
+import { isProvisional, shortName } from './naming'
 import { BoardIcon, ChevronIcon, GridIcon, HomeIcon, SparkIcon, StepsIcon } from './icons'
 import { personClass } from './constants'
 
@@ -137,7 +138,8 @@ function Shell() {
           <span className="brand-name">Podcast Creator</span>
           {project && (
             <button className="switcher" onClick={() => setSwitcher(true)} aria-label="Cambiar de proyecto">
-              <span>{project.name}</span>
+              <span>{shortName(project)}</span>
+              {isProvisional(project) && <span className="badge-prov">Nombre provisional</span>}
               <ChevronIcon width={16} height={16} />
             </button>
           )}

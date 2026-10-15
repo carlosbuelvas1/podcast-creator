@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useStore, useProject, useNav } from '../context'
 import Sheet from '../Sheet'
-import { MODULES, moduleProgress } from '../modules'
+import { MODULES, moduleProgress, moduleStep } from '../modules'
+import { NAME_FOCUS, NAME_STEP } from '../naming'
 import { aiEnabled } from '../ai'
 import { CheckIcon, ChevronIcon, LinkIcon, SparkIcon } from '../icons'
 import { formatMinutes } from '../guide'
 import { burst } from '../celebrate'
-import Brief, { NameCheck } from './Brief'
+import Brief, { NameCheck, NamePicker } from './Brief'
 import Invitados from './Invitados'
 import Ideas from './Ideas'
 import Proximamente from './Proximamente'
@@ -28,10 +29,11 @@ const VIEWS = { brief: Brief, invitados: Invitados, ideas: Ideas, proximamente: 
 export default function Modulos({ focus }) {
   const { modules } = useProject()
   const { go } = useNav()
-  const [moduleKey, setModuleKey] = useState(() => (typeof focus === 'string' && MODULES.some((m) => m.key === focus) ? focus : null))
+  const toName = focus === NAME_FOCUS
+  const [moduleKey, setModuleKey] = useState(() => (toName ? 'concepto' : typeof focus === 'string' && MODULES.some((m) => m.key === focus) ? focus : null))
   const labItem = focus?.startsWith?.('lab:') ? focus.slice(4) : null
   const [view, setView] = useState(() => (labItem ? 'laboratorio' : focus && VIEWS[focus] ? focus : null))
-  const [step, setStep] = useState(null)
+  const [step, setStep] = useState(() => (toName ? moduleStep(NAME_STEP).step : null))
   const progress = moduleProgress(modules)
 
   if (view) {
@@ -167,6 +169,7 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
             <p>{step.why}</p>
           </section>
         )}
+        {step.code === NAME_STEP && module.key === 'concepto' && <NamePicker />}
         {step.code === '0.2' && module.key === 'concepto' && <NameCheck />}
         <section className="guide-block">
           <h4>
