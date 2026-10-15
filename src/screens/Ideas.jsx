@@ -3,8 +3,10 @@ import { KINDS, kindLabel } from '../trackers'
 import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
 import { aiEnabled } from '../ai'
-import { CalendarIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
+import { CalendarIcon, PlusIcon, SparkIcon, ThumbDownIcon, ThumbUpIcon, TrashIcon } from '../icons'
 
+
+const vote = (v) => (v === 1 ? 'sí' : v === -1 ? 'no' : '—')
 
 const score = (i) => (i.vote_carlos ?? 0) + (i.vote_michelle ?? 0)
 
@@ -26,7 +28,7 @@ export default function Ideas() {
     setTags('')
   }
 
-  const vote = (idea, v) => actions.update('ideas', idea.id, { [voteKey]: idea[voteKey] === v ? 0 : v })
+  const castVote = (idea, v) => actions.update('ideas', idea.id, { [voteKey]: idea[voteKey] === v ? 0 : v })
 
   const schedule = (idea) => {
     actions.add('calendar', { project_id: project.id, title: idea.title, kind: idea.kind, status: 'planned', idea_id: idea.id, publish_on: null })
@@ -78,11 +80,11 @@ export default function Ideas() {
               </div>
               <div className="votes">
                 <span className="vote-score" aria-label="Puntos">{score(i) > 0 ? `+${score(i)}` : score(i)}</span>
-                <button className={`vote ${i[voteKey] === 1 ? 'on' : ''}`} onClick={() => vote(i, 1)} aria-label="Me gusta">👍</button>
-                <button className={`vote ${i[voteKey] === -1 ? 'on' : ''}`} onClick={() => vote(i, -1)} aria-label="No me gusta">👎</button>
+                <button className={`vote ${i[voteKey] === 1 ? 'on' : ''}`} onClick={() => castVote(i, 1)} aria-label="Me gusta" aria-pressed={i[voteKey] === 1}><ThumbUpIcon width={20} height={20} /></button>
+                <button className={`vote ${i[voteKey] === -1 ? 'on' : ''}`} onClick={() => castVote(i, -1)} aria-label="No me gusta" aria-pressed={i[voteKey] === -1}><ThumbDownIcon width={20} height={20} /></button>
               </div>
               <div className="tracker-extra row">
-                <span className="muted small">Carlos {i.vote_carlos === 1 ? '👍' : i.vote_carlos === -1 ? '👎' : '—'} · Michelle {i.vote_michelle === 1 ? '👍' : i.vote_michelle === -1 ? '👎' : '—'}</span>
+                <span className="muted small">Carlos: {vote(i.vote_carlos)} · Michelle: {vote(i.vote_michelle)}</span>
                 <span className="tool-row">
                   {!i.scheduled && (
                     <button className="btn small ghost" onClick={() => schedule(i)}>

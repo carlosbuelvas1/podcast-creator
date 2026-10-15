@@ -161,7 +161,7 @@ function Shell() {
           <main className="page" key={`${tab}-${project.id}-${tab === 'ia' || tab === 'modulos' ? focus : ''}`}>
             <Screen go={go} focus={focus} prompt={tab === 'ia' ? focus ?? '' : ''} />
           </main>
-          <nav className="tabbar">
+          <nav className="tabbar" style={{ '--tab-count': tabs.length }}>
             {tabs.map(({ id, label, Icon }) => (
               <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
                 <Icon />

@@ -200,7 +200,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-  border-color: var(--ink);
+  border-color: var(--accent);
 }
 
 input[type='date'] {
@@ -238,7 +238,7 @@ input[type='date'] {
 }
 
 .btn.primary {
-  background: var(--ink);
+  background: var(--primary);
   color: var(--on-primary);
 }
 
@@ -278,7 +278,7 @@ input[type='date'] {
 }
 
 .icon-btn.filled {
-  background: var(--ink);
+  background: var(--primary);
   color: var(--on-primary);
   width: 44px;
   height: 44px;
@@ -377,7 +377,7 @@ input[type='date'] {
   bottom: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--tab-count, 3), 1fr);
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   background: color-mix(in srgb, var(--surface-1) 94%, transparent);
   backdrop-filter: blur(12px);
@@ -1155,7 +1155,7 @@ select {
 }
 
 select:focus {
-  border-color: var(--ink);
+  border-color: var(--accent);
 }
 
 .btn.ghost {
@@ -2623,4 +2623,27 @@ button.chip {
 
 .tabbar button span {
   font-size: 11px;
+}
+
+.tabs-top button.on {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.tabbar button.on {
+  color: var(--text);
+}
+
+.vote svg {
+  display: block;
+  margin: auto;
+}
+
+.vote {
+  filter: none;
+  color: var(--text-3);
+}
+
+.vote.on {
+  color: var(--accent);
 }

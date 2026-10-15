@@ -81,3 +81,15 @@ export const LinkIcon = (p) => (
     <path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
   </svg>
 )
+
+export const ThumbUpIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M7 10v11H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h3Zm0 0 4-8a3 3 0 0 1 3 3v4h5.5a2 2 0 0 1 2 2.3l-1.4 8a2 2 0 0 1-2 1.7H7" />
+  </svg>
+)
+
+export const ThumbDownIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M17 14V3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-3Zm0 0-4 8a3 3 0 0 1-3-3v-4H4.5a2 2 0 0 1-2-2.3l1.4-8a2 2 0 0 1 2-1.7H17" />
+  </svg>
+)
