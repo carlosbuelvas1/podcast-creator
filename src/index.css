@@ -2837,3 +2837,128 @@ button.chip {
 .name-card-actions .icon-btn {
   margin-left: auto;
 }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (min-width: 640px) {
+  .stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stat {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.stat-value {
+  font-weight: 800;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-top: 10px;
+  padding-bottom: 4px;
+  scroll-snap-type: x mandatory;
+}
+
+.thumbs a {
+  flex: 0 0 150px;
+  scroll-snap-align: start;
+}
+
+.thumbs img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+.recent {
+  margin-top: 10px;
+}
+
+.recent summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.recent ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.buzz {
+  margin: 10px 0 6px;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.picker .cand-group {
+  border: 0;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 6px;
+}
+
+.picker legend {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.cand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.cand.on {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.cand input {
+  accent-color: var(--primary);
+}
+
+.cand img,
+.cand-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--surface-2);
+}
+
+.picker .btn.primary {
+  margin-top: 12px;
+}

@@ -18,3 +18,17 @@ export async function askAI({ projectId, message, mode = 'chat', context = null,
   }
   return data
 }
+
+export async function researchReference({ referenceId, pick = null, refresh = false }) {
+  const { data, error } = await supabase.functions.invoke('research-referente', { body: { reference_id: referenceId, pick, refresh, ai: aiEnabled() } })
+  if (error) {
+    let reason = ''
+    try {
+      reason = (await error.context?.json())?.error ?? ''
+    } catch {
+      reason = ''
+    }
+    throw new Error(reason || 'No pudimos investigar este referente ahora.')
+  }
+  return data
+}
