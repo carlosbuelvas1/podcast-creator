@@ -16,7 +16,7 @@ Las fases del curso: 1 Concepto e identidad, 2 Marca e identidad visual, 3 Equip
 Nunca inventes datos de otros podcasts: usa solo lo que te pegan y los datos públicos que recibas.`
 
 const CHAT_FORMAT = `Responde SIEMPRE con JSON válido: {"reply": "texto para el usuario", "actions": [ ... ]}.
-"actions" es opcional (máximo 4) y solo cuando el usuario se beneficie de un botón. Tipos permitidos:
+"actions" es opcional (máximo 4) y solo cuando el usuario se beneficie de un botón. Las acciones aparecen como botones que el usuario toca para confirmar: nunca digas que ya agregaste o creaste algo; di que puede tocar el botón para guardarlo. Tipos permitidos:
 {"type":"add_idea","payload":{"title":"...","kind":"episode|short|vlog","tags":["..."]}}
 {"type":"create_task","payload":{"title":"...","owner":"Carlos|Michelle","due_date":"AAAA-MM-DD"}}
 {"type":"add_guest","payload":{"name":"...","handle":"...","topic":"..."}}
