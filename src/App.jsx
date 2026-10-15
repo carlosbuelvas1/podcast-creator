@@ -8,6 +8,7 @@ import Fases from './screens/Fases'
 import Tareas from './screens/Tareas'
 import Account from './screens/Account'
 import { ProjectSwitcher, Welcome } from './screens/Projects'
+import Onboarding, { onboardingKey } from './screens/Onboarding'
 import { BoardIcon, ChevronIcon, HomeIcon, StepsIcon } from './icons'
 import { personClass } from './constants'
 
@@ -55,6 +56,7 @@ function Shell() {
   const [focus, setFocus] = useState(null)
   const [account, setAccount] = useState(false)
   const [switcher, setSwitcher] = useState(false)
+  const [onboarded, setOnboarded] = useState(0)
 
   useEffect(() => {
     const onHash = () => setTab(tabFromHash())
@@ -135,6 +137,7 @@ function Shell() {
         </main>
       )}
 
+      {project && !localStorage.getItem(onboardingKey(project.id)) && <Onboarding key={`${project.id}-${onboarded}`} onClose={() => setOnboarded((n) => n + 1)} />}
       {account && <Account onClose={() => setAccount(false)} />}
       {switcher && <ProjectSwitcher onClose={() => setSwitcher(false)} onPick={() => go('inicio')} />}
     </div>
