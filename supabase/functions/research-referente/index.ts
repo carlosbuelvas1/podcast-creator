@@ -79,7 +79,8 @@ async function candidates(name: string) {
     image: i.snippet.thumbnails?.default?.url,
     detail: i.snippet.description?.slice(0, 90),
   }))
-  const ytMatch = ytAll.filter((c) => similar(name, c.title))
+  const ytExact = ytAll.filter((c) => norm(c.title) === norm(name))
+  const ytList = ytExact.length === 1 ? ytExact : [...ytAll.filter((c) => similar(name, c.title)), ...ytAll.filter((c) => !similar(name, c.title))].slice(0, 4)
   const apple: Candidate[] = (a?.results ?? [])
     .filter((r: { collectionName: string }) => similar(name, r.collectionName))
     .map((r: { collectionId: number; collectionName: string; artistName: string; trackCount: number; artworkUrl100?: string }) => ({
@@ -100,7 +101,7 @@ async function candidates(name: string) {
       count: x.total_episodes,
     }))
     .sort((x: Candidate, z: Candidate) => (z.count ?? 0) - (x.count ?? 0))
-  return { youtube: ytMatch.length ? ytMatch : ytAll.slice(0, 1), apple, spotify }
+  return { youtube: ytList, apple, spotify }
 }
 
 async function youtubeFromUrl(url?: string | null) {
