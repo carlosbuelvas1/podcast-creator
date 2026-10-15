@@ -2,16 +2,18 @@ import { useState } from 'react'
 import { supabase } from '../supabase'
 import { useStore } from '../context'
 import Sheet from '../Sheet'
+import { aiEnabled, setAiEnabled } from '../ai'
 
 export default function Account({ onClose }) {
   const { me, session, notify } = useStore()
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
-  const [ai, setAi] = useState(() => localStorage.getItem('podcast-creator-ai') !== 'off')
+  const [ai, setAi] = useState(aiEnabled)
 
   const toggleAi = (on) => {
     setAi(on)
-    localStorage.setItem('podcast-creator-ai', on ? 'on' : 'off')
+    setAiEnabled(on)
+    window.dispatchEvent(new Event('ai-toggle'))
   }
 
   const changePassword = async (e) => {
@@ -55,9 +57,9 @@ export default function Account({ onClose }) {
       <div className="sheet-section">
         <label className="toggle">
           <input type="checkbox" checked={ai} onChange={(e) => toggleAi(e.target.checked)} />
-          <span>Consejos con IA</span>
+          <span>IA activada</span>
         </label>
-        <p className="muted small">Si lo apagas, la app sigue recomendando pasos sin IA.</p>
+        <p className="muted small">Si la apagas, se ocultan los botones de IA y la app sigue recomendando pasos sola.</p>
       </div>
       <button className="btn danger-ghost full" onClick={() => supabase.auth.signOut()}>
         Cerrar sesión

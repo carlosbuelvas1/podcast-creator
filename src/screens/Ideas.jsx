@@ -1,0 +1,108 @@
+import { useState } from 'react'
+import { useStore, useProject, useNav } from '../context'
+import { Segmented } from '../Sheet'
+import { aiEnabled } from '../ai'
+import { CalendarIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
+
+export const KINDS = [
+  { id: 'episode', label: 'Episodio' },
+  { id: 'short', label: 'Short' },
+  { id: 'vlog', label: 'Vlog' },
+]
+export const kindLabel = (k) => KINDS.find((x) => x.id === k)?.label ?? k
+
+const score = (i) => (i.vote_carlos ?? 0) + (i.vote_michelle ?? 0)
+
+export default function Ideas() {
+  const { actions, me } = useStore()
+  const { project, ideas } = useProject()
+  const { ask } = useNav()
+  const [title, setTitle] = useState('')
+  const [kind, setKind] = useState('episode')
+  const [tags, setTags] = useState('')
+  const [tag, setTag] = useState('')
+  const voteKey = me === 'Michelle' ? 'vote_michelle' : 'vote_carlos'
+
+  const add = (e) => {
+    e.preventDefault()
+    if (!title.trim()) return
+    actions.add('ideas', { project_id: project.id, title: title.trim(), kind, tags: tags.split(',').map((t) => t.trim()).filter(Boolean), notes: '', scheduled: false })
+    setTitle('')
+    setTags('')
+  }
+
+  const vote = (idea, v) => actions.update('ideas', idea.id, { [voteKey]: idea[voteKey] === v ? 0 : v })
+
+  const schedule = (idea) => {
+    actions.add('calendar', { project_id: project.id, title: idea.title, kind: idea.kind, status: 'planned', idea_id: idea.id, publish_on: null })
+    actions.update('ideas', idea.id, { scheduled: true })
+  }
+
+  const allTags = [...new Set(ideas.flatMap((i) => i.tags ?? []))]
+  const visible = ideas.filter((i) => !tag || (i.tags ?? []).includes(tag)).sort((a, b) => a.scheduled - b.scheduled || score(b) - score(a))
+
+  return (
+    <>
+      <div className="page-head">
+        <h1>Ideas</h1>
+      </div>
+      <form className="card quick-add" onSubmit={add}>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nueva idea…" aria-label="Idea" />
+        <Segmented name="Tipo" value={kind} onChange={setKind} options={KINDS.map((k) => ({ value: k.id, label: k.label }))} />
+        <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Etiquetas separadas por coma" aria-label="Etiquetas" />
+        <button className="btn primary" disabled={!title.trim()}>
+          <PlusIcon width={18} height={18} /> Añadir
+        </button>
+      </form>
+      {aiEnabled() && (
+        <button className="btn ghost full" onClick={() => ask('Dame 10 ideas de episodios para nuestro podcast, con un título corto cada una.')}>
+          <SparkIcon width={18} height={18} /> Pedir 10 ideas a la IA
+        </button>
+      )}
+      {allTags.length > 0 && (
+        <div className="chips filter-chips">
+          <button className={`chip ${!tag ? 'on' : 'subtle'}`} onClick={() => setTag('')}>Todas</button>
+          {allTags.map((t) => (
+            <button key={t} className={`chip ${tag === t ? 'on' : 'subtle'}`} onClick={() => setTag(tag === t ? '' : t)}>#{t}</button>
+          ))}
+        </div>
+      )}
+      {visible.length === 0 ? (
+        <p className="muted empty">Anoten todo, sin juzgar. Después votan entre los dos.</p>
+      ) : (
+        <ul className="tracker-list">
+          {visible.map((i) => (
+            <li key={i.id} className={`card tracker-item ${i.scheduled ? 'dim' : ''}`}>
+              <div className="tracker-main">
+                <b>{i.title}</b>
+                <span className="muted small">
+                  {kindLabel(i.kind)}
+                  {(i.tags ?? []).map((t) => ` · #${t}`).join('')}
+                  {i.scheduled && ' · En el calendario'}
+                </span>
+              </div>
+              <div className="votes">
+                <span className="vote-score" aria-label="Puntos">{score(i) > 0 ? `+${score(i)}` : score(i)}</span>
+                <button className={`vote ${i[voteKey] === 1 ? 'on' : ''}`} onClick={() => vote(i, 1)} aria-label="Me gusta">👍</button>
+                <button className={`vote ${i[voteKey] === -1 ? 'on' : ''}`} onClick={() => vote(i, -1)} aria-label="No me gusta">👎</button>
+              </div>
+              <div className="tracker-extra row">
+                <span className="muted small">Carlos {i.vote_carlos === 1 ? '👍' : i.vote_carlos === -1 ? '👎' : '—'} · Michelle {i.vote_michelle === 1 ? '👍' : i.vote_michelle === -1 ? '👎' : '—'}</span>
+                <span className="tool-row">
+                  {!i.scheduled && (
+                    <button className="btn small ghost" onClick={() => schedule(i)}>
+                      <CalendarIcon width={16} height={16} /> Mover al calendario
+                    </button>
+                  )}
+                  <button className="icon-btn" onClick={() => window.confirm('¿Borrar esta idea?') && actions.remove('ideas', i.id)} aria-label="Borrar idea">
+                    <TrashIcon width={16} height={16} />
+                  </button>
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  )
+}

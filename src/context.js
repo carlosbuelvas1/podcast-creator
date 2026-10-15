@@ -4,6 +4,10 @@ export const DataContext = createContext(null)
 
 export const useStore = () => useContext(DataContext)
 
+export const NavContext = createContext({ go: () => {}, ask: () => {} })
+
+export const useNav = () => useContext(NavContext)
+
 const scope = (rows, id) => (id ? rows.filter((row) => row.project_id === id) : [])
 
 export function useProject() {

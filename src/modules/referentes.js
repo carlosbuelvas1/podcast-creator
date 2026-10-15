@@ -54,7 +54,7 @@ export default {
     "why": "",
     "tips": [],
     "checklist": [
-      "Revisar referentes y sumar uno nuevo\nDatos públicos opcionales: con una clave gratuita de YouTube Data API la app puede mostrar suscriptores, número de videos, vistas y títulos recientes de un canal"
+      "Revisar referentes y sumar uno nuevo"
     ],
     "links": []
   }

@@ -4,7 +4,7 @@ export default {
   {
     "code": "7.1",
     "title": "Conoce a tu co-productor",
-    "why": "te ayuda a pensar ideas, títulos, descripciones y mensajes en segundos.",
+    "why": "Te ayuda a pensar ideas, títulos, descripciones y mensajes en segundos.",
     "tips": [],
     "checklist": [
       "Completar el Brief de marca (la IA lo usa)",

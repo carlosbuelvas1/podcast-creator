@@ -34,7 +34,7 @@ export default {
       "@ en TikTok (tiktok.com/@NOMBRE)",
       "@ en YouTube (youtube.com/@NOMBRE)",
       "Marcas en USPTO (tmsearch.uspto.gov)",
-      "Empresas en Florida (search.sunbiz.org)\nNota para la app: solo abrir los enlaces con el nombre ya puesto; la persona marca \"libre / ocupado\""
+      "Empresas en Florida (search.sunbiz.org)"
     ],
     "links": [
       {
@@ -105,7 +105,7 @@ export default {
       "Escuchar 3 podcasts parecidos",
       "Anotar qué hacen bien y qué falta",
       "Escribir \"Nosotros somos los únicos que…\"",
-      "Guardar todo en la tarjeta Brief de marca\nBrief de marca (tarjeta): nombre, @, dominio, persona, beneficios, promesa, eslogan, logline, diferencia, paleta y fuentes (se completa en Branding). La IA lo usa como contexto siempre"
+      "Guardar todo en la tarjeta Brief de marca"
     ],
     "links": []
   }
