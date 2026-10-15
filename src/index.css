@@ -78,7 +78,7 @@ button {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: var(--y) url('./favicon.svg') center/cover;
+  background: var(--y) url('/favicon.svg') center/cover;
   flex: none;
 }
 
