@@ -3,8 +3,7 @@ import { useStore, useProject } from '../context'
 import Sheet from '../Sheet'
 import { autoAssign, spreadDueDates, suggestedLaunch } from '../recommend'
 import { PEOPLE } from '../constants'
-
-export const onboardingKey = (id) => `podcast-creator-onboarded-${id}`
+import { onboardingKey } from '../skips'
 
 export default function Onboarding({ onClose }) {
   const { actions } = useStore()

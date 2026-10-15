@@ -4,7 +4,7 @@ import { ProjectEditor } from './Projects'
 import StepSheet from './StepSheet'
 import { useSkips } from '../skips'
 import { guideFor, formatMinutes } from '../guide'
-import { autoAssign, daysBetween, ownerBalance, phaseProgress, recommend } from '../recommend'
+import { autoAssign, ownerBalance, phaseProgress, recommend } from '../recommend'
 import { CalendarIcon, CheckIcon, EditIcon } from '../icons'
 import { byDueDate, daysUntil, dueLabel, longDate } from '../dates'
 import { PEOPLE, personClass, progressOf } from '../constants'
@@ -55,7 +55,7 @@ export default function Inicio({ go }) {
   const overdue = tasks.filter((t) => t.status !== 'done' && daysUntil(t.due_date) < 0)
   const unassigned = tasks.filter((t) => !t.owner && t.status !== 'done')
   const week = tasks
-    .filter((t) => t.status !== 'done' && t.due_date && daysBetween(t.due_date, new Date()) <= 7)
+    .filter((t) => t.status !== 'done' && t.due_date && daysUntil(t.due_date) <= 7)
     .sort(byDueDate)
   const phaseName = Object.fromEntries(phases.map((p) => [p.id, p.title]))
 

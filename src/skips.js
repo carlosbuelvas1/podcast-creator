@@ -22,3 +22,5 @@ export function useSkips() {
   }, [])
   return { skipped: Object.keys(skips), skip }
 }
+
+export const onboardingKey = (id) => `podcast-creator-onboarded-${id}`
