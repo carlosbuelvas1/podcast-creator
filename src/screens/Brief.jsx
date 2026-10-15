@@ -3,6 +3,7 @@ import { useStore, useProject, useNav } from '../context'
 import { aiEnabled } from '../ai'
 import { CheckIcon, LinkIcon, SparkIcon } from '../icons'
 import { isProvisional, useChooseName } from '../naming'
+import NameLab from './NameLab'
 import { nameLinks, slug } from '../trackers'
 
 const NAME_PROMPT = 'Dame 10 opciones de nombre para nuestro podcast, cortas y fáciles de decir, con una frase de por qué funciona cada una.'
@@ -16,7 +17,6 @@ function useBrief() {
 
 export function NamePicker() {
   const { project } = useProject()
-  const { ask } = useNav()
   const choose = useChooseName()
   const provisional = isProvisional(project)
   const [name, setName] = useState(provisional ? '' : project.name)
@@ -32,14 +32,10 @@ export function NamePicker() {
         Ahora: <b>{project.name}</b>
         {provisional && <span className="badge-prov">Nombre provisional</span>}
       </p>
-      {aiEnabled() && (
-        <button type="button" className="btn ghost full" onClick={() => ask(NAME_PROMPT)}>
-          <SparkIcon width={18} height={18} /> Pedir 10 nombres a la IA
-        </button>
-      )}
+      <NameLab />
       <form onSubmit={submit} className="name-form">
         <label className="field">
-          <span>El nombre que eligieron</span>
+          <span>¿Ya tienen uno? Escríbanlo aquí</span>
           <input value={name} onChange={(e) => { setName(e.target.value); setChosen(false) }} placeholder="Ej. Entre Nos" />
         </label>
         <button className="btn primary full" disabled={!name.trim() || name.trim() === project.name}>

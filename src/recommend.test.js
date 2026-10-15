@@ -116,3 +116,23 @@ describe('modules', async () => {
     expect(doneName.every((r) => r.score < 50)).toBe(true)
   })
 })
+
+describe('name check', async () => {
+  const { handleOf, scoreOf, sortByAvailability, briefFields } = await import('./namecheck.js')
+  const result = (statuses) => ({ handle: 'x', checks: statuses.map(([key, status, label = key]) => ({ key, status, label })) })
+
+  it('scores names by availability and ignores manual checks', () => {
+    expect(handleOf('Entre Nós Pod!')).toBe('entrenospod')
+    expect(scoreOf(result([['a', 'libre'], ['b', 'ocupado'], ['c', 'manual']]))).toBe(50)
+    expect(scoreOf(result([['a', 'probable'], ['b', 'similar']]))).toBe(75)
+    expect(scoreOf(undefined)).toBe(null)
+    const ideas = [{ name: 'Malo' }, { name: 'Sin revisar' }, { name: 'Bueno' }]
+    const results = { Malo: result([['a', 'ocupado']]), Bueno: result([['a', 'libre']]) }
+    expect(sortByAvailability(ideas, results).map((i) => i.name)).toEqual(['Bueno', 'Malo', 'Sin revisar'])
+  })
+
+  it('turns a result into brief fields with handles and a free domain', () => {
+    const r = result([['domain_com', 'ocupado', 'x.com'], ['domain_fm', 'libre', 'x.fm'], ['instagram', 'probable'], ['spotify', 'ocupado'], ['uspto', 'manual']])
+    expect(briefFields(r)).toEqual({ handle: 'x', domain: 'x.fm', availability: { domain: 'ocupado', instagram: 'libre', spotify: 'ocupado' } })
+  })
+})

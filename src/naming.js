@@ -11,11 +11,11 @@ export const shortName = (project) => (isProvisional(project) ? 'Mi podcast' : p
 export function useChooseName() {
   const { actions } = useStore()
   const { project, brief } = useProject()
-  return (name) => {
+  return (name, extra = {}) => {
     const clean = name.trim()
     if (!clean || clean === PROVISIONAL_NAME) return false
     actions.updateProject(project.id, { name: clean })
-    actions.upsert('briefs', { project_id: project.id, data: { ...brief, name: clean }, updated_at: new Date().toISOString() })
+    actions.upsert('briefs', { project_id: project.id, data: { ...brief, ...extra, availability: { ...(brief.availability ?? {}), ...(extra.availability ?? {}) }, name: clean }, updated_at: new Date().toISOString() })
     return true
   }
 }

@@ -2698,3 +2698,142 @@ button.chip {
   background: rgba(52, 211, 153, 0.12);
   color: var(--success);
 }
+
+.name-lab .tool-row {
+  margin: 8px 0;
+}
+
+.name-cards {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.name-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.name-card.chosen {
+  border-color: var(--success);
+}
+
+.name-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.name-card-head p {
+  margin: 4px 0 0;
+}
+
+.score {
+  flex-shrink: 0;
+  min-width: 52px;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 99px;
+  font-weight: 800;
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+
+.score.ok,
+.sc-status.ok {
+  color: var(--success);
+}
+
+.score.warn,
+.sc-status.warn {
+  color: var(--warning);
+}
+
+.score.bad,
+.sc-status.bad {
+  color: var(--danger);
+}
+
+.score.ok {
+  background: rgba(52, 211, 153, 0.12);
+}
+
+.score.warn {
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.score.bad {
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-3);
+  flex-shrink: 0;
+}
+
+.dot.ok {
+  background: var(--success);
+}
+
+.dot.warn {
+  background: var(--warning);
+}
+
+.dot.bad {
+  background: var(--danger);
+}
+
+.scorecard {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.scorecard li {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  gap: 4px 10px;
+  align-items: center;
+}
+
+.scorecard .link-pill {
+  grid-column: 2 / -1;
+  justify-self: start;
+}
+
+.sc-label {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.sc-status {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.name-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.name-card-actions .icon-btn {
+  margin-left: auto;
+}

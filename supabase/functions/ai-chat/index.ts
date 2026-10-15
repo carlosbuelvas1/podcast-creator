@@ -26,6 +26,7 @@ const MODE_FORMAT: Record<string, string> = {
   thumbnails: 'Crea 3 conceptos de miniatura. JSON: {"concepts":[{"text":"3 a 4 palabras","expression":"...","composition":"...","colors":["#RRGGBB"]}]}. Usa los colores del brief si existen.',
   titles: 'Crea 10 títulos. JSON: {"titles":[{"title":"...","hook":"pregunta|número|secreto|opinión fuerte|historia|cómo","curiosity":1-10,"clarity":1-10}]}. Menos de 60 caracteres, sin engañar.',
   seo: 'Crea SEO. JSON: {"keywords":["..."],"description":"las 2 primeras líneas son clave","tags":["..."],"chapters":["00:00 ..."],"hashtags":{"YouTube":["#..." x3],"Instagram":["#..." x5-10],"TikTok":["#..." x3-5]}}.',
+  names: 'Crea 10 nombres para el podcast usando el brief y el proyecto. JSON: {"names":[{"name":"1 a 3 palabras","why":"una frase corta"}]}. Cortos, fáciles de decir y deletrear en voz alta, sin copiar podcasts famosos.',
   reference: 'Analiza este podcast de referencia SOLO con la información dada. JSON: {"format":"...","length":"...","hook":"...","titles":"...","thumbnails":"...","cadence":"...","guests":"...","shorts":"...","monetization":"...","branding":"...","audience":"...","steal":["3 a 5 ideas concretas para adaptar"]}. Si falta información di "No hay datos suficientes".',
 }
 
