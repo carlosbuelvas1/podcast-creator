@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore, useProject } from '../context'
 import { askAI, aiEnabled } from '../ai'
-import { SparkIcon } from '../icons'
+import { SparkIcon, StarIcon } from '../icons'
 
 const MODES = [
   { id: 'thumbnails', label: 'Miniaturas' },
@@ -93,7 +93,7 @@ export default function Laboratorio({ itemId = null }) {
                 <span className="muted small">Composición: {c.composition}</span>
                 <span className="swatches">{(c.colors ?? []).map((col) => <span key={col} className="swatch" style={{ background: col }} title={col} />)}</span>
                 <span className="tool-row">
-                  <button className="btn small ghost" onClick={() => star('thumbnail', c)} aria-label="Guardar en favoritos">⭐</button>
+                  <button className="btn small ghost" onClick={() => star('thumbnail', c)} aria-label="Guardar en favoritos"><StarIcon width={16} height={16} /></button>
                   <Copy text={asText('thumbnail', c)} />
                 </span>
               </li>
@@ -116,7 +116,7 @@ export default function Laboratorio({ itemId = null }) {
                   <span className={`chip ${t.title.length > 60 ? 'warn' : 'subtle'}`}>{t.title.length} caracteres{t.title.length > 60 ? ' · muy largo' : ''}</span>
                 </span>
                 <span className="tool-row">
-                  <button className="btn small ghost" onClick={() => star('title', t)} aria-label="Guardar en favoritos">⭐</button>
+                  <button className="btn small ghost" onClick={() => star('title', t)} aria-label="Guardar en favoritos"><StarIcon width={16} height={16} /></button>
                   <Copy text={t.title} />
                 </span>
               </li>
@@ -137,7 +137,7 @@ export default function Laboratorio({ itemId = null }) {
               <p key={k} className="small"><b>{k}:</b> {(v ?? []).join(' ')}</p>
             ))}
             <span className="tool-row">
-              <button className="btn small ghost" onClick={() => star('seo', results.seo)} aria-label="Guardar en favoritos">⭐</button>
+              <button className="btn small ghost" onClick={() => star('seo', results.seo)} aria-label="Guardar en favoritos"><StarIcon width={16} height={16} /></button>
               <Copy text={asText('seo', results.seo)} />
             </span>
           </div>
@@ -147,7 +147,7 @@ export default function Laboratorio({ itemId = null }) {
       <section className="card">
         <h3 className="card-title">Favoritos {item ? 'de este episodio' : ''}</h3>
         {mine.length === 0 ? (
-          <p className="muted empty">Toca ⭐ en cualquier resultado para guardarlo aquí.</p>
+          <p className="muted empty">Toca la estrella en cualquier resultado para guardarlo aquí.</p>
         ) : (
           <ul className="lab-list">
             {mine.map((f) => (
