@@ -10,6 +10,7 @@ const TLDS = ['com', 'co', 'fm', 'show']
 const HOUR_LIMIT = 40
 const DAY_LIMIT = 200
 const DAY = 24 * 60 * 60 * 1000
+const RDAP: Record<string, string> = { co: 'https://rdap.registry.co/co/domain/' }
 
 type Check = { key: string; label: string; group: string; status: string; url: string; buy?: string | null; similar?: string[] }
 
@@ -43,7 +44,7 @@ function compare(name: string, titles: string[]) {
 async function domain(handle: string, tld: string): Promise<Check> {
   const d = `${handle}.${tld}`
   const buy = `https://www.namecheap.com/domains/registration/results/?domain=${d}`
-  const r = await get(`https://rdap.org/domain/${d}`, { Accept: 'application/rdap+json' })
+  const r = await get(`${RDAP[tld] ?? 'https://rdap.org/domain/'}${d}`, { Accept: 'application/rdap+json' })
   await done(r)
   let status = 'verificar'
   if (r?.status === 200) status = 'ocupado'
