@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { useStore, useProject } from '../context'
 import { ProjectEditor } from './Projects'
 import StepSheet from './StepSheet'
+import { BriefCard } from './Brief'
+import { moduleRecommendations } from '../modules'
 import { useSkips } from '../skips'
 import { guideFor, formatMinutes } from '../guide'
 import { autoAssign, ownerBalance, phaseProgress, recommend } from '../recommend'
@@ -37,7 +39,7 @@ function Ring({ value }) {
 
 export default function Inicio({ go }) {
   const { me, actions } = useStore()
-  const { project, phases, tasks, items } = useProject()
+  const { project, phases, tasks, items, modules } = useProject()
   const { skipped, skip } = useSkips()
   const [editing, setEditing] = useState(false)
   const [open, setOpen] = useState(null)
@@ -104,6 +106,24 @@ export default function Inicio({ go }) {
         </section>
       )}
 
+      {(() => {
+        const [m] = moduleRecommendations(modules, 1)
+        return m && !overdue.length ? (
+          <section className="card">
+            <h3 className="card-title">Módulo sugerido</h3>
+            <ul className="mini-list">
+              <li>
+                <button className="mini" onClick={() => go('modulos', m.module.key)}>
+                  <span className="mini-label">{m.module.title}</span>
+                  <span className="mini-title">{m.step.title}</span>
+                  <span className="mini-meta">{m.reasons.join(' · ')}</span>
+                </button>
+              </li>
+            </ul>
+          </section>
+        ) : null
+      })()}
+
       {alerts.length > 0 && (
         <div className="alerts">
           {alerts.map((a) => (
@@ -136,6 +156,8 @@ export default function Inicio({ go }) {
           ))}
         </div>
       </section>
+
+      <BriefCard onOpen={() => go('modulos', 'brief')} />
 
       <section className="card">
         <h3 className="card-title">Esta semana</h3>

@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { DataProvider } from './store'
-import { useStore, useProject } from './context'
+import { useStore, useProject, NavContext } from './context'
+import Modulos from './screens/Modulos'
+import Asistente from './screens/Asistente'
+import { aiEnabled } from './ai'
 import { useCelebrations } from './celebrate'
 import Login from './screens/Login'
 import Inicio from './screens/Inicio'
@@ -11,13 +14,15 @@ import Account from './screens/Account'
 import { ProjectSwitcher, Welcome } from './screens/Projects'
 import Onboarding from './screens/Onboarding'
 import { onboardingKey } from './skips'
-import { BoardIcon, ChevronIcon, HomeIcon, StepsIcon } from './icons'
+import { BoardIcon, ChevronIcon, GridIcon, HomeIcon, SparkIcon, StepsIcon } from './icons'
 import { personClass } from './constants'
 
 const TABS = [
   { id: 'inicio', label: 'Inicio', Icon: HomeIcon, Screen: Inicio },
   { id: 'fases', label: 'Fases', Icon: StepsIcon, Screen: Fases },
   { id: 'tareas', label: 'Tareas', Icon: BoardIcon, Screen: Tareas },
+  { id: 'modulos', label: 'Módulos', Icon: GridIcon, Screen: Modulos },
+  { id: 'ia', label: 'IA', Icon: SparkIcon, Screen: Asistente, ai: true },
 ]
 
 const tabFromHash = () => {
@@ -80,6 +85,13 @@ function Shell() {
   const [switcher, setSwitcher] = useState(false)
   const [onboarded, setOnboarded] = useState(0)
   useCelebrations(project, scoped.phases, scoped.tasks, notify)
+  const [ai, setAi] = useState(aiEnabled)
+
+  useEffect(() => {
+    const onToggle = () => setAi(aiEnabled())
+    window.addEventListener('ai-toggle', onToggle)
+    return () => window.removeEventListener('ai-toggle', onToggle)
+  }, [])
 
   useEffect(() => {
     const onHash = () => setTab(tabFromHash())
@@ -93,6 +105,9 @@ function Shell() {
     setTab(id)
     window.scrollTo({ top: 0 })
   }
+
+  const ask = (prompt) => go('ia', prompt)
+  const tabs = TABS.filter((t) => !t.ai || ai)
 
   if (!ready) return <Skeleton />
 
@@ -111,9 +126,10 @@ function Shell() {
     )
   }
 
-  const { Screen } = TABS.find((t) => t.id === tab)
+  const { Screen } = tabs.find((t) => t.id === tab) ?? tabs[0]
 
   return (
+    <NavContext.Provider value={{ go, ask }}>
     <div className="shell">
       <header className="topbar">
         <div className="brand">
@@ -128,7 +144,7 @@ function Shell() {
         </div>
         {project && (
           <nav className="tabs-top">
-            {TABS.map(({ id, label }) => (
+            {tabs.map(({ id, label }) => (
               <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
                 {label}
               </button>
@@ -142,11 +158,11 @@ function Shell() {
 
       {project ? (
         <>
-          <main className="page" key={`${tab}-${project.id}`}>
-            <Screen go={go} focus={focus} />
+          <main className="page" key={`${tab}-${project.id}-${tab === 'ia' || tab === 'modulos' ? focus : ''}`}>
+            <Screen go={go} focus={focus} prompt={tab === 'ia' ? focus ?? '' : ''} />
           </main>
           <nav className="tabbar">
-            {TABS.map(({ id, label, Icon }) => (
+            {tabs.map(({ id, label, Icon }) => (
               <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
                 <Icon />
                 <span>{label}</span>
@@ -164,5 +180,6 @@ function Shell() {
       {account && <Account onClose={() => setAccount(false)} />}
       {switcher && <ProjectSwitcher onClose={() => setSwitcher(false)} onPick={() => go('inicio')} />}
     </div>
+    </NavContext.Provider>
   )
 }

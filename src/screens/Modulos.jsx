@@ -28,8 +28,9 @@ const VIEWS = { brief: Brief, invitados: Invitados, ideas: Ideas, proximamente: 
 export default function Modulos({ focus }) {
   const { modules } = useProject()
   const { go } = useNav()
-  const [moduleKey, setModuleKey] = useState(() => (focus && MODULES.some((m) => m.key === focus) ? focus : null))
-  const [view, setView] = useState(() => (focus && VIEWS[focus] ? focus : null))
+  const [moduleKey, setModuleKey] = useState(() => (typeof focus === 'string' && MODULES.some((m) => m.key === focus) ? focus : null))
+  const labItem = focus?.startsWith?.('lab:') ? focus.slice(4) : null
+  const [view, setView] = useState(() => (labItem ? 'laboratorio' : focus && VIEWS[focus] ? focus : null))
   const [step, setStep] = useState(null)
   const progress = moduleProgress(modules)
 
@@ -40,7 +41,7 @@ export default function Modulos({ focus }) {
         <button className="back" onClick={() => setView(null)}>
           <ChevronIcon className="chev left" width={16} height={16} /> Módulos
         </button>
-        <View />
+        <View itemId={view === 'laboratorio' ? labItem : null} />
       </>
     )
   }
