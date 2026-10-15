@@ -7,6 +7,12 @@ export default function Account({ onClose }) {
   const { me, session, notify } = useStore()
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
+  const [ai, setAi] = useState(() => localStorage.getItem('podcast-creator-ai') !== 'off')
+
+  const toggleAi = (on) => {
+    setAi(on)
+    localStorage.setItem('podcast-creator-ai', on ? 'on' : 'off')
+  }
 
   const changePassword = async (e) => {
     e.preventDefault()
@@ -46,6 +52,13 @@ export default function Account({ onClose }) {
           Cambiar contraseña
         </button>
       </form>
+      <div className="sheet-section">
+        <label className="toggle">
+          <input type="checkbox" checked={ai} onChange={(e) => toggleAi(e.target.checked)} />
+          <span>Consejos con IA</span>
+        </label>
+        <p className="muted small">Si lo apagas, la app sigue recomendando pasos sin IA.</p>
+      </div>
       <button className="btn danger-ghost full" onClick={() => supabase.auth.signOut()}>
         Cerrar sesión
       </button>

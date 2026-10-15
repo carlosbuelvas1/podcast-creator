@@ -2138,3 +2138,8 @@ select:focus {
     scroll-behavior: auto !important;
   }
 }
+
+.skeleton-page {
+  display: grid;
+  gap: var(--s4);
+}
