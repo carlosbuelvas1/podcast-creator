@@ -93,3 +93,21 @@ describe('planning', () => {
     expect(dates[0] > '2026-10-15').toBe(true)
   })
 })
+
+describe('modules', async () => {
+  const { MODULES, moduleProgress, moduleRecommendations } = await import('./modules/index.js')
+
+  it('loads all 10 modules with 55 steps', () => {
+    expect(MODULES).toHaveLength(10)
+    expect(MODULES.reduce((n, m) => n + m.steps.length, 0)).toBe(55)
+    expect(MODULES.every((m) => m.steps.every((s) => s.title && s.checklist.length && s.minutes > 0))).toBe(true)
+  })
+
+  it('tracks module progress and suggests unfinished steps with low weight', () => {
+    const rows = [{ step_code: '0.1', done: true, done_items: [0, 1, 2, 3] }, { step_code: '0.2', done: false, done_items: [0] }]
+    expect(moduleProgress(rows)[0]).toMatchObject({ done: 1, total: 6 })
+    const recs = moduleRecommendations(rows)
+    expect(recs[0].step.code).toBe('0.2')
+    expect(recs.every((r) => r.score < 50)).toBe(true)
+  })
+})

@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from './supabase'
 import { DataContext } from './context'
+import { EXTRA } from './tables'
 
-const empty = { projects: [], phases: [], tasks: [], items: [], people: [] }
+
+const empty = { projects: [], phases: [], tasks: [], items: [], people: [], ...Object.fromEntries(Object.keys(EXTRA).map((k) => [k, []])) }
+
+const sameKey = (spec, row, other) => (Array.isArray(spec.key) ? spec.key.every((k) => row[k] === other[k]) : spec.key ? row[spec.key] === other[spec.key] : row.id === other.id)
 
 const STORAGE_KEY = 'podcast-creator-project'
 
@@ -40,7 +44,14 @@ export function DataProvider({ session, children }) {
       return
     }
     const [projects, phases, tasks, items, people] = results.map((r) => r.data ?? [])
-    setData({ projects, phases, tasks, items, people })
+    const extra = await Promise.all(
+      Object.entries(EXTRA).map(async ([name, spec]) => {
+        const query = supabase.from(spec.table).select('*')
+        const { data: rows, error } = await (spec.order ? query.order(spec.order, { nullsFirst: false }) : query)
+        return [name, error ? [] : rows]
+      }),
+    )
+    setData({ projects, phases, tasks, items, people, ...Object.fromEntries(extra) })
     setReady(true)
   }, [notify])
 
@@ -100,11 +111,8 @@ export function DataProvider({ session, children }) {
       deleteProject: (id) =>
         run(
           (d) => ({
+            ...Object.fromEntries(Object.entries(d).map(([k, rows]) => [k, k === 'people' ? rows : rows.filter((r) => r.project_id !== id)])),
             projects: d.projects.filter((p) => p.id !== id),
-            phases: d.phases.filter((p) => p.project_id !== id),
-            tasks: d.tasks.filter((t) => t.project_id !== id),
-            items: d.items.filter((i) => i.project_id !== id),
-            people: d.people,
           }),
           () => supabase.from('projects').delete().eq('id', id),
         ),
@@ -127,6 +135,26 @@ export function DataProvider({ session, children }) {
         run((d) => ({ ...d, items: patch(d.items, id, fields) }), () => supabase.from('checklist_items').update(fields).eq('id', id)),
       deleteItem: (id) =>
         run((d) => ({ ...d, items: d.items.filter((i) => i.id !== id) }), () => supabase.from('checklist_items').delete().eq('id', id)),
+      add: (name, fields) => {
+        const row = newRow({ created_at: new Date().toISOString(), ...fields })
+        run((d) => ({ ...d, [name]: [...d[name], row] }), () => supabase.from(EXTRA[name].table).insert(row))
+        return row
+      },
+      update: (name, id, fields) =>
+        run((d) => ({ ...d, [name]: patch(d[name], id, fields) }), () => supabase.from(EXTRA[name].table).update(fields).eq('id', id)),
+      remove: (name, id) =>
+        run((d) => ({ ...d, [name]: d[name].filter((r) => r.id !== id) }), () => supabase.from(EXTRA[name].table).delete().eq('id', id)),
+      upsert: (name, row) => {
+        const spec = EXTRA[name]
+        const onConflict = Array.isArray(spec.key) ? spec.key.join(',') : spec.key
+        return run(
+          (d) => {
+            const exists = d[name].some((r) => sameKey(spec, r, row))
+            return { ...d, [name]: exists ? d[name].map((r) => (sameKey(spec, r, row) ? { ...r, ...row } : r)) : [...d[name], row] }
+          },
+          () => supabase.from(spec.table).upsert(row, { onConflict }),
+        )
+      },
     }),
     [run, load, notify, selectProject],
   )
