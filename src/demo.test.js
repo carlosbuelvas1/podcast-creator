@@ -18,7 +18,7 @@ describe('IA en la demo', () => {
     const chat = await askAI({ projectId: 'demo', message: 'Dame 10 ideas de episodios' })
     expect(chat.reply).toBeTruthy()
     expect(chat.actions.length).toBeGreaterThan(0)
-    for (const mode of ['titles', 'thumbnails', 'seo', 'names', 'script']) expect((await askAI({ projectId: 'demo', mode, message: 'x' })).result).toBeTruthy()
+    for (const mode of ['titles', 'thumbnails', 'seo', 'names', 'script', 'runsheet']) expect((await askAI({ projectId: 'demo', mode, message: 'x' })).result).toBeTruthy()
     expect((await askAI({ projectId: 'demo', mode: 'script', message: 'x' })).result.segments.length).toBeGreaterThan(2)
     expect(supabase.functions.invoke).not.toHaveBeenCalled()
     setDemoMode(false)

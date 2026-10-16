@@ -9,6 +9,7 @@ const MODES = [
   { id: 'titles', label: tk('Títulos') },
   { id: 'seo', label: 'SEO' },
   { id: 'script', label: tk('Guion') },
+  { id: 'runsheet', label: tk('Día de grabación') },
 ]
 
 function Copy({ text }) {
@@ -22,6 +23,7 @@ function Copy({ text }) {
 
 const asText = (kind, c) => {
   if (kind === 'title') return c.title
+  if (kind === 'runsheet') return [...(c.schedule ?? []).map((s) => `${s.time} · ${s.task}`), ...(c.gear ?? []).map((g) => `☐ ${g}`), ...(c.questions ?? []).map((q) => `? ${q}`), ...(c.reminders ?? []).map((r) => `! ${r}`)].join('\n')
   if (kind === 'script') return [c.hook, ...(c.segments ?? []).map((s) => `${s.title} (${s.minutes} min)\n${(s.points ?? []).map((x) => `- ${x}`).join('\n')}`), c.closing, c.script].filter(Boolean).join('\n\n')
   if (kind === 'thumbnail') return `${c.text}\n${t('Expresión')}: ${c.expression}\n${t('Composición')}: ${c.composition}\n${t('Colores')}: ${(c.colors ?? []).join(', ')}`
   return [c.description, `${t('Palabras clave')}: ${(c.keywords ?? []).join(', ')}`, `${t('Etiquetas')}: ${(c.tags ?? []).join(', ')}`, (c.chapters ?? []).join('\n'), Object.entries(c.hashtags ?? {}).map(([k, v]) => `${k}: ${(v ?? []).join(' ')}`).join('\n')].filter(Boolean).join('\n\n')
@@ -129,6 +131,22 @@ export default function Laboratorio({ itemId = null }) {
         </section>
       )}
 
+      {results.runsheet && (
+        <section className="card">
+          <h3 className="card-title">{t('Hoja del día de grabación')}</h3>
+          <div className="lab-list">
+            <ul className="bullets">{(results.runsheet.schedule ?? []).map((s) => <li key={`${s.time}${s.task}`}><b>{s.time}</b> · {s.task}</li>)}</ul>
+            <p className="muted small"><b>{t('Equipo')}:</b> {(results.runsheet.gear ?? []).join(' · ')}</p>
+            <p className="muted small"><b>{t('Preguntas')}:</b> {(results.runsheet.questions ?? []).join(' · ')}</p>
+            <p className="muted small"><b>{t('Pendientes')}:</b> {(results.runsheet.reminders ?? []).join(' · ')}</p>
+            <span className="tool-row">
+              <button className="btn small ghost" onClick={() => star('runsheet', results.runsheet)} aria-label={t('Guardar en favoritos')}><StarIcon width={16} height={16} /></button>
+              <Copy text={asText('runsheet', results.runsheet)} />
+            </span>
+          </div>
+        </section>
+      )}
+
       {results.script && (
         <section className="card">
           <h3 className="card-title">{t('Estructura y guion')}</h3>
@@ -181,7 +199,7 @@ export default function Laboratorio({ itemId = null }) {
           <ul className="lab-list">
             {mine.map((f) => (
               <li key={f.id}>
-                <span className="chip subtle">{f.kind === 'title' ? t('Título') : f.kind === 'thumbnail' ? t('Miniatura') : f.kind === 'script' ? t('Guion') : 'SEO'}</span>
+                <span className="chip subtle">{f.kind === 'title' ? t('Título') : f.kind === 'thumbnail' ? t('Miniatura') : f.kind === 'script' ? t('Guion') : f.kind === 'runsheet' ? t('Día de grabación') : 'SEO'}</span>
                 <span className="pre">{asText(f.kind, f.content)}</span>
                 <span className="tool-row">
                   <Copy text={asText(f.kind, f.content)} />

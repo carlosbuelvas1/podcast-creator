@@ -139,3 +139,13 @@ test('el laboratorio arma la estructura y el guion en la demo', async ({ page })
   await expect(page.getByText('Estructura y guion')).toBeVisible()
   await expect(page.getByText('Lo que haríamos distinto').first()).toBeVisible()
 })
+
+test('el laboratorio arma la hoja del día de grabación en la demo', async ({ page }) => {
+  await openDemo(page)
+  await tab(page, 'Módulos').click()
+  await page.getByRole('button', { name: /Laboratorio de contenido/ }).click()
+  await page.getByRole('button', { name: 'Abrir laboratorio' }).click()
+  await page.getByRole('button', { name: 'Día de grabación' }).click()
+  await expect(page.getByText('Hoja del día de grabación')).toBeVisible()
+  await expect(page.getByText('Prueba de sonido de 5 minutos')).toBeVisible()
+})
