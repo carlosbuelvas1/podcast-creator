@@ -160,3 +160,14 @@ test('la ficha de una página para un invitado en la demo', async ({ page }) => 
   await page.getByRole('button', { name: 'Enviar' }).click()
   await expect(page.getByText(/Ficha para Laura Gómez/)).toBeVisible()
 })
+
+test('los borradores para invitar a un invitado en la demo', async ({ page }) => {
+  await openDemo(page)
+  await tab(page, 'Módulos').click()
+  await page.getByRole('button', { name: /Invitados/ }).first().click()
+  await page.getByRole('button', { name: 'Abrir lista de invitados' }).click()
+  await page.getByRole('button', { name: /Laura Gómez/ }).click()
+  await page.getByRole('button', { name: 'Mensajes para invitar' }).click()
+  await page.getByRole('button', { name: 'Enviar' }).click()
+  await expect(page.getByText(/Formal: «Hola Laura/)).toBeVisible()
+})
