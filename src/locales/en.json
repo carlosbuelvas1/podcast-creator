@@ -530,5 +530,10 @@
   "Agregar el primer referente": "Add your first reference",
   "Generar ideas arriba": "Generate ideas above",
   "Pueden adelantarlo igual si quieren.": "You can still do it early if you want.",
-  "Ir al paso que falta": "Go to the missing step"
+  "Ir al paso que falta": "Go to the missing step",
+  "¡Terminaron todos los pasos! A lanzar 🎙️": "You finished every step! Time to launch 🎙️",
+  "¡Llegaron al {n}% del camino!": "You're {n}% of the way there!",
+  "¡Fase completa!": "Phase complete!",
+  "Lo que viene: {title}": "Up next: {title}",
+  "¡Terminaron todas las fases! Es hora de lanzar.": "You finished every phase! Time to launch."
 }
