@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
   const xai = Deno.env.get('XAI_API_KEY')
   if (!xai) return json({ error: 'La IA todavía no está configurada.' }, 503)
 
-  const { project_id, message, mode = 'chat', context = {}, author } = await req.json().catch(() => ({}))
+  const { project_id, message, mode = 'chat', context = {}, author, lang } = await req.json().catch(() => ({}))
   if (!project_id || !message || typeof message !== 'string') return json({ error: 'Falta el mensaje.' }, 400)
 
   const now = Date.now()
@@ -122,6 +122,7 @@ Calendario: ${JSON.stringify(calendar.data ?? [])}`
     { role: 'system', content: SYSTEM },
     { role: 'system', content: mode === 'chat' ? CHAT_FORMAT : `Responde SOLO con JSON válido. ${MODE_FORMAT[mode] ?? MODE_FORMAT.titles}` },
     { role: 'system', content: dynamic },
+    ...(lang === 'en' ? [{ role: 'system', content: 'The user has the app in English. Write every text for the user in English (keep JSON keys and allowed values exactly as specified).' }] : []),
     ...((history.data ?? []) as { role: string; content: string }[]).reverse(),
     { role: 'user', content: extra ? `${extra}\n\n${message}` : message },
   ]

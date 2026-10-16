@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 import { demoAnswer } from './demo-ai'
-import { t, tk } from './i18n'
+import { getLang, t, tk } from './i18n'
 
 const KEY = 'podcast-creator-ai'
 
@@ -27,7 +27,7 @@ export async function askAI({ projectId, message, mode = 'chat', context = null,
     await new Promise((r) => setTimeout(r, 400))
     return demoAnswer(mode, message)
   }
-  const { data, error } = await supabase.functions.invoke('ai-chat', { body: { project_id: projectId, message, mode, context, author } })
+  const { data, error } = await supabase.functions.invoke('ai-chat', { body: { project_id: projectId, message, mode, context, author, lang: getLang() } })
   if (error) {
     let reason = ''
     try {
