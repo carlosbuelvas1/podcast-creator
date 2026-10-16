@@ -1,3 +1,4 @@
+import { t } from './i18n'
 const r = (label, url) => ({ label, url })
 
 export const GUIDE = {
@@ -287,7 +288,8 @@ const FALLBACK = { why: '', tips: [], mistakes: [], minutes: 30, resources: [], 
 export const stepCode = (phase, task) => (phase && task ? `${phase.position}.${task.position}` : null)
 
 export function guideFor(code) {
-  return { ...FALLBACK, ...(GUIDE[code] ?? {}), known: Boolean(GUIDE[code]) }
+  const g = { ...FALLBACK, ...(GUIDE[code] ?? {}), known: Boolean(GUIDE[code]) }
+  return { ...g, why: g.why && t(g.why), ownerHint: g.ownerHint && t(g.ownerHint), tips: (g.tips ?? []).map((x) => t(x)), mistakes: (g.mistakes ?? []).map((x) => t(x)) }
 }
 
 export function formatMinutes(min) {

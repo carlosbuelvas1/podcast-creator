@@ -1,8 +1,9 @@
 import { useSyncExternalStore } from 'react'
 import en from './locales/en.json'
+import content from './locales/content-en.json'
 
 const KEY = 'podcast-creator-lang'
-const DICTS = { en }
+const DICTS = { en: { ...content, ...en } }
 export const LANGS = ['es', 'en']
 
 const read = () => {
