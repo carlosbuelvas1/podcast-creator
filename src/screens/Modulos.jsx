@@ -62,10 +62,10 @@ export default function Modulos({ focus }) {
         <div className="page-head">
           <div>
             <p className="eyebrow-muted">{t('Módulo {n}', { n: current.number })}</p>
-            <h1>{current.title}</h1>
+            <h1>{t(current.title)}</h1>
           </div>
         </div>
-        {current.intro && <p className="hint notice">{current.intro.replace(/^Aviso en la app:\s*/, '').replace(/^"|"$/g, '')}</p>}
+        {current.intro && <p className="hint notice">{t(current.intro).replace(/^Aviso en la app:\s*/, '').replace(/^"|"$/g, '')}</p>}
         <div className="bar thin">
           <div className="bar-fill" style={{ width: `${p.pct}%` }} />
         </div>
@@ -92,7 +92,7 @@ export default function Modulos({ focus }) {
                 </span>
                 <button className="step-main" onClick={() => setStep(s)}>
                   <span className="step-name">
-                    {s.code} · {s.title}
+                    {s.code} · {t(s.title)}
                   </span>
                   <span className="step-meta">
                     <span className="muted small">
@@ -119,7 +119,7 @@ export default function Modulos({ focus }) {
         {progress.map(({ module: m, done, total, pct }) => (
           <button key={m.key} className={`card module-card ${pct === 100 ? 'complete' : ''}`} onClick={() => setModuleKey(m.key)}>
             <span className="module-num">{pct === 100 ? <CheckIcon width={16} height={16} /> : m.number}</span>
-            <b>{m.title}</b>
+            <b>{t(m.title)}</b>
             <span className="muted small">
               {t('{done} de {total} pasos', { done, total })}
             </span>
@@ -156,18 +156,18 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
   }
 
   return (
-    <Sheet title={`${module.title} · ${t('Paso {code}', { code: step.code })}`} onClose={onClose} full>
+    <Sheet title={`${t(module.title)} · ${t('Paso {code}', { code: step.code })}`} onClose={onClose} full>
       <div className="guide">
         <div className="guide-top">
           <span className="chip">⏱ {formatMinutes(step.minutes)}</span>
           {done && <span className="chip done-chip">{t('Hecho')}</span>}
         </div>
-        <h3 className="step-title">{step.title}</h3>
+        <h3 className="step-title">{t(step.title)}</h3>
         {module.key === 'legal' && <p className="alert warning">{t('Esto es una guía, no asesoría legal. Para dudas, consulta a un abogado o contador.')}</p>}
         {step.why && (
           <section className="guide-block">
             <h4>{t('Por qué importa')}</h4>
-            <p>{step.why}</p>
+            <p>{t(step.why)}</p>
           </section>
         )}
         {step.code === NAME_STEP && module.key === 'concepto' && <NamePicker />}
@@ -179,11 +179,11 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
           <ul className="checklist">
             {step.checklist.map((text, i) => (
               <li key={text} className={doneItems.includes(i) ? 'done' : ''}>
-                <button type="button" className={`box ${doneItems.includes(i) ? 'on' : ''}`} role="checkbox" aria-checked={doneItems.includes(i)} aria-label={text} onClick={() => toggle(i)}>
+                <button type="button" className={`box ${doneItems.includes(i) ? 'on' : ''}`} role="checkbox" aria-checked={doneItems.includes(i)} aria-label={t(text)} onClick={() => toggle(i)}>
                   <CheckIcon width={14} height={14} />
                 </button>
                 <span className="item-text" onClick={() => toggle(i)}>
-                  {text}
+                  {t(text)}
                 </span>
               </li>
             ))}
@@ -193,8 +193,8 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
           <section className="guide-block">
             <h4>{t('Consejos')}</h4>
             <ul className="bullets good">
-              {step.tips.map((t) => (
-                <li key={t}>{t}</li>
+              {step.tips.map((tip) => (
+                <li key={tip}>{t(tip)}</li>
               ))}
             </ul>
           </section>
@@ -205,7 +205,7 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
             <div className="links">
               {step.links.map((l) => (
                 <a key={l.url} className="link-pill" href={l.url} target="_blank" rel="noreferrer">
-                  <LinkIcon width={14} height={14} /> {l.label}
+                  <LinkIcon width={14} height={14} /> {t(l.label)}
                 </a>
               ))}
             </div>
@@ -218,7 +218,7 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
             </button>
           )}
           {aiEnabled() && (
-            <button className="btn ghost" onClick={() => ask(t('Ayúdame con el paso "{step}" del módulo {module}.', { step: step.title, module: module.title }) + (brief.name ? t(' Nuestro podcast se llama {name}.', { name: brief.name }) : ''))}>
+            <button className="btn ghost" onClick={() => ask(t('Ayúdame con el paso "{step}" del módulo {module}.', { step: t(step.title), module: t(module.title) }) + (brief.name ? t(' Nuestro podcast se llama {name}.', { name: brief.name }) : ''))}>
               <SparkIcon width={18} height={18} /> Pedir ayuda a la IA
             </button>
           )}

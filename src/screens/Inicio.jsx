@@ -94,8 +94,8 @@ export default function Inicio({ go }) {
       {nameRec ? (
         <section className="hero rec">
           <span className="eyebrow">{t('Siguiente paso recomendado')}</span>
-          <h2 className="hero-goal">{nameRec.step.title}</h2>
-          <p className="hero-sub">{nameRec.step.why}</p>
+          <h2 className="hero-goal">{t(nameRec.step.title)}</h2>
+          <p className="hero-sub">{t(nameRec.step.why)}</p>
           <div className="chips">
             <span className="chip on-hero">⏱ {formatMinutes(nameRec.step.minutes)}</span>
             {nameRec.reasons.map((r) => (
@@ -137,8 +137,8 @@ export default function Inicio({ go }) {
             <ul className="mini-list">
               <li>
                 <button className="mini" onClick={() => go('modulos', m.module.key)}>
-                  <span className="mini-label">{t('Módulo {n}', { n: m.module.number })} · {m.module.title}</span>
-                  <span className="mini-title">{m.step.title}</span>
+                  <span className="mini-label">{t('Módulo {n}', { n: m.module.number })} · {t(m.module.title)}</span>
+                  <span className="mini-title">{t(m.step.title)}</span>
                   <span className="mini-meta">{m.reasons.join(' · ')}</span>
                 </button>
               </li>
