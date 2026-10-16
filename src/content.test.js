@@ -23,8 +23,8 @@ describe('contenido del curso en inglés', () => {
     expect(missing).toEqual([])
   })
 
-  it('módulos 0 a 4: título, pasos, listas, consejos y enlaces', () => {
-    const texts = MODULES.filter((m) => m.number <= 4).flatMap((m) => [m.title, m.subtitle, m.intro, ...m.steps.flatMap((s) => [s.title, s.why, ...(s.checklist ?? []), ...(s.tips ?? []), ...(s.links ?? []).map((l) => l.label)])])
+  it('los 10 módulos: título, pasos, listas, consejos y enlaces', () => {
+    const texts = MODULES.flatMap((m) => [m.title, m.subtitle, m.intro, ...m.steps.flatMap((s) => [s.title, s.why, ...(s.checklist ?? []), ...(s.tips ?? []), ...(s.links ?? []).map((l) => l.label)])])
     expect(texts.filter((x) => x && !content[x] && !ui[x])).toEqual([])
   })
 })

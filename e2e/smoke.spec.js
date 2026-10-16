@@ -86,3 +86,13 @@ test('los módulos salen en inglés', async ({ page }) => {
   await page.getByRole('button', { name: /Create the LLC on Sunbiz/ }).click()
   await expect(page.getByText('Choose a registered agent')).toBeVisible()
 })
+
+test('los módulos finales también salen en inglés', async ({ page }) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: 'English' }).click()
+  await page.getByRole('button', { name: 'View demo' }).click()
+  await tab(page, 'Modules').click()
+  await expect(page.getByText('Distribution and growth')).toBeVisible()
+  await page.getByRole('button', { name: /Content lab/ }).click()
+  await expect(page.getByText('Thumbnails with AI', { exact: false })).toBeVisible()
+})
