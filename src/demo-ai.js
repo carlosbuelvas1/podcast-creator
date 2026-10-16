@@ -54,6 +54,21 @@ function answer(mode, message) {
       },
     }
   }
+  if (mode === 'script') {
+    return {
+      result: {
+        hook: tk('Carlos cuenta la vez que casi renuncia a todo por un correo mal enviado.'),
+        segments: [
+          { title: tk('Intro y presentación'), minutes: 3, points: [tk('Quiénes somos'), tk('De qué va el episodio')] },
+          { title: tk('El primer error'), minutes: 12, points: [tk('Qué pasó'), tk('Qué aprendimos')] },
+          { title: tk('Lo que haríamos distinto'), minutes: 15, points: [tk('3 consejos concretos'), tk('Pregunta de la audiencia')] },
+          { title: tk('Cierre'), minutes: 4, points: [tk('Resumen en una frase'), tk('Invitar a la comunidad')] },
+        ],
+        closing: tk('Si te sirvió, compártelo con alguien que esté empezando y únete a nuestra comunidad.'),
+        script: tk('CARLOS: Bienvenidos a No Hay Break.\nMICHELLE: Hoy hablamos de lo que nadie te dice de emprender a los 25.'),
+      },
+    }
+  }
   if (mode === 'seo') {
     return {
       result: {

@@ -8,6 +8,7 @@ const MODES = [
   { id: 'thumbnails', label: tk('Miniaturas') },
   { id: 'titles', label: tk('Títulos') },
   { id: 'seo', label: 'SEO' },
+  { id: 'script', label: tk('Guion') },
 ]
 
 function Copy({ text }) {
@@ -21,6 +22,7 @@ function Copy({ text }) {
 
 const asText = (kind, c) => {
   if (kind === 'title') return c.title
+  if (kind === 'script') return [c.hook, ...(c.segments ?? []).map((s) => `${s.title} (${s.minutes} min)\n${(s.points ?? []).map((x) => `- ${x}`).join('\n')}`), c.closing, c.script].filter(Boolean).join('\n\n')
   if (kind === 'thumbnail') return `${c.text}\n${t('Expresión')}: ${c.expression}\n${t('Composición')}: ${c.composition}\n${t('Colores')}: ${(c.colors ?? []).join(', ')}`
   return [c.description, `${t('Palabras clave')}: ${(c.keywords ?? []).join(', ')}`, `${t('Etiquetas')}: ${(c.tags ?? []).join(', ')}`, (c.chapters ?? []).join('\n'), Object.entries(c.hashtags ?? {}).map(([k, v]) => `${k}: ${(v ?? []).join(' ')}`).join('\n')].filter(Boolean).join('\n\n')
 }
@@ -127,6 +129,31 @@ export default function Laboratorio({ itemId = null }) {
         </section>
       )}
 
+      {results.script && (
+        <section className="card">
+          <h3 className="card-title">{t('Estructura y guion')}</h3>
+          <div className="lab-list">
+            {results.script.hook && <p><b>{t('Gancho')}:</b> {results.script.hook}</p>}
+            <ol className="segments">
+              {(results.script.segments ?? []).map((s) => (
+                <li key={s.title}>
+                  <b>{s.title}</b> <span className="muted small">· {s.minutes} min</span>
+                  <ul className="bullets">
+                    {(s.points ?? []).map((x) => <li key={x}>{x}</li>)}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+            {results.script.closing && <p><b>{t('Cierre')}:</b> {results.script.closing}</p>}
+            {results.script.script && <pre className="chapters">{results.script.script}</pre>}
+            <span className="tool-row">
+              <button className="btn small ghost" onClick={() => star('script', results.script)} aria-label={t('Guardar en favoritos')}><StarIcon width={16} height={16} /></button>
+              <Copy text={asText('script', results.script)} />
+            </span>
+          </div>
+        </section>
+      )}
+
       {results.seo && (
         <section className="card">
           <h3 className="card-title">SEO</h3>
@@ -154,7 +181,7 @@ export default function Laboratorio({ itemId = null }) {
           <ul className="lab-list">
             {mine.map((f) => (
               <li key={f.id}>
-                <span className="chip subtle">{f.kind === 'title' ? t('Título') : f.kind === 'thumbnail' ? t('Miniatura') : 'SEO'}</span>
+                <span className="chip subtle">{f.kind === 'title' ? t('Título') : f.kind === 'thumbnail' ? t('Miniatura') : f.kind === 'script' ? t('Guion') : 'SEO'}</span>
                 <span className="pre">{asText(f.kind, f.content)}</span>
                 <span className="tool-row">
                   <Copy text={asText(f.kind, f.content)} />
