@@ -8,7 +8,7 @@ const files = (dir) => readdirSync(dir).flatMap((f) => (statSync(join(dir, f)).i
 const used = () => {
   const keys = new Set()
   for (const f of files('src').filter((f) => /\.jsx?$/.test(f) && !f.endsWith('.test.js'))) {
-    for (const m of readFileSync(f, 'utf8').matchAll(/(?<![\w.])tk?\('((?:[^'\\]|\\.)*)'/g)) keys.add(m[1].replace(/\\'/g, "'"))
+    for (const m of readFileSync(f, 'utf8').matchAll(/(?<![\w.])tk?\('((?:[^'\\]|\\.)*)'/g)) keys.add(m[1].replace(/\\'/g, "'").replace(/\\n/g, '\n'))
   }
   return keys
 }

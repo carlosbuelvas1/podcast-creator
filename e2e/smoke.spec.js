@@ -129,3 +129,13 @@ test('la portada cambia a inglés', async ({ page }) => {
   await page.getByRole('button', { name: 'English' }).click()
   await expect(page.getByRole('link', { name: 'Try the demo' })).toBeVisible()
 })
+
+test('el laboratorio arma la estructura y el guion en la demo', async ({ page }) => {
+  await openDemo(page)
+  await tab(page, 'Módulos').click()
+  await page.getByRole('button', { name: /Laboratorio de contenido/ }).click()
+  await page.getByRole('button', { name: 'Abrir laboratorio' }).click()
+  await page.getByRole('button', { name: 'Guion' }).click()
+  await expect(page.getByText('Estructura y guion')).toBeVisible()
+  await expect(page.getByText('Lo que haríamos distinto').first()).toBeVisible()
+})
