@@ -1017,7 +1017,7 @@ input[type='date'] {
   bottom: calc(96px + env(safe-area-inset-bottom));
   transform: translate(-50%, 20px);
   background: var(--ink);
-  color: var(--on-primary);
+  color: var(--bg);
   padding: 10px 16px;
   border-radius: 12px;
   font-size: 14px;
@@ -2347,13 +2347,18 @@ button.chip {
 
 .tracker-item {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--s2);
   align-items: center;
 }
 
 .tracker-item.block {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.tracker-item > *,
+.tracker-extra > * {
+  min-width: 0;
 }
 
 .tracker-item.dim {
@@ -2505,7 +2510,8 @@ button.chip {
 
 .compare-row {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr 1fr;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 1fr);
+  overflow-wrap: anywhere;
   gap: var(--s2);
   padding: var(--s2) var(--s3);
   border-top: 1px solid var(--border);

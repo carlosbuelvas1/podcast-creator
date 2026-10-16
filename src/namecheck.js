@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { DEMO_MESSAGE, isDemo } from './ai'
 
 export const LABEL = {
   libre: 'Libre',
@@ -45,6 +46,7 @@ export function briefFields(result) {
 }
 
 export async function checkNames(names) {
+  if (isDemo()) throw new Error(DEMO_MESSAGE)
   const { data, error } = await supabase.functions.invoke('check-name', { body: { names } })
   if (error) {
     let reason = ''

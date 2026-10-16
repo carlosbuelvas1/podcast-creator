@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataContext } from './context'
 import { onboardingKey } from './skips'
+import { DEMO_MESSAGE } from './ai'
 import template from './demo-template.json'
 
 const P = 'demo'
@@ -96,11 +97,17 @@ export function DemoProvider({ onExit, children }) {
   const [toast, setToast] = useState('')
   const timer = useRef()
 
-  const notify = useCallback((text) => {
+  const guardAt = useRef(0)
+
+  const show = useCallback((text) => {
     setToast(text)
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setToast(''), 3200)
   }, [])
+
+  const notify = useCallback((text) => {
+    if (Date.now() - guardAt.current > 1000) show(text)
+  }, [show])
 
   const actions = useMemo(
     () =>
@@ -108,12 +115,13 @@ export function DemoProvider({ onExit, children }) {
         {},
         {
           get: (_, name) => (a, fields) => {
-            notify('Esta es una demo de solo lectura. Inicia sesión para guardar cambios.')
+            guardAt.current = Date.now()
+            show(DEMO_MESSAGE)
             return name === 'add' ? { id: 'demo-new', ...fields } : null
           },
         },
       ),
-    [notify],
+    [show],
   )
 
   const value = { ...data, project: data.projects[0], selectProject: () => {}, ready: true, actions, notify, me: 'Carlos', session: { user: { id: P, email: 'carlos@demo' } }, demo: true }

@@ -7,6 +7,9 @@ export const setDemoMode = (on) => {
   demoMode = on
 }
 
+export const isDemo = () => demoMode
+export const DEMO_MESSAGE = 'Esta es una demo de solo lectura. Inicia sesión para guardar cambios.'
+
 export const aiEnabled = () => !demoMode && localStorage.getItem(KEY) !== 'off'
 export const setAiEnabled = (on) => localStorage.setItem(KEY, on ? 'on' : 'off')
 
@@ -25,6 +28,7 @@ export async function askAI({ projectId, message, mode = 'chat', context = null,
 }
 
 export async function researchReference({ referenceId, pick = null, refresh = false }) {
+  if (demoMode) throw new Error(DEMO_MESSAGE)
   const { data, error } = await supabase.functions.invoke('research-referente', { body: { reference_id: referenceId, pick, refresh, ai: aiEnabled() } })
   if (error) {
     let reason = ''
