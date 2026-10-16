@@ -57,7 +57,7 @@ export function DataProvider({ session, children }) {
   }, [notify])
 
   useEffect(() => {
-    load()
+    const start = setTimeout(load, 0)
     let timer
     const channel = supabase
       .channel(`podcast-creator-${crypto.randomUUID()}`)
@@ -71,6 +71,7 @@ export function DataProvider({ session, children }) {
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => {
+      clearTimeout(start)
       clearTimeout(timer)
       supabase.removeChannel(channel)
       document.removeEventListener('visibilitychange', onVisible)
