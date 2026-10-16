@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { autoAssign, lockReason, lockState, ownerBalance, recommend, spreadDueDates, suggestedLaunch } from './recommend.js'
+import { autoAssign, lockReason, lockState, unlockTarget, ownerBalance, recommend, spreadDueDates, suggestedLaunch } from './recommend.js'
 
 const now = new Date(2026, 9, 15)
 const phases = [
@@ -26,6 +26,15 @@ describe('recommend', () => {
     const r = recommend({ phases, tasks: base(), now }).find((x) => x.task.id === 'b')
     expect(r.blockedBy[0]).toMatchObject({ type: 'step', code: '1.1' })
     expect(lockReason(r.blockedBy)).toBe('Se desbloquea cuando terminen “a”')
+  })
+
+  it('points blocked steps to the step that unlocks them', () => {
+    const tasks = base()
+    const r = recommend({ phases, tasks, now }).find((x) => x.task.id === 'b')
+    expect(unlockTarget(r.blockedBy, tasks).id).toBe('a')
+    expect(unlockTarget([], tasks)).toBeNull()
+    const phaseBlock = lockState(tasks[4], phases, tasks).filter((b) => b.type === 'phase')
+    expect(unlockTarget(phaseBlock, tasks).phase_id).toBe(phaseBlock[0].phase.id)
   })
 
   it('blocks later phases until earlier ones reach 60%', () => {
