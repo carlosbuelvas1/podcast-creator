@@ -78,8 +78,8 @@ export default function Invitados() {
                   </label>
                   <div className="tool-row">
                     {aiEnabled() && (
-                      <button className="btn ghost" onClick={() => ask(t('Escribe un mensaje corto y personal para invitar a {name}{handle} a nuestro podcast{topic}.', { name: g.name, handle: g.handle ? ` (@${g.handle.replace(/^@/, '')})` : '', topic: g.topic ? t(' para hablar de {topic}', { topic: g.topic }) : '' }))}>
-                        <SparkIcon width={18} height={18} /> {t('Pedir ayuda a la IA')}
+                      <button className="btn ghost" onClick={() => ask(t('Escribe 3 borradores para invitar a {name}{handle} a nuestro podcast{topic}: uno corto, uno formal por correo y uno para mensaje directo en redes.', { name: g.name, handle: g.handle ? ` (@${g.handle.replace(/^@/, '')})` : '', topic: g.topic ? t(' para hablar de {topic}', { topic: g.topic }) : '' }))}>
+                        <SparkIcon width={18} height={18} /> {t('Mensajes para invitar')}
                       </button>
                     )}
                     {aiEnabled() && (

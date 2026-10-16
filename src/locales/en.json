@@ -180,7 +180,6 @@
   "Estado": "Status",
   "Fecha de contacto": "Contact date",
   "Notas": "Notes",
-  "Escribe un mensaje corto y personal para invitar a {name}{handle} a nuestro podcast{topic}.": "Write a short, personal message inviting {name}{handle} to our podcast{topic}.",
   " para hablar de {topic}": " to talk about {topic}",
   "Miniaturas": "Thumbnails",
   "Títulos": "Titles",
@@ -515,5 +514,8 @@
   "Ficha de una página": "One-page sheet",
   "¿Borrar a {name}?": "Delete {name}?",
   "Escribe una ficha de una página para {name}: quiénes somos, de qué trata el podcast, el tema que hablaríamos, fecha, duración, lugar o enlace y cómo prepararse.": "Write a one-page sheet for {name}: who we are, what the podcast is about, the topic we'd discuss, date, length, place or link and how to prepare.",
-  "Ficha para Laura Gómez — No Hay Break: dos amigos, cero pausas, conversaciones honestas sobre emprender en Miami. Tema: cómo lanzar un negocio sin dinero. Grabación de 60 minutos en nuestro estudio o por enlace. Para prepararte: trae una historia de tu primer año y un consejo concreto.": "Sheet for Laura Gómez — No Hay Break: two friends, no breaks, honest conversations about starting a business in Miami. Topic: how to launch a business with no money. 60-minute recording in our studio or by link. To prepare: bring a story from your first year and one concrete tip."
+  "Ficha para Laura Gómez — No Hay Break: dos amigos, cero pausas, conversaciones honestas sobre emprender en Miami. Tema: cómo lanzar un negocio sin dinero. Grabación de 60 minutos en nuestro estudio o por enlace. Para prepararte: trae una historia de tu primer año y un consejo concreto.": "Sheet for Laura Gómez — No Hay Break: two friends, no breaks, honest conversations about starting a business in Miami. Topic: how to launch a business with no money. 60-minute recording in our studio or by link. To prepare: bring a story from your first year and one concrete tip.",
+  "Escribe 3 borradores para invitar a {name}{handle} a nuestro podcast{topic}: uno corto, uno formal por correo y uno para mensaje directo en redes.": "Write 3 drafts inviting {name}{handle} to our podcast{topic}: a short one, a formal email and one for a social media DM.",
+  "Mensajes para invitar": "Invitation messages",
+  "Corto: «¡Hola Laura! Nos encantaría tenerte en No Hay Break para hablar de cómo lanzar un negocio sin dinero. ¿Te animas?»\n\nFormal: «Hola Laura, somos Carlos y Michelle, de No Hay Break. Nos gustaría invitarte a un episodio de 60 minutos sobre emprender sin dinero. ¿Qué fechas te funcionan?»\n\nDM: «¡Laura! Te seguimos hace tiempo 🙌 ¿Grabamos un episodio juntos sobre emprender sin dinero?»": "Short: \"Hi Laura! We'd love to have you on No Hay Break to talk about launching a business with no money. Are you in?\"\n\nFormal: \"Hi Laura, we're Carlos and Michelle from No Hay Break. We'd like to invite you to a 60-minute episode about starting a business with no money. Which dates work for you?\"\n\nDM: \"Laura! We've followed you for a while 🙌 Want to record an episode together about starting a business with no money?\""
 }

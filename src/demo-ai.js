@@ -6,6 +6,7 @@ const IDEAS = [
 ]
 
 const REPLIES = [
+  [/borradores|drafts/i, tk('Corto: «¡Hola Laura! Nos encantaría tenerte en No Hay Break para hablar de cómo lanzar un negocio sin dinero. ¿Te animas?»\n\nFormal: «Hola Laura, somos Carlos y Michelle, de No Hay Break. Nos gustaría invitarte a un episodio de 60 minutos sobre emprender sin dinero. ¿Qué fechas te funcionan?»\n\nDM: «¡Laura! Te seguimos hace tiempo 🙌 ¿Grabamos un episodio juntos sobre emprender sin dinero?»'), []],
   [/ficha|one-pager|one-page/i, tk('Ficha para Laura Gómez — No Hay Break: dos amigos, cero pausas, conversaciones honestas sobre emprender en Miami. Tema: cómo lanzar un negocio sin dinero. Grabación de 60 minutos en nuestro estudio o por enlace. Para prepararte: trae una historia de tu primer año y un consejo concreto.'), []],
   [/idea|episodio|episode/i, tk('Aquí van dos ideas que encajan con su brief: "Lo que aprendimos en nuestro primer año" como episodio y "Mitos de emprender en Miami" como short.'), IDEAS],
   [/título|title/i, tk('Prueben: "Lo que nadie te dice de emprender a los 25", "Renunciamos y esto pasó" y "3 errores que casi nos cuestan el podcast".'), []],
