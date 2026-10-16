@@ -171,3 +171,9 @@ test('los borradores para invitar a un invitado en la demo', async ({ page }) =>
   await page.getByRole('button', { name: 'Enviar' }).click()
   await expect(page.getByText(/Formal: «Hola Laura/)).toBeVisible()
 })
+
+test('Inicio explica por qué recomienda el paso', async ({ page }) => {
+  await openDemo(page)
+  await page.getByText('¿Por qué este paso?').click()
+  await expect(page.getByText('Lo elegimos entre todos los pasos pendientes por estas razones:')).toBeVisible()
+})

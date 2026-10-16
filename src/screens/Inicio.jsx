@@ -224,6 +224,17 @@ function RecommendCard({ rec, onOpen, onSkip, onStart }) {
           <span key={r} className="chip on-hero">{r}</span>
         ))}
       </div>
+      {rec.reasons.length > 0 && (
+        <details className="why-rec">
+          <summary>{t('¿Por qué este paso?')}</summary>
+          <p>{t('Lo elegimos entre todos los pasos pendientes por estas razones:')}</p>
+          <ul>
+            {rec.reasons.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        </details>
+      )}
       <div className="hero-actions">
         <button className="btn on-hero" onClick={onStart}>{rec.task.status === 'doing' ? t('Seguir') : t('Empezar')}</button>
         <button className="btn ghost-hero" onClick={onOpen}>{t('Ver guía')}</button>

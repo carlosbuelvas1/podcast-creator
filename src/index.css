@@ -3094,3 +3094,18 @@ button.chip {
   font-size: 1.1rem;
   margin: 0 0 6px;
 }
+
+.why-rec {
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
+.why-rec summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.why-rec ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
