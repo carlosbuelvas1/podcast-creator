@@ -54,6 +54,22 @@ function answer(mode, message) {
       },
     }
   }
+  if (mode === 'runsheet') {
+    return {
+      result: {
+        schedule: [
+          { time: '15:00', task: tk('Montar micrófonos, cámaras y luces') },
+          { time: '15:30', task: tk('Prueba de sonido de 5 minutos') },
+          { time: '16:00', task: tk('Grabar el episodio') },
+          { time: '17:15', task: tk('Grabar 3 clips cortos para redes') },
+          { time: '17:45', task: tk('Respaldar los archivos') },
+        ],
+        gear: [tk('Micrófonos y audífonos'), tk('Tarjetas de memoria vacías'), tk('Baterías cargadas')],
+        questions: [tk('¿Cuál fue tu primer error al emprender?'), tk('¿Qué harías distinto hoy?')],
+        reminders: [tk('Firmar el permiso del invitado'), tk('Grabar 1 minuto de silencio del cuarto')],
+      },
+    }
+  }
   if (mode === 'script') {
     return {
       result: {
