@@ -43,7 +43,9 @@ export default function Onboarding({ onClose }) {
           <ul className="onb-list">
             <li><b>{t('{n} fases', { n: phases.length })}</b>{t(', de la idea al lanzamiento, con {n} pasos en orden.', { n: tasks.length })}</li>
             <li>{t('Cada paso trae por qué importa, consejos y una lista para marcar.')}</li>
-            <li>En <b>{t('Inicio')}</b> {t('les decimos cuál es el siguiente paso y por qué.')}</li>
+            <li>{t('En Inicio les decimos cuál es el siguiente paso y por qué.')}</li>
+            <li>{t('En Módulos hay guías prácticas (legal, marca, invitados, distribución) y herramientas como el Brief de marca.')}</li>
+            <li>{t('La pestaña IA es su co-productor: ideas, títulos, guiones y mensajes. Pueden apagarla en Mi cuenta.')}</li>
             <li>{t('Algunos pasos se desbloquean cuando terminan los anteriores.')}</li>
           </ul>
           <button className="btn primary full" onClick={() => setStep(1)}>{t('Siguiente')}</button>
@@ -62,6 +64,7 @@ export default function Onboarding({ onClose }) {
             <span>{t('Repartir fechas límite entre hoy y el lanzamiento')}</span>
           </label>
           <button className="btn primary full" onClick={saveDates}>{t('Siguiente')}</button>
+          <button className="btn ghost-plain full" onClick={() => setStep(0)}>{t('Atrás')}</button>
         </div>
       )}
       {step === 2 && (
@@ -73,6 +76,7 @@ export default function Onboarding({ onClose }) {
             <span>{t('Repartir los pasos automáticamente')}</span>
           </label>
           <button className="btn primary full" onClick={saveOwners}>{t('Listo')}</button>
+          <button className="btn ghost-plain full" onClick={() => setStep(1)}>{t('Atrás')}</button>
           <button className="btn ghost-plain full" onClick={finish}>{t('Omitir por ahora')}</button>
         </div>
       )}
