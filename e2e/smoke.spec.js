@@ -186,3 +186,13 @@ test('Favoritos vacío explica qué hacer y tiene un botón', async ({ page }) =
   await expect(page.getByText('Toca la estrella en cualquier resultado para guardarlo aquí.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Generar ideas arriba' })).toBeVisible()
 })
+
+test('un paso bloqueado lleva al paso que falta', async ({ page }) => {
+  await openDemo(page)
+  await tab(page, 'Fases').click()
+  await page.locator('.step.locked .step-main').first().click()
+  const title = page.locator('.step-title')
+  const before = await title.textContent()
+  await page.getByRole('button', { name: 'Ir al paso que falta' }).click()
+  await expect(title).not.toHaveText(before)
+})

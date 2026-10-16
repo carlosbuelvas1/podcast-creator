@@ -54,6 +54,13 @@ export function lockState(task, phases, tasks, index = buildIndex(phases, tasks)
   return blockedBy
 }
 
+export function unlockTarget(blockedBy, tasks) {
+  const b = blockedBy[0]
+  if (!b) return null
+  if (b.type === 'step') return b.task
+  return tasks.filter((t) => t.phase_id === b.phase.id && t.status !== 'done').sort((x, y) => x.position - y.position)[0] ?? null
+}
+
 export function lockReason(blockedBy) {
   if (!blockedBy.length) return ''
   const b = blockedBy[0]

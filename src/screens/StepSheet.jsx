@@ -4,7 +4,7 @@ import Sheet, { Segmented } from '../Sheet'
 import { CheckIcon, CloseIcon, DotsIcon, LinkIcon, LockIcon, PlusIcon, TrashIcon, EditIcon } from '../icons'
 import { COLUMNS, PEOPLE, personClass } from '../constants'
 import { formatMinutes, guideFor } from '../guide'
-import { buildIndex, lockReason, lockState, recommend, unlocks } from '../recommend'
+import { buildIndex, lockReason, lockState, recommend, unlocks, unlockTarget } from '../recommend'
 import { t } from '../i18n'
 
 const NOTES_KEY = 'podcast-creator-notes'
@@ -41,6 +41,7 @@ function StepGuide({ task, onClose, onNext }) {
   const checked = checklist.filter((i) => i.done).length
   const blockedBy = task.status === 'done' ? [] : lockState(task, phases, tasks, index)
   const opens = unlocks(task, phases, tasks, index)
+  const missing = unlockTarget(blockedBy, tasks)
   const partner = PEOPLE.find((p) => p !== me)
   const next = justDone
     ? recommend({ phases, tasks, items, me, partner }).find((r) => r.task.id !== task.id && !r.blockedBy.length)
@@ -113,8 +114,13 @@ function StepGuide({ task, onClose, onNext }) {
         {blockedBy.length > 0 && (
           <div className="alert warning">
             <span>
-              <LockIcon width={14} height={14} /> {lockReason(blockedBy)}. Pueden adelantarlo igual si quieren.
+              <LockIcon width={14} height={14} /> {lockReason(blockedBy)}. {t('Pueden adelantarlo igual si quieren.')}
             </span>
+            {missing && (
+              <button className="btn small" onClick={() => onNext(missing.id)}>
+                {t('Ir al paso que falta')}
+              </button>
+            )}
           </div>
         )}
 
