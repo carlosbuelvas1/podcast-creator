@@ -107,7 +107,7 @@ function Research({ stats }) {
                   {yt.recent.map((v) => (
                     <li key={v.url}>
                       <a href={v.url} target="_blank" rel="noreferrer">{v.title}</a>
-                      <span className="muted small"> · {compact(v.views)} vistas · {Math.round(v.seconds / 60) || '<1'} min</span>
+                      <span className="muted small"> · {t('{n} vistas', { n: compact(v.views) })} · {Math.round(v.seconds / 60) || '<1'} min</span>
                     </li>
                   ))}
                 </ol>
@@ -245,14 +245,14 @@ export default function Referentes() {
                 <b>{r.name}</b>
                 <span className="muted small">
                   {researched ? t('Investigado el {date}', { date: when(researched) }) : r.analysis ? t('Analizado') : t('Sin investigar')}
-                  {r.stats?.subscribers ? ` · ${compact(r.stats.subscribers)} suscriptores` : ''}
+                  {r.stats?.subscribers ? ` · ${t('{n} suscriptores', { n: compact(r.stats.subscribers) })}` : ''}
                 </span>
               </button>
               {open === r.id && (
                 <div className="tracker-extra">
                   {r.url && (
                     <a className="link-pill" href={r.url} target="_blank" rel="noreferrer">
-                      <LinkIcon width={14} height={14} /> Abrir
+                      <LinkIcon width={14} height={14} /> {t('Abrir')}
                     </a>
                   )}
                   {r.notes && <p className="muted small pre">{r.notes}</p>}

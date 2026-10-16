@@ -8,6 +8,7 @@ import { t } from './i18n'
 const P = 'demo'
 const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10)
 const now = new Date().toISOString()
+const THUMB = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180"><rect width="320" height="180" fill="#4c1d95"/></svg>')}`
 
 function demoData() {
   localStorage.setItem(onboardingKey(P), '1')
@@ -69,8 +70,27 @@ function demoData() {
         created_at: now,
         stats: {
           researched_at: now,
+          subscribers: 1240000,
+          youtube: {
+            title: 'Nadie Sabe Nada · Andreu Buenafuente y Berto Romero (Canal oficial de la Cadena SER)',
+            url: 'https://www.youtube.com/@nadiesabenada',
+            subscribers: 1240000,
+            views: 487300000,
+            videos: 1286,
+            every_days: 3.5,
+            avg_minutes: 52,
+            shorts: 412,
+            long: 874,
+            recent: Array.from({ length: 20 }, (_, i) => ({
+              title: `Nadie Sabe Nada ${14 - Math.floor(i / 4)}x${String(6 - (i % 4)).padStart(2, '0')} | Una anécdota absurdamente larga que no cabe en una sola línea del teléfono ${i + 1}`,
+              url: `https://www.youtube.com/watch?v=demo${i}`,
+              thumb: THUMB,
+              views: 180000 + i * 23000,
+              seconds: 3000 + i * 40,
+            })),
+          },
           apple: { title: 'Nadie Sabe Nada', category: 'Comedy', episodes: 544, every_days: 7, avg_minutes: 54, url: 'https://podcasts.apple.com/us/podcast/nadie-sabe-nada/id665143133', recent: [{ title: 'Nadie Sabe Nada | 14x06 | La mudanza', date: day(-5) }, { title: 'Nadie Sabe Nada | 14x05 | La adolescencia', date: day(-12) }] },
-          social: { buzz: ['Temporada 14 con episodios semanales', 'Destacan la improvisación y la química del dúo'] },
+          social: { instagram: 'https://www.instagram.com/nadiesabenadaoficialdelacadenaser/', x: 'https://x.com/nadiesabenada', buzz: ['Temporada 14 con episodios semanales', 'Destacan la improvisación y la química del dúo'] },
           sources: [{ label: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/nadie-sabe-nada/id665143133' }],
         },
         analysis: {
