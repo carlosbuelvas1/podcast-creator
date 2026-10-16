@@ -3024,3 +3024,73 @@ button.chip {
 .login .lang-toggle {
   align-self: center;
 }
+
+.landing {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.landing-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.landing-top .brand span {
+  font-weight: 800;
+}
+
+.landing-hero {
+  background: var(--hero);
+  border-radius: var(--r-lg);
+  padding: 40px 24px;
+  color: var(--on-primary);
+}
+
+.landing-hero h1 {
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  margin: 8px 0 12px;
+}
+
+.landing-sub {
+  max-width: 560px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.landing-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.landing-cta .btn {
+  text-decoration: none;
+}
+
+.landing-cta .btn.primary {
+  background: var(--on-primary);
+  color: var(--primary-hover);
+}
+
+.landing-cta .btn.ghost {
+  color: var(--on-primary);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.landing-features h2 {
+  font-size: 1.1rem;
+  margin: 0 0 6px;
+}

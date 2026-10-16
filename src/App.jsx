@@ -33,10 +33,16 @@ const tabFromHash = () => {
   return TABS.some((t) => t.id === id) ? id : 'inicio'
 }
 
+const startsInDemo = () => {
+  const on = new URLSearchParams(window.location.search).has('demo')
+  if (on) setDemoMode(true)
+  return on
+}
+
 export default function App() {
   useLang()
   const [session, setSession] = useState(undefined)
-  const [demo, setDemo] = useState(false)
+  const [demo, setDemo] = useState(startsInDemo)
 
   useEffect(() => {
     const apply = (next) => {

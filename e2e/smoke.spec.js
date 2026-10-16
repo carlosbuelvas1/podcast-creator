@@ -1,7 +1,7 @@
 import { expect, openDemo, tab, test } from './fixtures'
 
 test('la app carga en la pantalla de entrada', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('app/')
   await expect(page.getByRole('button', { name: 'Entrar' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Ver demo' })).toBeVisible()
 })
@@ -30,7 +30,7 @@ test('la IA de la demo responde con un ejemplo', async ({ page }) => {
 })
 
 test('cambiar a inglés muestra la app en inglés', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('app/')
   await page.getByRole('button', { name: 'English' }).click()
   await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible()
   await page.getByRole('button', { name: 'View demo' }).click()
@@ -47,7 +47,7 @@ test('Salir de la demo vuelve a la entrada', async ({ page }) => {
 
 for (const lang of ['Español', 'English']) {
   test(`todas las pestañas de la demo abren sin errores (${lang})`, async ({ page }) => {
-    await page.goto('./')
+    await page.goto('app/')
     await page.getByRole('button', { name: lang }).click()
     await page.locator('.login .btn.ghost').click()
     for (const i of [1, 2, 3, 4, 0]) {
@@ -58,7 +58,7 @@ for (const lang of ['Español', 'English']) {
 }
 
 test('los pasos del curso salen en inglés', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('app/')
   await page.getByRole('button', { name: 'English' }).click()
   await page.getByRole('button', { name: 'View demo' }).click()
   await tab(page, 'Phases').click()
@@ -69,7 +69,7 @@ test('los pasos del curso salen en inglés', async ({ page }) => {
 })
 
 test('las fases finales también salen en inglés', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('app/')
   await page.getByRole('button', { name: 'English' }).click()
   await page.getByRole('button', { name: 'View demo' }).click()
   await tab(page, 'Phases').click()
@@ -78,7 +78,7 @@ test('las fases finales también salen en inglés', async ({ page }) => {
 })
 
 test('los módulos salen en inglés', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('app/')
   await page.getByRole('button', { name: 'English' }).click()
   await page.getByRole('button', { name: 'View demo' }).click()
   await tab(page, 'Modules').click()
@@ -88,7 +88,7 @@ test('los módulos salen en inglés', async ({ page }) => {
 })
 
 test('los módulos finales también salen en inglés', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('app/')
   await page.getByRole('button', { name: 'English' }).click()
   await page.getByRole('button', { name: 'View demo' }).click()
   await tab(page, 'Modules').click()
@@ -98,7 +98,7 @@ test('los módulos finales también salen en inglés', async ({ page }) => {
 })
 
 test('la demo y su IA salen en inglés', async ({ page }) => {
-  await page.goto('./')
+  await page.goto('app/')
   await page.getByRole('button', { name: 'English' }).click()
   await page.getByRole('button', { name: 'View demo' }).click()
   await tab(page, 'AI').click()
@@ -108,4 +108,24 @@ test('la demo y su IA salen en inglés', async ({ page }) => {
   await page.getByRole('button', { name: /Guests/ }).first().click()
   await page.getByRole('button', { name: 'Open guest list' }).click()
   await expect(page.getByText(/Mental health for creators/)).toBeVisible()
+})
+
+test('la portada carga y Probar la demo abre la demo', async ({ page }) => {
+  await page.goto('./')
+  await expect(page.getByRole('heading', { level: 1, name: 'Podcast Creator' })).toBeVisible()
+  await page.getByRole('link', { name: 'Probar la demo' }).click()
+  await expect(page).toHaveURL(/\/app\//)
+  await expect(page.getByText('Demo de solo lectura')).toBeVisible()
+})
+
+test('los enlaces antiguos con # abren la app', async ({ page }) => {
+  await page.goto('./#modulos')
+  await expect(page).toHaveURL(/\/app\/#modulos/)
+  await expect(page.getByRole('button', { name: 'Entrar' })).toBeVisible()
+})
+
+test('la portada cambia a inglés', async ({ page }) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: 'English' }).click()
+  await expect(page.getByRole('link', { name: 'Try the demo' })).toBeVisible()
 })
