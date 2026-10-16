@@ -67,3 +67,12 @@ test('los pasos del curso salen en inglés', async ({ page }) => {
   await page.getByText('Choose the show format').click()
   await expect(page.getByText('Audio only or audio + video')).toBeVisible()
 })
+
+test('las fases finales también salen en inglés', async ({ page }) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: 'English' }).click()
+  await page.getByRole('button', { name: 'View demo' }).click()
+  await tab(page, 'Phases').click()
+  await page.getByRole('button', { name: /Launch, growth and monetization/ }).click()
+  await expect(page.getByText('Prepare your media kit')).toBeVisible()
+})
