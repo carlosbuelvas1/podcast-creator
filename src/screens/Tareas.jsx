@@ -18,6 +18,7 @@ import { byDueDate, daysUntil, dueLabel } from '../dates'
 import { COLUMNS, PEOPLE, personClass, progressOf } from '../constants'
 import { buildIndex, lockReason, lockState, phaseProgress } from '../recommend'
 import { LockIcon } from '../icons'
+import { t } from '../i18n'
 
 export default function Tareas() {
   const { actions, me } = useStore()
@@ -52,7 +53,7 @@ export default function Tareas() {
   return (
     <>
       <div className="page-head">
-        <h1>Tareas</h1>
+        <h1>{t('Tareas')}</h1>
         <button className="btn primary" onClick={() => setEditing({ status: 'todo', owner: me, phase_id: current?.id })}>
           <PlusIcon width={18} height={18} /> Nueva
         </button>
@@ -62,31 +63,31 @@ export default function Tareas() {
         name="Filtrar por persona"
         value={filter}
         onChange={setFilter}
-        options={[{ value: 'all', label: 'Todas' }, ...PEOPLE.map((p) => ({ value: p, label: p }))]}
+        options={[{ value: 'all', label: t('Todas') }, ...PEOPLE.map((p) => ({ value: p, label: p }))]}
       />
-      <p className="hint desktop-only">Arrastra una tarea a otra columna para cambiar su estado.</p>
+      <p className="hint desktop-only">{t('Arrastra una tarea a otra columna para cambiar su estado.')}</p>
 
       <div className="mobile-list">
         <Segmented
           name="Columna"
           value={column}
           onChange={setColumn}
-          options={COLUMNS.map((c) => ({ value: c.id, label: `${c.label} · ${visible.filter((t) => t.status === c.id).length}` }))}
+          options={COLUMNS.map((c) => ({ value: c.id, label: `${t(c.label)} · ${visible.filter((t) => t.status === c.id).length}` }))}
         />
         <div className="list-body">
           {visible
             .filter((t) => t.status === column)
             .sort(byPlan)
-            .map((t) => (
-              <div key={t.id} className="list-row">
-                <TaskCard task={t} phase={phaseName[t.phase_id]} lock={lockOf(t)} onClick={() => setEditing(t)} />
+            .map((task) => (
+              <div key={task.id} className="list-row">
+                <TaskCard task={task} phase={phaseName[task.phase_id]} lock={lockOf(task)} onClick={() => setEditing(task)} />
                 <label className="move">
-                  <span className="sr-only">Mover a…</span>
-                  <select value="" onChange={(e) => e.target.value && actions.updateTask(t.id, { status: e.target.value })}>
-                    <option value="">Mover a…</option>
-                    {COLUMNS.filter((c) => c.id !== t.status).map((c) => (
+                  <span className="sr-only">{t('Mover a…')}</span>
+                  <select value="" onChange={(e) => e.target.value && actions.updateTask(task.id, { status: e.target.value })}>
+                    <option value="">{t('Mover a…')}</option>
+                    {COLUMNS.filter((c) => c.id !== task.status).map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.label}
+                        {t(c.label)}
                       </option>
                     ))}
                   </select>
@@ -95,7 +96,7 @@ export default function Tareas() {
             ))}
           {visible.filter((t) => t.status === column).length === 0 && (
             <p className="muted empty">
-              {column === 'done' ? 'Todavía no hay pasos hechos. ¡El primero es el más difícil!' : column === 'doing' ? 'Nada en progreso. Empiecen el paso recomendado desde Inicio.' : 'No hay pasos por hacer aquí.'}
+              {column === 'done' ? t('Todavía no hay pasos hechos. ¡El primero es el más difícil!') : column === 'doing' ? t('Nada en progreso. Empiecen el paso recomendado desde Inicio.') : t('No hay pasos por hacer aquí.')}
             </p>
           )}
         </div>
@@ -134,9 +135,9 @@ function Column({ column, tasks, onOpen, onAdd, phaseName, lockOf }) {
   return (
     <section ref={setNodeRef} className={`column ${column.id} ${isOver ? 'over' : ''}`}>
       <div className="column-head">
-        <h2>{column.label}</h2>
+        <h2>{t(column.label)}</h2>
         <span className="count">{tasks.length}</span>
-        <button className="icon-btn" onClick={onAdd} aria-label={`Añadir tarea en ${column.label}`}>
+        <button className="icon-btn" onClick={onAdd} aria-label={t('Añadir tarea en {column}', { column: t(column.label) })}>
           <PlusIcon width={18} height={18} />
         </button>
       </div>
@@ -144,7 +145,7 @@ function Column({ column, tasks, onOpen, onAdd, phaseName, lockOf }) {
         {tasks.map((t) => (
           <DraggableTask key={t.id} task={t} onOpen={onOpen} phase={phaseName[t.phase_id]} lock={lockOf(t)} />
         ))}
-        {tasks.length === 0 && <p className="drop-empty">Suelta un paso aquí</p>}
+        {tasks.length === 0 && <p className="drop-empty">{t('Suelta un paso aquí')}</p>}
       </div>
     </section>
   )
@@ -177,7 +178,7 @@ function TaskCard({ task, onClick, overlay, phase, lock }) {
         </p>
       )}
       <div className="task-meta">
-        <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? 'Sin asignar'}</span>
+        <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? t('Sin asignar')}</span>
         {task.due_date && <span className={`due ${late ? 'late' : ''}`}>{dueLabel(task.due_date)}</span>}
       </div>
     </div>

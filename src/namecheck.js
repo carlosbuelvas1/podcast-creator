@@ -1,12 +1,14 @@
 import { supabase } from './supabase'
+import { DEMO_MESSAGE, isDemo } from './ai'
+import { t, tk } from './i18n'
 
 export const LABEL = {
-  libre: 'Libre',
-  probable: 'Probablemente libre',
-  similar: 'Hay nombres parecidos',
-  verificar: 'Verificar manualmente',
-  ocupado: 'Ocupado',
-  manual: 'Revisar a mano',
+  libre: tk('Libre'),
+  probable: tk('Probablemente libre'),
+  similar: tk('Hay nombres parecidos'),
+  verificar: tk('Verificar manualmente'),
+  ocupado: tk('Ocupado'),
+  manual: tk('Revisar a mano'),
 }
 
 export const TONE = { libre: 'ok', probable: 'ok', similar: 'warn', verificar: 'warn', ocupado: 'bad', manual: 'muted' }
@@ -45,6 +47,7 @@ export function briefFields(result) {
 }
 
 export async function checkNames(names) {
+  if (isDemo()) throw new Error(t(DEMO_MESSAGE))
   const { data, error } = await supabase.functions.invoke('check-name', { body: { names } })
   if (error) {
     let reason = ''
@@ -53,7 +56,7 @@ export async function checkNames(names) {
     } catch {
       reason = ''
     }
-    throw new Error(reason || 'No pudimos revisar los nombres ahora.')
+    throw new Error(reason || t('No pudimos revisar los nombres ahora.'))
   }
   return data.results ?? {}
 }

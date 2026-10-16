@@ -4,6 +4,7 @@ import Sheet from '../Sheet'
 import { autoAssign, spreadDueDates, suggestedLaunch } from '../recommend'
 import { PEOPLE } from '../constants'
 import { onboardingKey } from '../skips'
+import { t } from '../i18n'
 
 export default function Onboarding({ onClose }) {
   const { actions } = useStore()
@@ -30,7 +31,7 @@ export default function Onboarding({ onClose }) {
   }
 
   return (
-    <Sheet title={`Empecemos · ${step + 1} de 3`} onClose={finish}>
+    <Sheet title={t('Empecemos · {n} de 3', { n: step + 1 })} onClose={finish}>
       <div className="dots" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <span key={i} className={i <= step ? 'on' : ''} />
@@ -38,41 +39,41 @@ export default function Onboarding({ onClose }) {
       </div>
       {step === 0 && (
         <div className="onb">
-          <h3>Así funciona</h3>
+          <h3>{t('Así funciona')}</h3>
           <ul className="onb-list">
-            <li><b>{phases.length} fases</b>, de la idea al lanzamiento, con {tasks.length} pasos en orden.</li>
-            <li>Cada paso trae por qué importa, consejos y una lista para marcar.</li>
-            <li>En <b>Inicio</b> les decimos cuál es el siguiente paso y por qué.</li>
-            <li>Algunos pasos se desbloquean cuando terminan los anteriores.</li>
+            <li><b>{t('{n} fases', { n: phases.length })}</b>{t(', de la idea al lanzamiento, con {n} pasos en orden.', { n: tasks.length })}</li>
+            <li>{t('Cada paso trae por qué importa, consejos y una lista para marcar.')}</li>
+            <li>En <b>{t('Inicio')}</b> {t('les decimos cuál es el siguiente paso y por qué.')}</li>
+            <li>{t('Algunos pasos se desbloquean cuando terminan los anteriores.')}</li>
           </ul>
-          <button className="btn primary full" onClick={() => setStep(1)}>Siguiente</button>
+          <button className="btn primary full" onClick={() => setStep(1)}>{t('Siguiente')}</button>
         </div>
       )}
       {step === 1 && (
         <div className="onb">
-          <h3>¿Cuándo lanzan?</h3>
-          <p className="muted">Les sugerimos 12 semanas desde hoy. Pueden cambiarla cuando quieran.</p>
+          <h3>{t('¿Cuándo lanzan?')}</h3>
+          <p className="muted">{t('Les sugerimos 12 semanas desde hoy. Pueden cambiarla cuando quieran.')}</p>
           <label className="field">
-            <span>Fecha de lanzamiento</span>
+            <span>{t('Fecha de lanzamiento')}</span>
             <input type="date" value={launch} onChange={(e) => setLaunch(e.target.value)} />
           </label>
           <label className="toggle">
             <input type="checkbox" checked={spread} onChange={(e) => setSpread(e.target.checked)} />
-            <span>Repartir fechas límite entre hoy y el lanzamiento</span>
+            <span>{t('Repartir fechas límite entre hoy y el lanzamiento')}</span>
           </label>
-          <button className="btn primary full" onClick={saveDates}>Siguiente</button>
+          <button className="btn primary full" onClick={saveDates}>{t('Siguiente')}</button>
         </div>
       )}
       {step === 2 && (
         <div className="onb">
-          <h3>¿Quién hace qué?</h3>
-          <p className="muted">Podemos repartir los pasos entre Carlos y Michelle de forma pareja. Luego pueden cambiar cualquiera.</p>
+          <h3>{t('¿Quién hace qué?')}</h3>
+          <p className="muted">{t('Podemos repartir los pasos entre Carlos y Michelle de forma pareja. Luego pueden cambiar cualquiera.')}</p>
           <label className="toggle">
             <input type="checkbox" checked={split} onChange={(e) => setSplit(e.target.checked)} />
-            <span>Repartir los pasos automáticamente</span>
+            <span>{t('Repartir los pasos automáticamente')}</span>
           </label>
-          <button className="btn primary full" onClick={saveOwners}>Listo</button>
-          <button className="btn ghost-plain full" onClick={finish}>Omitir por ahora</button>
+          <button className="btn primary full" onClick={saveOwners}>{t('Listo')}</button>
+          <button className="btn ghost-plain full" onClick={finish}>{t('Omitir por ahora')}</button>
         </div>
       )}
     </Sheet>

@@ -4,6 +4,7 @@ import { aiEnabled, askAI } from '../ai'
 import { LABEL, TONE, briefFields, checkNames, scoreOf, scoreTone, sortByAvailability } from '../namecheck'
 import { useChooseName } from '../naming'
 import { CheckIcon, LinkIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
+import { t } from '../i18n'
 
 export default function NameLab() {
   const { me, actions, notify } = useStore()
@@ -39,7 +40,7 @@ export default function NameLab() {
   const askNames = async () => {
     setBusy('ai')
     try {
-      const data = await askAI({ projectId: project.id, mode: 'names', message: 'Ideas de nombre para nuestro podcast', author: me })
+      const data = await askAI({ projectId: project.id, mode: 'names', message: t('Ideas de nombre para nuestro podcast'), author: me })
       const next = merge(data.result?.names ?? [])
       setBusy('')
       await run(next.filter((i) => !results[i.name]), { name_ideas: next })
@@ -63,7 +64,7 @@ export default function NameLab() {
   }
 
   const pick = (name) => {
-    if (choose(name, briefFields(results[name]))) notify(`¡Listo! Ahora su podcast se llama ${name}.`)
+    if (choose(name, briefFields(results[name]))) notify(t('¡Listo! Ahora su podcast se llama {name}.', { name }))
   }
 
   const pending = ideas.filter((i) => !results[i.name])
@@ -71,27 +72,27 @@ export default function NameLab() {
 
   return (
     <section className="guide-block name-lab">
-      <h4>Ideas de nombre</h4>
-      <p className="muted small">Revisamos dominios, redes y plataformas de podcast por ustedes. Lo que no se puede confirmar sale como “Verificar manualmente” con su enlace.</p>
+      <h4>{t('Ideas de nombre')}</h4>
+      <p className="muted small">{t('Revisamos dominios, redes y plataformas de podcast por ustedes. Lo que no se puede confirmar sale como “Verificar manualmente” con su enlace.')}</p>
       <div className="tool-row">
         {aiEnabled() && (
           <button type="button" className="btn primary" disabled={Boolean(busy)} onClick={askNames}>
-            <SparkIcon width={18} height={18} /> {busy === 'ai' ? 'Pensando nombres…' : 'Pedir 10 nombres a la IA'}
+            <SparkIcon width={18} height={18} /> {busy === 'ai' ? t('Pensando nombres…') : t('Pedir 10 nombres a la IA')}
           </button>
         )}
         {pending.length > 0 && (
           <button type="button" className="btn ghost" disabled={Boolean(busy)} onClick={() => run(pending)}>
-            Revisar disponibilidad ({pending.length})
+            {t('Revisar disponibilidad')} ({pending.length})
           </button>
         )}
       </div>
       <form className="quick-add" onSubmit={add}>
-        <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Escribe una idea de nombre" aria-label="Nueva idea de nombre" />
-        <button className="btn" disabled={!draft.trim() || Boolean(busy)} aria-label="Añadir y revisar">
+        <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={t('Escribe una idea de nombre')} aria-label={t('Nueva idea de nombre')} />
+        <button className="btn" disabled={!draft.trim() || Boolean(busy)} aria-label={t('Añadir y revisar')}>
           <PlusIcon width={18} height={18} />
         </button>
       </form>
-      {busy === 'check' && <p className="muted small" role="status">Revisando disponibilidad… puede tardar unos segundos.</p>}
+      {busy === 'check' && <p className="muted small" role="status">{t('Revisando disponibilidad… puede tardar unos segundos.')}</p>}
       <ul className="name-cards">
         {sorted.map((idea) => {
           const result = results[idea.name]
@@ -106,12 +107,12 @@ export default function NameLab() {
                   {result?.handle && <span className="muted small"> · @{result.handle}</span>}
                   {idea.why && <p className="muted small">{idea.why}</p>}
                 </div>
-                <span className={`score ${scoreTone(score)}`} aria-label="Disponibilidad">{score === null ? '—' : `${score}%`}</span>
+                <span className={`score ${scoreTone(score)}`} aria-label={t('Disponibilidad')}>{score === null ? '—' : `${score}%`}</span>
               </div>
               {result && (
                 <div className="dots" aria-hidden="true">
                   {result.checks.filter((c) => c.status !== 'manual').map((c) => (
-                    <span key={c.key} className={`dot ${TONE[c.status]}`} title={`${c.label}: ${LABEL[c.status]}`} />
+                    <span key={c.key} className={`dot ${TONE[c.status]}`} title={`${c.label}: ${t(LABEL[c.status])}`} />
                   ))}
                 </div>
               )}
@@ -124,9 +125,9 @@ export default function NameLab() {
                         {c.label}
                         {c.similar?.length > 0 && <span className="muted small"> · {c.similar.slice(0, 2).join(', ')}</span>}
                       </span>
-                      <span className={`sc-status ${TONE[c.status]}`}>{LABEL[c.status]}</span>
+                      <span className={`sc-status ${TONE[c.status]}`}>{t(LABEL[c.status])}</span>
                       <a className="link-pill" href={c.buy ?? c.url} target="_blank" rel="noreferrer">
-                        <LinkIcon width={14} height={14} /> {c.buy ? 'Comprar' : 'Abrir'}
+                        <LinkIcon width={14} height={14} /> {c.buy ? t('Comprar') : t('Abrir')}
                       </a>
                     </li>
                   ))}
@@ -135,7 +136,7 @@ export default function NameLab() {
               <div className="name-card-actions">
                 {result && (
                   <button type="button" className="btn ghost small" onClick={() => setOpen(expanded ? null : idea.name)}>
-                    {expanded ? 'Ocultar detalle' : 'Ver detalle'}
+                    {expanded ? t('Ocultar detalle') : t('Ver detalle')}
                   </button>
                 )}
                 {chosen ? (
@@ -144,7 +145,7 @@ export default function NameLab() {
                   </span>
                 ) : (
                   <button type="button" className="btn primary small" onClick={() => pick(idea.name)}>
-                    Elegir este nombre
+                    {t('Elegir este nombre')}
                   </button>
                 )}
                 <button type="button" className="icon-btn" onClick={() => remove(idea.name)} aria-label={`Quitar ${idea.name}`}>
@@ -155,7 +156,7 @@ export default function NameLab() {
           )
         })}
       </ul>
-      {!ideas.length && <p className="muted small">Todavía no hay ideas. Pidan nombres a la IA o escriban los suyos.</p>}
+      {!ideas.length && <p className="muted small">{t('Todavía no hay ideas. Pidan nombres a la IA o escriban los suyos.')}</p>}
     </section>
   )
 }

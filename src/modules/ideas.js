@@ -1,5 +1,5 @@
 export default {
-  ...{"key": "ideas", "number": 4, "title": "Ideas", "subtitle": "", "intro": "Tracker: título, tipo (episodio / short / vlog), etiquetas, voto de Carlos (👍/👎), voto de Michelle, notas, botón \"Mover al calendario\"."},
+  ...{"key": "ideas", "number": 4, "title": "Ideas", "subtitle": "", "intro": ""},
   steps: [
   {
     "code": "4.1",

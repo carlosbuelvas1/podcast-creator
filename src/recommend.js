@@ -1,4 +1,5 @@
 import { guideFor, stepCode } from './guide.js'
+import { t } from './i18n'
 
 const DAY = 86400000
 
@@ -10,7 +11,7 @@ export function daysBetween(value, now) {
   return Math.round((new Date(y, m - 1, d) - startOfDay(now)) / DAY)
 }
 
-const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`
+const plural = (n, one, many) => `${n} ${n === 1 ? t(one) : t(many)}`
 
 export function phaseProgress(phases, tasks) {
   return phases.map((ph) => {
@@ -56,8 +57,8 @@ export function lockState(task, phases, tasks, index = buildIndex(phases, tasks)
 export function lockReason(blockedBy) {
   if (!blockedBy.length) return ''
   const b = blockedBy[0]
-  if (b.type === 'step') return `Se desbloquea cuando terminen “${b.task.title}”`
-  return `Se desbloquea cuando “${b.phase.title}” llegue al 60%`
+  if (b.type === 'step') return t('Se desbloquea cuando terminen “{title}”', { title: b.task.title })
+  return t('Se desbloquea cuando “{title}” llegue al 60%', { title: b.phase.title })
 }
 
 export function recommend({ phases, tasks, items = [], me = null, partner = null, now = new Date(), skipped = [] }) {
@@ -77,28 +78,28 @@ export function recommend({ phases, tasks, items = [], me = null, partner = null
       const phase = index.phaseById[task.phase_id]
       const days = daysBetween(task.due_date, now)
 
-      if (task.status === 'doing') add(40, 'Ya empezado')
+      if (task.status === 'doing') add(40, t('Ya empezado'))
       if (days !== null) {
-        if (days < 0) add(50, `Vencido hace ${plural(-days, 'día', 'días')}`)
-        else if (days === 0) add(30, 'Vence hoy')
-        else if (days <= 3) add(30, `Vence en ${plural(days, 'día', 'días')}`)
-        else if (days <= 7) add(15, `Vence en ${plural(days, 'día', 'días')}`)
+        if (days < 0) add(50, t('Vencido hace {n}', { n: plural(-days, 'día', 'días') }))
+        else if (days === 0) add(30, t('Vence hoy'))
+        else if (days <= 3) add(30, t('Vence en {n}', { n: plural(days, 'día', 'días') }))
+        else if (days <= 7) add(15, t('Vence en {n}', { n: plural(days, 'día', 'días') }))
       }
       if (phase && current) {
-        if (phase.id === current.id) add(25, 'Fase actual')
+        if (phase.id === current.id) add(25, t('Fase actual'))
         else if (phase.position > current.position) add(-15 * (phase.position - current.position))
       }
       add(-2 * (task.position ?? 0))
-      if (me && task.owner === me) add(20, 'Es tuyo')
-      else if (!task.owner) add(10, 'Sin responsable')
+      if (me && task.owner === me) add(20, t('Es tuyo'))
+      else if (!task.owner) add(10, t('Sin responsable'))
       else if (partner && task.owner === partner) add(-30)
 
       const list = items.filter((i) => i.task_id === task.id)
       const checked = list.filter((i) => i.done).length
-      if (checked > 0 && checked < list.length) add(10, `Lista a medias (${checked}/${list.length})`)
+      if (checked > 0 && checked < list.length) add(10, t('Lista a medias ({done}/{total})', { done: checked, total: list.length }))
 
       const opens = unlocks(task, phases, tasks, index).length
-      if (opens > 0) reasons.push(`Desbloquea ${plural(opens, 'paso', 'pasos')}`)
+      if (opens > 0) reasons.push(t('Desbloquea {n}', { n: plural(opens, 'paso', 'pasos') }))
 
       const blockedBy = lockState(task, phases, tasks, index, progress)
       const isSkipped = skipped.includes(task.id)

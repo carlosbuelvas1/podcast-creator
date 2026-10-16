@@ -5,8 +5,9 @@ import { NAME_FOCUS, PROVISIONAL_NAME, isProvisional } from '../naming'
 import Sheet from '../Sheet'
 import { CheckIcon, MicIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
 import { progressOf } from '../constants'
+import { t } from '../i18n'
 
-export function NewProjectForm({ onDone, submitLabel = 'Crear proyecto' }) {
+export function NewProjectForm({ onDone, submitLabel = t('Crear proyecto') }) {
   const { actions } = useStore()
   const { go } = useNav()
   const [name, setName] = useState('')
@@ -31,27 +32,27 @@ export function NewProjectForm({ onDone, submitLabel = 'Crear proyecto' }) {
   return (
     <form onSubmit={submit}>
       <label className="field">
-        <span>Nombre del podcast (opcional)</span>
+        <span>{t('Nombre del podcast (opcional)')}</span>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder={PROVISIONAL_NAME} />
       </label>
       {!name.trim() && (
         <div className="name-later">
-          <p className="muted small">¿Todavía no tienen nombre? No pasa nada: lo crean juntos en el módulo Concepto.</p>
+          <p className="muted small">{t('¿Todavía no tienen nombre? No pasa nada: lo crean juntos en el módulo Concepto.')}</p>
           <button type="button" className="btn ghost full" disabled={busy} onClick={() => create(true)}>
-            <SparkIcon width={18} height={18} /> {aiEnabled() ? 'Crear nombre con IA' : 'Crear el nombre ahora'}
+            <SparkIcon width={18} height={18} /> {aiEnabled() ? t('Crear nombre con IA') : t('Crear el nombre ahora')}
           </button>
         </div>
       )}
       <label className="field">
-        <span>Meta del lanzamiento (opcional)</span>
-        <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Ej. Lanzar con 3 episodios listos" />
+        <span>{t('Meta del lanzamiento (opcional)')}</span>
+        <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder={t('Ej. Lanzar con 3 episodios listos')} />
       </label>
       <label className="field">
-        <span>Fecha de lanzamiento (opcional)</span>
+        <span>{t('Fecha de lanzamiento (opcional)')}</span>
         <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
       </label>
       <button className="btn primary full" disabled={busy}>
-        {busy ? 'Creando…' : submitLabel}
+        {busy ? t('Creando…') : submitLabel}
       </button>
     </form>
   )
@@ -63,9 +64,9 @@ export function Welcome() {
       <div className="welcome-icon">
         <MicIcon width={30} height={30} />
       </div>
-      <h1>Creen su primer podcast</h1>
+      <h1>{t('Creen su primer podcast')}</h1>
       <p className="muted">
-        Les preparamos todas las fases, de la idea al lanzamiento, con pasos claros y listas para marcar. El nombre pueden elegirlo después.
+        {t('Les preparamos todas las fases, de la idea al lanzamiento, con pasos claros y listas para marcar. El nombre pueden elegirlo después.')}
       </p>
       <NewProjectForm submitLabel="Empezar" />
     </div>
@@ -85,7 +86,7 @@ export function ProjectSwitcher({ onClose, onPick }) {
   }
 
   return (
-    <Sheet title={creating ? 'Nuevo podcast' : 'Sus podcasts'} onClose={onClose}>
+    <Sheet title={creating ? t('Nuevo podcast') : t('Sus podcasts')} onClose={onClose}>
       {creating ? (
         <NewProjectForm onDone={pick} />
       ) : (
@@ -98,7 +99,7 @@ export function ProjectSwitcher({ onClose, onPick }) {
                   <button className={p.id === project?.id ? 'on' : ''} onClick={() => pick(p.id)}>
                     <span className="project-name">
                       {p.name}
-                      {isProvisional(p) && <span className="badge-prov">Nombre provisional</span>}
+                      {isProvisional(p) && <span className="badge-prov">{t('Nombre provisional')}</span>}
                     </span>
                     <span className="project-pct">{pct}%</span>
                     {p.id === project?.id && <CheckIcon width={18} height={18} />}
@@ -130,28 +131,28 @@ export function ProjectEditor({ project, onClose }) {
   }
 
   const remove = () => {
-    if (window.confirm(`¿Borrar "${project.name}" con todas sus tareas? Esto no se puede deshacer.`)) {
+    if (window.confirm(t('¿Borrar "{name}" con todas sus tareas? Esto no se puede deshacer.', { name: project.name }))) {
       actions.deleteProject(project.id)
       onClose()
     }
   }
 
   return (
-    <Sheet title="Editar proyecto" onClose={onClose}>
+    <Sheet title={t('Editar proyecto')} onClose={onClose}>
       <form onSubmit={submit}>
         <label className="field">
-          <span>Nombre del podcast</span>
+          <span>{t('Nombre del podcast')}</span>
           <input value={name} onChange={(e) => setName(e.target.value)} required />
         </label>
         <label className="field">
-          <span>Meta del lanzamiento</span>
+          <span>{t('Meta del lanzamiento')}</span>
           <textarea rows={2} value={goal} onChange={(e) => setGoal(e.target.value)} />
         </label>
         <label className="field">
-          <span>Fecha de lanzamiento</span>
+          <span>{t('Fecha de lanzamiento')}</span>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </label>
-        <button className="btn primary full">Guardar</button>
+        <button className="btn primary full">{t('Guardar')}</button>
         <button type="button" className="btn danger-ghost full" onClick={remove}>
           <TrashIcon width={18} height={18} /> Borrar proyecto
         </button>

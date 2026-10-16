@@ -11,7 +11,7 @@ import referentes from './referentes.js'
 
 const MINUTES = 20
 
-export const MODULES = [concepto, legal, branding, invitados, ideas, proximamente, distribucion, laboratorio, referentes, asistente].map((m) => ({
+export const MODULES = [concepto, legal, branding, invitados, ideas, proximamente, distribucion, laboratorio, referentes, asistente].sort((a, b) => a.number - b.number).map((m) => ({
   ...m,
   steps: m.steps.map((s) => ({ minutes: Math.max(MINUTES, s.checklist.length * 10), ...s, module: m.key })),
 }))
@@ -45,7 +45,7 @@ export function moduleRecommendations(progressRows, limit = 3, { provisionalName
     const next = m.steps.find((s) => !byCode[s.code]?.done)
     if (!next) continue
     const started = (byCode[next.code]?.done_items ?? []).length > 0
-    out.push({ module: m, step: next, score: (started ? 20 : 10) - m.number, reasons: [started ? 'Ya empezado' : `Módulo ${m.title}`] })
+    out.push({ module: m, step: next, score: (started ? 20 : 10) - m.number, reasons: [started ? 'Ya empezado' : 'Siguiente paso del módulo'] })
   }
   return out.sort((a, b) => b.score - a.score).slice(0, limit)
 }

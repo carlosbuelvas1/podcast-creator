@@ -4,6 +4,7 @@ import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
 import { aiEnabled } from '../ai'
 import { CalendarIcon, PlusIcon, SparkIcon, ThumbDownIcon, ThumbUpIcon, TrashIcon } from '../icons'
+import { t } from '../i18n'
 
 
 const vote = (v) => (v === 1 ? 'sí' : v === -1 ? 'no' : '—')
@@ -41,31 +42,31 @@ export default function Ideas() {
   return (
     <>
       <div className="page-head">
-        <h1>Ideas</h1>
+        <h1>{t('Ideas')}</h1>
       </div>
       <form className="card quick-add" onSubmit={add}>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nueva idea…" aria-label="Idea" />
+        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('Nueva idea…')} aria-label={t('Idea')} />
         <Segmented name="Tipo" value={kind} onChange={setKind} options={KINDS.map((k) => ({ value: k.id, label: k.label }))} />
-        <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Etiquetas separadas por coma" aria-label="Etiquetas" />
+        <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('Etiquetas separadas por coma')} aria-label={t('Etiquetas')} />
         <button className="btn primary" disabled={!title.trim()}>
           <PlusIcon width={18} height={18} /> Añadir
         </button>
       </form>
       {aiEnabled() && (
-        <button className="btn ghost full" onClick={() => ask('Dame 10 ideas de episodios para nuestro podcast, con un título corto cada una.')}>
+        <button className="btn ghost full" onClick={() => ask(t('Dame 10 ideas de episodios para nuestro podcast, con un título corto cada una.'))}>
           <SparkIcon width={18} height={18} /> Pedir 10 ideas a la IA
         </button>
       )}
       {allTags.length > 0 && (
         <div className="chips filter-chips">
-          <button className={`chip ${!tag ? 'on' : 'subtle'}`} onClick={() => setTag('')}>Todas</button>
+          <button className={`chip ${!tag ? 'on' : 'subtle'}`} onClick={() => setTag('')}>{t('Todas')}</button>
           {allTags.map((t) => (
             <button key={t} className={`chip ${tag === t ? 'on' : 'subtle'}`} onClick={() => setTag(tag === t ? '' : t)}>#{t}</button>
           ))}
         </div>
       )}
       {visible.length === 0 ? (
-        <p className="muted empty">Anoten todo, sin juzgar. Después votan entre los dos.</p>
+        <p className="muted empty">{t('Anoten todo, sin juzgar. Después votan entre los dos.')}</p>
       ) : (
         <ul className="tracker-list">
           {visible.map((i) => (
@@ -79,9 +80,9 @@ export default function Ideas() {
                 </span>
               </div>
               <div className="votes">
-                <span className="vote-score" aria-label="Puntos">{score(i) > 0 ? `+${score(i)}` : score(i)}</span>
-                <button className={`vote ${i[voteKey] === 1 ? 'on' : ''}`} onClick={() => castVote(i, 1)} aria-label="Me gusta" aria-pressed={i[voteKey] === 1}><ThumbUpIcon width={20} height={20} /></button>
-                <button className={`vote ${i[voteKey] === -1 ? 'on' : ''}`} onClick={() => castVote(i, -1)} aria-label="No me gusta" aria-pressed={i[voteKey] === -1}><ThumbDownIcon width={20} height={20} /></button>
+                <span className="vote-score" aria-label={t('Puntos')}>{score(i) > 0 ? `+${score(i)}` : score(i)}</span>
+                <button className={`vote ${i[voteKey] === 1 ? 'on' : ''}`} onClick={() => castVote(i, 1)} aria-label={t('Me gusta')} aria-pressed={i[voteKey] === 1}><ThumbUpIcon width={20} height={20} /></button>
+                <button className={`vote ${i[voteKey] === -1 ? 'on' : ''}`} onClick={() => castVote(i, -1)} aria-label={t('No me gusta')} aria-pressed={i[voteKey] === -1}><ThumbDownIcon width={20} height={20} /></button>
               </div>
               <div className="tracker-extra row">
                 <span className="muted small">Carlos: {vote(i.vote_carlos)} · Michelle: {vote(i.vote_michelle)}</span>
@@ -91,7 +92,7 @@ export default function Ideas() {
                       <CalendarIcon width={16} height={16} /> Mover al calendario
                     </button>
                   )}
-                  <button className="icon-btn" onClick={() => window.confirm('¿Borrar esta idea?') && actions.remove('ideas', i.id)} aria-label="Borrar idea">
+                  <button className="icon-btn" onClick={() => window.confirm(t('¿Borrar esta idea?')) && actions.remove('ideas', i.id)} aria-label={t('Borrar idea')}>
                     <TrashIcon width={16} height={16} />
                   </button>
                 </span>

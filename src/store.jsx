@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from './supabase'
 import { DataContext } from './context'
 import { EXTRA } from './tables'
+import { t } from './i18n'
 
 
 const empty = { projects: [], phases: [], tasks: [], items: [], people: [], ...Object.fromEntries(Object.keys(EXTRA).map((k) => [k, []])) }
@@ -39,7 +40,7 @@ export function DataProvider({ session, children }) {
       supabase.from('allowed_emails').select('*'),
     ])
     if (results.some((r) => r.error)) {
-      notify('No pudimos cargar los datos. Revisa tu conexión.')
+      notify(t('No pudimos cargar los datos. Revisa tu conexión.'))
       setReady(true)
       return
     }
@@ -81,7 +82,7 @@ export function DataProvider({ session, children }) {
       setData((d) => update(d))
       const { error } = await request()
       if (error) {
-        notify('No se pudo guardar. Intenta de nuevo.')
+        notify(t('No se pudo guardar. Intenta de nuevo.'))
         load()
       }
     },
@@ -99,7 +100,7 @@ export function DataProvider({ session, children }) {
           p_launch: launch_date || null,
         })
         if (error) {
-          notify('No se pudo crear el proyecto. Intenta de nuevo.')
+          notify(t('No se pudo crear el proyecto. Intenta de nuevo.'))
           return null
         }
         await load()

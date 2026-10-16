@@ -5,6 +5,7 @@ import { CheckIcon, CloseIcon, DotsIcon, LinkIcon, LockIcon, PlusIcon, TrashIcon
 import { COLUMNS, PEOPLE, personClass } from '../constants'
 import { formatMinutes, guideFor } from '../guide'
 import { buildIndex, lockReason, lockState, recommend, unlocks } from '../recommend'
+import { t } from '../i18n'
 
 const NOTES_KEY = 'podcast-creator-notes'
 const readNotes = () => {
@@ -66,7 +67,7 @@ function StepGuide({ task, onClose, onNext }) {
   }
 
   const remove = () => {
-    if (window.confirm('¿Borrar este paso?')) {
+    if (window.confirm(t('¿Borrar este paso?'))) {
       actions.deleteTask(task.id)
       onClose()
     }
@@ -82,7 +83,7 @@ function StepGuide({ task, onClose, onNext }) {
 
   const menuButton = (
     <div className="menu-wrap">
-      <button className="icon-btn" onClick={() => setMenu((m) => !m)} aria-label="Más opciones" aria-expanded={menu}>
+      <button className="icon-btn" onClick={() => setMenu((m) => !m)} aria-label={t('Más opciones')} aria-expanded={menu}>
         <DotsIcon width={18} height={18} />
       </button>
       {menu && (
@@ -99,10 +100,10 @@ function StepGuide({ task, onClose, onNext }) {
   )
 
   return (
-    <Sheet title={phase ? `Fase ${phase.position} · ${phase.title}` : 'Paso'} onClose={onClose} full actions={menuButton}>
+    <Sheet title={phase ? `Fase ${phase.position} · ${phase.title}` : t('Paso')} onClose={onClose} full actions={menuButton}>
       <div className="guide">
         <div className="guide-top">
-          {code && <span className="chip">Paso {code}</span>}
+          {code && <span className="chip">{t('Paso {code}', { code })}</span>}
           {guide.minutes > 0 && <span className="chip">⏱ {formatMinutes(guide.minutes)}</span>}
           {guide.ownerHint && <span className="chip subtle">{guide.ownerHint}</span>}
         </div>
@@ -122,17 +123,17 @@ function StepGuide({ task, onClose, onNext }) {
             <span className="done-badge">
               <CheckIcon width={22} height={22} />
             </span>
-            <b>¡Paso terminado!</b>
+            <b>{t('¡Paso terminado!')}</b>
             {next ? (
               <>
-                <span className="muted small">Lo siguiente recomendado:</span>
+                <span className="muted small">{t('Lo siguiente recomendado:')}</span>
                 <button className="mini" onClick={() => onNext(next.task.id)}>
                   <span className="mini-title">{next.task.title}</span>
                   <span className="mini-meta">{next.reasons.slice(0, 2).join(' · ')}</span>
                 </button>
               </>
             ) : (
-              <span className="muted small">No hay otro paso disponible por ahora.</span>
+              <span className="muted small">{t('No hay otro paso disponible por ahora.')}</span>
             )}
           </div>
         ) : (
@@ -141,17 +142,17 @@ function StepGuide({ task, onClose, onNext }) {
               name="Estado"
               value={task.status}
               onChange={(status) => (status === 'done' ? complete() : actions.updateTask(task.id, { status }))}
-              options={COLUMNS.map((c) => ({ value: c.id, label: c.label }))}
+              options={COLUMNS.map((c) => ({ value: c.id, label: t(c.label) }))}
             />
             <div className="quick-row">
               <Segmented
                 name="Responsable"
                 value={task.owner ?? ''}
                 onChange={(owner) => actions.updateTask(task.id, { owner: owner || null })}
-                options={[...PEOPLE.map((p) => ({ value: p, label: p, className: personClass(p) })), { value: '', label: 'Nadie' }]}
+                options={[...PEOPLE.map((p) => ({ value: p, label: p, className: personClass(p) })), { value: '', label: t('Nadie') }]}
               />
               <label className="date-pill">
-                <span className="sr-only">Fecha límite</span>
+                <span className="sr-only">{t('Fecha límite')}</span>
                 <input type="date" value={task.due_date ?? ''} onChange={(e) => actions.updateTask(task.id, { due_date: e.target.value || null })} />
               </label>
             </div>
@@ -160,14 +161,14 @@ function StepGuide({ task, onClose, onNext }) {
 
         {guide.why && (
           <section className="guide-block">
-            <h4>Por qué importa</h4>
+            <h4>{t('Por qué importa')}</h4>
             <p>{guide.why}</p>
           </section>
         )}
 
         <section className="guide-block">
           <h4>
-            Lista para marcar <span className="muted">· {checked} de {checklist.length}</span>
+            {t('Lista para marcar')} <span className="muted">· {t('{done} de {total}', { done: checked, total: checklist.length })}</span>
           </h4>
           <ul className="checklist">
             {checklist.map((i) => (
@@ -185,8 +186,8 @@ function StepGuide({ task, onClose, onNext }) {
             ))}
           </ul>
           <form className="add-item" onSubmit={addItem}>
-            <input value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="Añadir a la lista…" />
-            <button className="icon-btn filled" aria-label="Añadir" disabled={!newItem.trim()}>
+            <input value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder={t('Añadir a la lista…')} />
+            <button className="icon-btn filled" aria-label={t('Añadir')} disabled={!newItem.trim()}>
               <PlusIcon width={18} height={18} />
             </button>
           </form>
@@ -194,7 +195,7 @@ function StepGuide({ task, onClose, onNext }) {
 
         {guide.tips.length > 0 && (
           <section className="guide-block">
-            <h4>Consejos</h4>
+            <h4>{t('Consejos')}</h4>
             <ul className="bullets good">
               {guide.tips.map((t) => (
                 <li key={t}>{t}</li>
@@ -205,7 +206,7 @@ function StepGuide({ task, onClose, onNext }) {
 
         {guide.mistakes.length > 0 && (
           <section className="guide-block">
-            <h4>Errores comunes</h4>
+            <h4>{t('Errores comunes')}</h4>
             <ul className="bullets bad">
               {guide.mistakes.map((t) => (
                 <li key={t}>{t}</li>
@@ -216,7 +217,7 @@ function StepGuide({ task, onClose, onNext }) {
 
         {guide.resources.length > 0 && (
           <section className="guide-block">
-            <h4>Recursos</h4>
+            <h4>{t('Recursos')}</h4>
             <div className="links">
               {guide.resources.map((r) => (
                 <a key={r.url} href={r.url} target="_blank" rel="noreferrer" className="link-pill">
@@ -229,7 +230,7 @@ function StepGuide({ task, onClose, onNext }) {
 
         {opens.length > 0 && (
           <section className="guide-block">
-            <h4>Al terminarlo se desbloquea</h4>
+            <h4>{t('Al terminarlo se desbloquea')}</h4>
             <ul className="bullets">
               {opens.map((t) => (
                 <li key={t.id}>{t.title}</li>
@@ -239,8 +240,8 @@ function StepGuide({ task, onClose, onNext }) {
         )}
 
         <section className="guide-block">
-          <h4>Notas</h4>
-          <textarea rows={3} value={note} onChange={(e) => saveNote(e.target.value)} placeholder="Ideas, enlaces o recordatorios para este paso (solo en este dispositivo)" />
+          <h4>{t('Notas')}</h4>
+          <textarea rows={3} value={note} onChange={(e) => saveNote(e.target.value)} placeholder={t('Ideas, enlaces o recordatorios para este paso (solo en este dispositivo)')} />
         </section>
 
         {task.status !== 'done' && !justDone && (
@@ -278,18 +279,18 @@ function StepForm({ task, onClose }) {
   }
 
   return (
-    <Sheet title={isNew ? 'Nuevo paso' : 'Editar paso'} onClose={onClose}>
+    <Sheet title={isNew ? t('Nuevo paso') : t('Editar paso')} onClose={onClose}>
       <form onSubmit={submit} className="sheet-section">
         <label className="field">
-          <span>Nombre del paso</span>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ej. Grabar la intro" required />
+          <span>{t('Nombre del paso')}</span>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('Ej. Grabar la intro')} required />
         </label>
         <label className="field">
-          <span>Explicación (opcional)</span>
+          <span>{t('Explicación (opcional)')}</span>
           <textarea rows={3} value={explanation} onChange={(e) => setExplanation(e.target.value)} />
         </label>
         <label className="field">
-          <span>Fase</span>
+          <span>{t('Fase')}</span>
           <select value={phaseId} onChange={(e) => setPhaseId(e.target.value)}>
             {phases.map((p) => (
               <option key={p.id} value={p.id}>
@@ -299,23 +300,23 @@ function StepForm({ task, onClose }) {
           </select>
         </label>
         <div className="field">
-          <span>¿Quién se encarga?</span>
+          <span>{t('¿Quién se encarga?')}</span>
           <Segmented
             name="Responsable"
             value={owner}
             onChange={setOwner}
-            options={[...PEOPLE.map((p) => ({ value: p, label: p, className: personClass(p) })), { value: '', label: 'Nadie aún' }]}
+            options={[...PEOPLE.map((p) => ({ value: p, label: p, className: personClass(p) })), { value: '', label: t('Nadie aún') }]}
           />
         </div>
         <label className="field">
-          <span>Fecha límite</span>
+          <span>{t('Fecha límite')}</span>
           <input type="date" value={due} onChange={(e) => setDue(e.target.value)} />
         </label>
         <div className="field">
-          <span>Estado</span>
-          <Segmented name="Estado" value={status} onChange={setStatus} options={COLUMNS.map((c) => ({ value: c.id, label: c.label }))} />
+          <span>{t('Estado')}</span>
+          <Segmented name="Estado" value={status} onChange={setStatus} options={COLUMNS.map((c) => ({ value: c.id, label: t(c.label) }))} />
         </div>
-        <button className="btn primary full">{isNew ? 'Crear paso' : 'Guardar'}</button>
+        <button className="btn primary full">{isNew ? t('Crear paso') : t('Guardar')}</button>
       </form>
     </Sheet>
   )

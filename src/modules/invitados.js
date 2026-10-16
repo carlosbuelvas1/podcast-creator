@@ -1,5 +1,5 @@
 export default {
-  ...{"key": "invitados", "number": 3, "title": "Invitados", "subtitle": "", "intro": "Campos del tracker: nombre, @, tema, estado (Idea / Contactado / Confirmado / Grabado / Publicado), fecha de contacto, notas."},
+  ...{"key": "invitados", "number": 3, "title": "Invitados", "subtitle": "", "intro": ""},
   steps: [
   {
     "code": "3.1",
