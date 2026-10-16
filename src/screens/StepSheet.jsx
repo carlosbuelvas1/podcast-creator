@@ -100,7 +100,7 @@ function StepGuide({ task, onClose, onNext }) {
   )
 
   return (
-    <Sheet title={phase ? `Fase ${phase.position} · ${phase.title}` : t('Paso')} onClose={onClose} full actions={menuButton}>
+    <Sheet title={phase ? `${t('Fase {n}', { n: phase.position })} · ${phase.title}` : t('Paso')} onClose={onClose} full actions={menuButton}>
       <div className="guide">
         <div className="guide-top">
           {code && <span className="chip">{t('Paso {code}', { code })}</span>}

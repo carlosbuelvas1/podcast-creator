@@ -56,3 +56,14 @@ for (const lang of ['Español', 'English']) {
     }
   })
 }
+
+test('los pasos del curso salen en inglés', async ({ page }) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: 'English' }).click()
+  await page.getByRole('button', { name: 'View demo' }).click()
+  await tab(page, 'Phases').click()
+  await page.getByRole('button', { name: /Concept and identity/ }).click()
+  await expect(page.getByText('Define who you are as a creator')).toBeVisible()
+  await page.getByText('Choose the show format').click()
+  await expect(page.getByText('Audio only or audio + video')).toBeVisible()
+})
