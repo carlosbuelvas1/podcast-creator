@@ -3114,3 +3114,27 @@ button.chip {
 .phase-done h3 {
   margin: 4px 0 0;
 }
+
+.swipe-cols {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.swipe-cols::-webkit-scrollbar {
+  display: none;
+}
+
+.swipe-cols:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.swipe-col {
+  flex: 0 0 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
