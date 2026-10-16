@@ -5,12 +5,14 @@ import Sheet from '../Sheet'
 import { DEMO_MESSAGE, aiEnabled, setAiEnabled } from '../ai'
 import { t } from '../i18n'
 import LangToggle from '../LangToggle'
+import Roadmap from './Roadmap'
 
 export default function Account({ onClose }) {
   const { me, session, notify, demo } = useStore()
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [ai, setAi] = useState(aiEnabled)
+  const [roadmap, setRoadmap] = useState(false)
 
   const toggleAi = (on) => {
     setAi(on)
@@ -38,6 +40,8 @@ export default function Account({ onClose }) {
     setPassword('')
     notify(t('Listo, contraseña cambiada.'))
   }
+
+  if (roadmap) return <Roadmap onClose={() => setRoadmap(false)} />
 
   return (
     <Sheet title={t('Mi cuenta')} onClose={onClose}>
@@ -71,6 +75,9 @@ export default function Account({ onClose }) {
         <p className="muted small">{t('Idioma')}</p>
         <LangToggle />
       </div>
+      <button className="btn ghost full" onClick={() => setRoadmap(true)}>
+        {t('Hoja de ruta')}
+      </button>
       <button className="btn danger-ghost full" onClick={() => supabase.auth.signOut()}>
         {t('Cerrar sesión')}
       </button>

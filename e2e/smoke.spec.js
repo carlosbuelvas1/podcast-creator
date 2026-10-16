@@ -211,3 +211,11 @@ test('Tareas en móvil: deslizar y flechas cambian de columna', async ({ page })
   await page.keyboard.press('ArrowLeft')
   await expect(page.getByRole('radiogroup', { name: 'Columna' }).getByRole('radio', { checked: true })).toContainText('Por hacer')
 })
+
+test('la hoja de ruta se abre desde Mi cuenta', async ({ page }) => {
+  await openDemo(page)
+  await page.getByRole('button', { name: 'Mi cuenta' }).click()
+  await page.getByRole('button', { name: 'Hoja de ruta' }).click()
+  await expect(page.getByText('Lo que viene para Podcast Creator.')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'En camino' })).toBeVisible()
+})
