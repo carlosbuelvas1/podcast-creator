@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useStore, useProject } from '../context'
 import { askAI, aiEnabled } from '../ai'
 import { SparkIcon, StarIcon } from '../icons'
+import { EmptyState } from '../EmptyState'
 import { t, tk } from '../i18n'
 
 const MODES = [
@@ -194,7 +195,7 @@ export default function Laboratorio({ itemId = null }) {
       <section className="card">
         <h3 className="card-title">{item ? t('Favoritos de este episodio') : t('Favoritos')}</h3>
         {mine.length === 0 ? (
-          <p className="muted empty">{t('Toca la estrella en cualquier resultado para guardarlo aquí.')}</p>
+          <EmptyState icon={StarIcon} text={t('Toca la estrella en cualquier resultado para guardarlo aquí.')} action={t('Generar ideas arriba')} onAction={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
         ) : (
           <ul className="lab-list">
             {mine.map((f) => (

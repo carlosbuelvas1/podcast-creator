@@ -3,8 +3,9 @@ import { GUEST_STATUS, today as todayIso } from '../trackers'
 import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
 import { aiEnabled } from '../ai'
-import { PlusIcon, SparkIcon, TrashIcon } from '../icons'
+import { MicIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
 import { shortDate } from '../dates'
+import { EmptyState } from '../EmptyState'
 import { t } from '../i18n'
 
 
@@ -50,7 +51,11 @@ export default function Invitados() {
         />
       </div>
       {visible.length === 0 ? (
-        <p className="muted empty">{guests.length ? t('Nadie en este estado.') : t('Hagan una lista de 10 personas con quienes les encantaría hablar.')}</p>
+        guests.length ? (
+          <p className="muted empty">{t('Nadie en este estado.')}</p>
+        ) : (
+          <EmptyState icon={MicIcon} text={t('Hagan una lista de 10 personas con quienes les encantaría hablar.')} action={t('Añadir el primer invitado')} />
+        )
       ) : (
         <ul className="tracker-list">
           {visible.map((g) => (

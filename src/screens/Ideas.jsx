@@ -4,6 +4,7 @@ import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
 import { aiEnabled } from '../ai'
 import { CalendarIcon, PlusIcon, SparkIcon, ThumbDownIcon, ThumbUpIcon, TrashIcon } from '../icons'
+import { EmptyState } from '../EmptyState'
 import { t } from '../i18n'
 
 
@@ -66,7 +67,7 @@ export default function Ideas() {
         </div>
       )}
       {visible.length === 0 ? (
-        <p className="muted empty">{t('Anoten todo, sin juzgar. Después votan entre los dos.')}</p>
+        <EmptyState icon={SparkIcon} text={t('Anoten todo, sin juzgar. Después votan entre los dos.')} action={t('Anotar la primera idea')} />
       ) : (
         <ul className="tracker-list">
           {visible.map((i) => (
