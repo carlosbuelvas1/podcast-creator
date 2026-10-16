@@ -406,5 +406,7 @@
   "{n} paso vencido. Pónganse al día o cambien la fecha.": "{n} overdue step. Catch up or change the date.",
   "{n} pasos vencidos. Pónganse al día o cambien la fecha.": "{n} overdue steps. Catch up or change the date.",
   "{n} paso sin responsable.": "{n} step without an owner.",
-  "{n} pasos sin responsable.": "{n} steps without an owner."
+  "{n} pasos sin responsable.": "{n} steps without an owner.",
+  "{n} vistas": "{n} views",
+  "{n} suscriptores": "{n} subscribers"
 }

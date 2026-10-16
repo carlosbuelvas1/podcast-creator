@@ -56,3 +56,15 @@ for (const lang of ['Español', 'English']) {
     }
   })
 }
+
+test('Referentes cabe en pantalla sin scroll horizontal', async ({ page }) => {
+  await openDemo(page)
+  await tab(page, 'Módulos').click()
+  await page.getByRole('button', { name: /Referentes/ }).first().click()
+  await page.getByRole('button', { name: 'Abrir referentes' }).click()
+  await page.getByRole('button', { name: /Nadie Sabe Nada/ }).click()
+  await page.getByText(/Últimos 20 videos/).click()
+  await expect(page.getByText('Suscriptores', { exact: true })).toBeVisible()
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+  expect(overflow).toBeLessThanOrEqual(0)
+})
