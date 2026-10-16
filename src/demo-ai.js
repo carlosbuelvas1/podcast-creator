@@ -1,26 +1,34 @@
+import { t, tk } from './i18n'
+
 const IDEAS = [
-  { type: 'add_idea', payload: { title: 'Lo que aprendimos en nuestro primer año', kind: 'episode' } },
-  { type: 'add_idea', payload: { title: 'Mitos de emprender en Miami', kind: 'short' } },
+  { type: 'add_idea', payload: { title: tk('Lo que aprendimos en nuestro primer año'), kind: 'episode' } },
+  { type: 'add_idea', payload: { title: tk('Mitos de emprender en Miami'), kind: 'short' } },
 ]
 
 const REPLIES = [
-  [/idea|episodio/i, 'Aquí van dos ideas que encajan con su brief: "Lo que aprendimos en nuestro primer año" como episodio y "Mitos de emprender en Miami" como short.', IDEAS],
-  [/título/i, 'Prueben: "Lo que nadie te dice de emprender a los 25", "Renunciamos y esto pasó" y "3 errores que casi nos cuestan el podcast".', []],
-  [/miniatura/i, 'Texto corto y grande: "CERO PAUSAS". Los dos riéndose a la izquierda, fondo morado y el logo abajo a la derecha.', []],
-  [/notas/i, 'En este episodio hablamos de emprender sin dinero, los errores del primer año y cómo encontrar a tu socio ideal. Síguenos para más.', []],
-  [/apple/i, 'Creen su cuenta en Apple Podcasts Connect, peguen el enlace RSS de su plataforma de hosting y envíen el show a revisión. Tarda de 1 a 5 días.', []],
+  [/idea|episodio|episode/i, tk('Aquí van dos ideas que encajan con su brief: "Lo que aprendimos en nuestro primer año" como episodio y "Mitos de emprender en Miami" como short.'), IDEAS],
+  [/título|title/i, tk('Prueben: "Lo que nadie te dice de emprender a los 25", "Renunciamos y esto pasó" y "3 errores que casi nos cuestan el podcast".'), []],
+  [/miniatura|thumbnail/i, tk('Texto corto y grande: "CERO PAUSAS". Los dos riéndose a la izquierda, fondo morado y el logo abajo a la derecha.'), []],
+  [/notas|notes/i, tk('En este episodio hablamos de emprender sin dinero, los errores del primer año y cómo encontrar a tu socio ideal. Síguenos para más.'), []],
+  [/apple/i, tk('Creen su cuenta en Apple Podcasts Connect, peguen el enlace RSS de su plataforma de hosting y envíen el show a revisión. Tarda de 1 a 5 días.'), []],
 ]
 
-const CHAT_DEFAULT = 'Esta semana terminen la identidad visual: elijan logo y colores. Michelle puede preparar la lista de invitados y Carlos cotizar micrófonos.'
+const CHAT_DEFAULT = tk('Esta semana terminen la identidad visual: elijan logo y colores. Michelle puede preparar la lista de invitados y Carlos cotizar micrófonos.')
+
+const local = (v) => (typeof v === 'string' ? t(v) : Array.isArray(v) ? v.map(local) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, local(x)])) : v)
 
 export function demoAnswer(mode, message) {
+  return local(answer(mode, message))
+}
+
+function answer(mode, message) {
   if (mode === 'names') {
     return {
       result: {
         names: [
-          { name: 'Cero Pausas', why: 'Suena a su energía y es fácil de decir' },
-          { name: 'Sin Filtro Miami', why: 'Dice dónde están y cómo hablan' },
-          { name: 'Socios de Sofá', why: 'Cercano y con humor' },
+          { name: tk('Cero Pausas'), why: tk('Suena a su energía y es fácil de decir') },
+          { name: tk('Sin Filtro Miami'), why: tk('Dice dónde están y cómo hablan') },
+          { name: tk('Socios de Sofá'), why: tk('Cercano y con humor') },
         ],
       },
     }
@@ -29,9 +37,9 @@ export function demoAnswer(mode, message) {
     return {
       result: {
         titles: [
-          { title: 'Lo que nadie te dice de emprender a los 25', hook: 'secreto', curiosity: 8, clarity: 9 },
-          { title: 'Renunciamos y esto pasó', hook: 'historia', curiosity: 9, clarity: 7 },
-          { title: '3 errores que casi nos cuestan el podcast', hook: 'número', curiosity: 8, clarity: 8 },
+          { title: tk('Lo que nadie te dice de emprender a los 25'), hook: 'secreto', curiosity: 8, clarity: 9 },
+          { title: tk('Renunciamos y esto pasó'), hook: 'historia', curiosity: 9, clarity: 7 },
+          { title: tk('3 errores que casi nos cuestan el podcast'), hook: 'número', curiosity: 8, clarity: 8 },
         ],
       },
     }
@@ -40,8 +48,8 @@ export function demoAnswer(mode, message) {
     return {
       result: {
         concepts: [
-          { text: 'CERO PAUSAS', expression: 'Los dos riéndose', composition: 'Caras a la izquierda, texto grande a la derecha', colors: ['#7C3AED', '#C084FC', '#0F0B1A'] },
-          { text: '¿VALE LA PENA?', expression: 'Sorpresa', composition: 'Primer plano de Carlos señalando el texto', colors: ['#FBBF24', '#0F0B1A'] },
+          { text: 'CERO PAUSAS', expression: tk('Los dos riéndose'), composition: tk('Caras a la izquierda, texto grande a la derecha'), colors: ['#7C3AED', '#C084FC', '#0F0B1A'] },
+          { text: '¿VALE LA PENA?', expression: tk('Sorpresa'), composition: tk('Primer plano de Carlos señalando el texto'), colors: ['#FBBF24', '#0F0B1A'] },
         ],
       },
     }
@@ -49,10 +57,10 @@ export function demoAnswer(mode, message) {
   if (mode === 'seo') {
     return {
       result: {
-        description: 'Emprender a los 25 no es como lo pintan. Carlos y Michelle cuentan lo que nadie les dijo.',
-        keywords: ['emprender', 'podcast en español', 'Miami'],
+        description: tk('Emprender a los 25 no es como lo pintan. Carlos y Michelle cuentan lo que nadie les dijo.'),
+        keywords: ['emprender', tk('podcast en español'), 'Miami'],
         tags: ['emprendimiento', 'negocios', 'podcast'],
-        chapters: ['00:00 Intro', '03:10 El primer error', '18:40 Lo que haríamos distinto'],
+        chapters: ['00:00 Intro', tk('03:10 El primer error'), tk('18:40 Lo que haríamos distinto')],
         hashtags: { YouTube: ['#podcast', '#emprender', '#miami'], Instagram: ['#podcastenespañol', '#emprendedores', '#miami'], TikTok: ['#podcast', '#emprender', '#fyp'] },
       },
     }
