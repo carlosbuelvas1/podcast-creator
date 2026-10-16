@@ -3103,3 +3103,14 @@ button.chip {
   color: var(--accent);
   margin-bottom: 8px;
 }
+
+.phase-done {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.phase-done h3 {
+  margin: 4px 0 0;
+}

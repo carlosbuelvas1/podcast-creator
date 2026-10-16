@@ -16,7 +16,8 @@ import { ProjectSwitcher, Welcome } from './screens/Projects'
 import Onboarding from './screens/Onboarding'
 import { onboardingKey } from './skips'
 import { isProvisional, shortName } from './naming'
-import { BoardIcon, ChevronIcon, GridIcon, HomeIcon, SparkIcon, StepsIcon } from './icons'
+import { BoardIcon, CheckIcon, ChevronIcon, GridIcon, HomeIcon, SparkIcon, StepsIcon } from './icons'
+import Sheet from './Sheet'
 import { personClass } from './constants'
 import { t, tk, useLang } from './i18n'
 
@@ -110,7 +111,7 @@ function Shell() {
   const [account, setAccount] = useState(false)
   const [switcher, setSwitcher] = useState(false)
   const [onboarded, setOnboarded] = useState(0)
-  useCelebrations(project, scoped.phases, scoped.tasks, notify)
+  const { celebration, dismiss } = useCelebrations(project, scoped.phases, scoped.tasks, notify)
   const [ai, setAi] = useState(aiEnabled)
 
   useEffect(() => {
@@ -205,6 +206,18 @@ function Shell() {
       )}
 
       {project && !localStorage.getItem(onboardingKey(project.id)) && <Onboarding key={`${project.id}-${onboarded}`} onClose={() => setOnboarded((n) => n + 1)} />}
+      {celebration && (
+        <Sheet title={t('¡Fase completa!')} onClose={dismiss}>
+          <div className="phase-done pop">
+            <span className="done-badge">
+              <CheckIcon width={22} height={22} />
+            </span>
+            <h3>{celebration.phase.title}</h3>
+            <p className="muted">{celebration.next ? t('Lo que viene: {title}', { title: celebration.next.title }) : t('¡Terminaron todas las fases! Es hora de lanzar.')}</p>
+            <button className="btn primary full" onClick={dismiss}>{t('Seguir')}</button>
+          </div>
+        </Sheet>
+      )}
       {account && <Account onClose={() => setAccount(false)} />}
       {switcher && <ProjectSwitcher onClose={() => setSwitcher(false)} onPick={() => go('inicio')} />}
     </div>
