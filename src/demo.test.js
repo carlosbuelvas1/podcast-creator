@@ -63,7 +63,7 @@ describe('contraste de avisos', () => {
 
   it('el texto del aviso cumple WCAG AA', () => {
     const rule = css.match(/\.toast \{[^}]*\}/)[0]
-    expect(rule).toMatch(/background: var\(--ink\)/)
+    expect(rule).toMatch(/background: var\(--text\)/)
     expect(rule).toMatch(/color: var\(--bg\)/)
     expect(ratio(token('text'), token('bg'))).toBeGreaterThanOrEqual(4.5)
   })

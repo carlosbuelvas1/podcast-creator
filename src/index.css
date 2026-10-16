@@ -20,20 +20,9 @@
   --hero: linear-gradient(135deg, #4c1d95 0%, #7c3aed 55%, #a855f7 100%);
   --on-primary: #ffffff;
   --scrim: rgba(8, 5, 16, 0.72);
-  --card: var(--surface-1);
-  --ink: var(--text);
-  --muted: var(--text-2);
-  --line: var(--border);
-  --soft: var(--surface-2);
-  --y: var(--primary);
-  --y-soft: var(--primary-soft);
-  --carlos: var(--carlos-c);
   --carlos-soft: color-mix(in srgb, var(--carlos-c) 16%, transparent);
-  --michelle: var(--michelle-c);
   --michelle-soft: color-mix(in srgb, var(--michelle-c) 16%, transparent);
-  --green: var(--success);
   --green-soft: color-mix(in srgb, var(--success) 16%, transparent);
-  --red: var(--danger);
   --r-sm: 10px;
   --r: 16px;
   --r-lg: 24px;
@@ -60,7 +49,7 @@ html,
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--ink);
+  color: var(--text);
   font: 500 15px/1.5 var(--font);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
@@ -95,7 +84,7 @@ button {
 }
 
 .muted {
-  color: var(--muted);
+  color: var(--text-2);
 }
 
 .small {
@@ -145,7 +134,7 @@ button {
 }
 
 .card {
-  background: var(--card);
+  background: var(--surface-1);
   border-radius: var(--r);
   box-shadow: var(--shadow);
   padding: 18px;
@@ -182,13 +171,13 @@ button {
 .field > span {
   font-size: 13px;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--text-2);
 }
 
 input,
 textarea {
   width: 100%;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--border);
   background: var(--surface-2);
   border-radius: 12px;
   padding: 12px 14px;
@@ -210,7 +199,7 @@ input[type='date'] {
 }
 
 .error {
-  color: var(--red);
+  color: var(--danger);
   font-size: 14px;
   font-weight: 600;
 }
@@ -224,7 +213,7 @@ input[type='date'] {
   border-radius: 12px;
   padding: 11px 16px;
   font-weight: 700;
-  background: var(--soft);
+  background: var(--surface-2);
   transition: transform 0.1s, opacity 0.15s;
 }
 
@@ -249,7 +238,7 @@ input[type='date'] {
 
 .btn.danger-ghost {
   background: transparent;
-  color: var(--red);
+  color: var(--danger);
   margin-top: 8px;
 }
 
@@ -261,12 +250,12 @@ input[type='date'] {
   border-radius: 10px;
   border: 0;
   background: transparent;
-  color: var(--muted);
+  color: var(--text-2);
   flex: none;
 }
 
 .icon-btn:hover {
-  background: var(--soft);
+  background: var(--surface-2);
 }
 
 .icon-btn.on-dark {
@@ -295,7 +284,7 @@ input[type='date'] {
   padding: 0;
   font-weight: 700;
   font-size: 14px;
-  color: var(--muted);
+  color: var(--text-2);
   text-decoration: underline;
   text-underline-offset: 3px;
   margin-top: 12px;
@@ -310,12 +299,12 @@ input[type='date'] {
   border: 0;
   font-weight: 800;
   color: var(--on-primary);
-  background: var(--carlos);
+  background: var(--carlos-c);
   flex: none;
 }
 
 .avatar.michelle {
-  background: var(--michelle);
+  background: var(--michelle-c);
 }
 
 .avatar.small {
@@ -382,7 +371,7 @@ input[type='date'] {
   background: color-mix(in srgb, var(--surface-1) 94%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--border);
 }
 
 .tabbar button {
@@ -395,7 +384,7 @@ input[type='date'] {
   padding: 6px 0;
   font-size: 12px;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--text-2);
   border-radius: 12px;
 }
 
@@ -408,11 +397,11 @@ input[type='date'] {
 }
 
 .tabbar button.on {
-  color: var(--ink);
+  color: var(--text);
 }
 
 .tabbar button.on svg {
-  background: var(--y);
+  background: var(--primary);
 }
 
 .greeting {
@@ -420,7 +409,7 @@ input[type='date'] {
 }
 
 .hero {
-  background: var(--ink);
+  background: var(--text);
   color: var(--on-primary);
   border-radius: 22px;
   padding: 18px 18px 16px;
@@ -439,7 +428,7 @@ input[type='date'] {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--y);
+  color: var(--primary);
 }
 
 .hero-body {
@@ -471,8 +460,8 @@ input[type='date'] {
 
 .countdown {
   display: inline-block;
-  background: var(--y);
-  color: var(--ink);
+  background: var(--primary);
+  color: var(--text);
   font-weight: 800;
   font-size: 13px;
   padding: 4px 10px;
@@ -510,7 +499,7 @@ input[type='date'] {
 }
 
 .ring-fg {
-  stroke: var(--y);
+  stroke: var(--primary);
   stroke-linecap: round;
   transition: stroke-dashoffset 0.6s ease;
 }
@@ -563,7 +552,7 @@ input[type='date'] {
   align-items: center;
   gap: 10px;
   padding: 10px 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--border);
 }
 
 .next-list li:first-child {
@@ -582,7 +571,7 @@ input[type='date'] {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 2px solid var(--line);
+  border: 2px solid var(--border);
   background: var(--surface-2);
   color: transparent;
   flex: none;
@@ -590,8 +579,8 @@ input[type='date'] {
 }
 
 .check:hover {
-  border-color: var(--green);
-  color: var(--green);
+  border-color: var(--success);
+  color: var(--success);
 }
 
 .empty {
@@ -601,12 +590,12 @@ input[type='date'] {
 .due {
   font-size: 12px;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--text-2);
   white-space: nowrap;
 }
 
 .due.late {
-  color: var(--red);
+  color: var(--danger);
 }
 
 .tag {
@@ -618,7 +607,7 @@ input[type='date'] {
 }
 
 .tag.doing {
-  background: var(--y-soft);
+  background: var(--primary-soft);
   color: var(--warning);
 }
 
@@ -631,7 +620,7 @@ input[type='date'] {
 
 .segmented {
   display: flex;
-  background: var(--soft);
+  background: var(--surface-2);
   border-radius: 12px;
   padding: 3px;
   gap: 2px;
@@ -645,23 +634,23 @@ input[type='date'] {
   border-radius: 9px;
   font-weight: 700;
   font-size: 14px;
-  color: var(--muted);
+  color: var(--text-2);
   transition: all 0.15s;
 }
 
 .segmented button.on {
   background: var(--surface-2);
-  color: var(--ink);
+  color: var(--text);
   box-shadow: var(--shadow-sm);
 }
 
 .segmented button.carlos.on {
-  background: var(--carlos);
+  background: var(--carlos-c);
   color: var(--on-primary);
 }
 
 .segmented button.michelle.on {
-  background: var(--michelle);
+  background: var(--michelle-c);
   color: var(--on-primary);
 }
 
@@ -672,7 +661,7 @@ input[type='date'] {
 
 .hint {
   font-size: 13px;
-  color: var(--muted);
+  color: var(--text-2);
   margin: 10px 0 14px;
 }
 
@@ -690,8 +679,8 @@ input[type='date'] {
 }
 
 .column.over {
-  background: var(--y-soft);
-  border-color: var(--y);
+  background: var(--primary-soft);
+  border-color: var(--primary);
 }
 
 .column-head {
@@ -715,18 +704,18 @@ input[type='date'] {
 }
 
 .column.doing .column-head::before {
-  background: var(--y);
+  background: var(--primary);
 }
 
 .column.done .column-head::before {
-  background: var(--green);
+  background: var(--success);
 }
 
 .count {
   font-size: 12px;
   font-weight: 800;
-  color: var(--muted);
-  background: var(--soft);
+  color: var(--text-2);
+  background: var(--surface-2);
   padding: 1px 8px;
   border-radius: 99px;
   margin-right: auto;
@@ -747,7 +736,7 @@ input[type='date'] {
   border-radius: 12px;
   font-size: 13px;
   color: var(--text-3);
-  border: 1.5px dashed var(--line);
+  border: 1.5px dashed var(--border);
 }
 
 .drag {
@@ -777,7 +766,7 @@ input[type='date'] {
 
 .task.done .task-title {
   text-decoration: line-through;
-  color: var(--muted);
+  color: var(--text-2);
 }
 
 .overlay-card {
@@ -805,12 +794,12 @@ input[type='date'] {
   padding: 2px 9px;
   border-radius: 99px;
   background: var(--carlos-soft);
-  color: var(--carlos);
+  color: var(--carlos-c);
 }
 
 .owner.michelle {
   background: var(--michelle-soft);
-  color: var(--michelle);
+  color: var(--michelle-c);
 }
 
 .goals {
@@ -841,20 +830,20 @@ input[type='date'] {
 .bar {
   flex: 1;
   height: 10px;
-  background: var(--soft);
+  background: var(--surface-2);
   border-radius: 99px;
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
-  background: var(--y);
+  background: var(--primary);
   border-radius: 99px;
   transition: width 0.4s ease, background 0.3s;
 }
 
 .goal.complete .bar-fill {
-  background: var(--green);
+  background: var(--success);
 }
 
 .pct {
@@ -865,7 +854,7 @@ input[type='date'] {
 }
 
 .goal.complete .pct {
-  color: var(--green);
+  color: var(--success);
 }
 
 .goal > .small {
@@ -900,8 +889,8 @@ input[type='date'] {
 }
 
 .box.on {
-  background: var(--green);
-  border-color: var(--green);
+  background: var(--success);
+  border-color: var(--success);
   color: var(--on-primary);
 }
 
@@ -913,7 +902,7 @@ input[type='date'] {
 }
 
 .checklist li.done .item-text {
-  color: var(--muted);
+  color: var(--text-2);
   text-decoration: line-through;
 }
 
@@ -928,8 +917,8 @@ input[type='date'] {
 }
 
 .remove:hover {
-  color: var(--red);
-  background: var(--soft);
+  color: var(--danger);
+  background: var(--surface-2);
 }
 
 .add-item {
@@ -973,7 +962,7 @@ input[type='date'] {
   max-width: 520px;
   max-height: 92dvh;
   overflow: auto;
-  background: var(--card);
+  background: var(--surface-1);
   border-radius: 24px 24px 0 0;
   padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
   animation: up 0.25s ease-out;
@@ -1016,7 +1005,7 @@ input[type='date'] {
   left: 50%;
   bottom: calc(96px + env(safe-area-inset-bottom));
   transform: translate(-50%, 20px);
-  background: var(--ink);
+  background: var(--text);
   color: var(--bg);
   padding: 10px 16px;
   border-radius: 12px;
@@ -1058,11 +1047,11 @@ input[type='date'] {
     padding: 8px 18px;
     border-radius: 10px;
     font-weight: 700;
-    color: var(--muted);
+    color: var(--text-2);
   }
 
   .tabs-top button.on {
-    background: var(--ink);
+    background: var(--text);
     color: var(--on-primary);
   }
 
@@ -1144,7 +1133,7 @@ input[type='date'] {
 
 select {
   width: 100%;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--border);
   background: var(--surface-2);
   border-radius: 12px;
   padding: 12px 14px;
@@ -1160,8 +1149,8 @@ select:focus {
 
 .btn.ghost {
   background: transparent;
-  border: 1.5px dashed var(--line);
-  color: var(--muted);
+  border: 1.5px dashed var(--border);
+  color: var(--text-2);
   margin-top: 6px;
 }
 
@@ -1177,7 +1166,7 @@ select:focus {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: var(--soft);
+  background: var(--surface-2);
   font-weight: 800;
   font-size: 14px;
   flex: none;
@@ -1192,7 +1181,7 @@ select:focus {
 
 .num.complete,
 .phase.complete .num {
-  background: var(--green);
+  background: var(--success);
   color: var(--on-primary);
 }
 
@@ -1207,7 +1196,7 @@ select:focus {
 
 .phase.complete .bar-fill,
 .num.complete + .pp-text .bar-fill {
-  background: var(--green);
+  background: var(--success);
 }
 
 .phase-progress {
@@ -1263,14 +1252,14 @@ select:focus {
 .pp-pct small {
   font-size: 11px;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--text-2);
 }
 
 .next-title small {
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--text-2);
 }
 
 .notice {
@@ -1280,7 +1269,7 @@ select:focus {
   border: 0;
   border-radius: 14px;
   padding: 12px 14px;
-  background: var(--y-soft);
+  background: var(--primary-soft);
   color: var(--warning);
   font-weight: 700;
   font-size: 14px;
@@ -1321,7 +1310,7 @@ select:focus {
 }
 
 .chev {
-  color: var(--muted);
+  color: var(--text-2);
   transition: transform 0.2s;
   flex: none;
 }
@@ -1336,12 +1325,12 @@ select:focus {
 
 .phase-body {
   padding: 0 16px 16px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--border);
 }
 
 .phase-summary {
   margin: 12px 0 4px;
-  color: var(--muted);
+  color: var(--text-2);
   font-size: 14px;
 }
 
@@ -1356,7 +1345,7 @@ select:focus {
   align-items: flex-start;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--border);
 }
 
 .step .check {
@@ -1364,8 +1353,8 @@ select:focus {
 }
 
 .check.on {
-  background: var(--green);
-  border-color: var(--green);
+  background: var(--success);
+  border-color: var(--success);
   color: var(--on-primary);
 }
 
@@ -1387,7 +1376,7 @@ select:focus {
 }
 
 .step.done .step-name {
-  color: var(--muted);
+  color: var(--text-2);
   text-decoration: line-through;
 }
 
@@ -1399,8 +1388,8 @@ select:focus {
 }
 
 .owner.nobody {
-  background: var(--soft);
-  color: var(--muted);
+  background: var(--surface-2);
+  color: var(--text-2);
 }
 
 .task-phase {
@@ -1409,7 +1398,7 @@ select:focus {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: var(--text-2);
 }
 
 .step-title {
@@ -1421,7 +1410,7 @@ select:focus {
 .explain {
   margin: 0 0 16px;
   padding: 12px 14px;
-  background: var(--y-soft);
+  background: var(--primary-soft);
   border-radius: 12px;
   font-size: 14px;
   white-space: pre-line;
@@ -1437,7 +1426,7 @@ select:focus {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: var(--text-2);
   margin-bottom: 8px;
 }
 
@@ -1459,7 +1448,7 @@ select:focus {
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: var(--y);
+  background: var(--primary);
   display: grid;
   place-items: center;
 }
@@ -1477,7 +1466,7 @@ select:focus {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--border);
   background: var(--surface-2);
   border-radius: 14px;
   padding: 14px;
@@ -1486,7 +1475,7 @@ select:focus {
 }
 
 .project-list button.on {
-  border-color: var(--ink);
+  border-color: var(--text);
 }
 
 .project-name {
@@ -1495,7 +1484,7 @@ select:focus {
 }
 
 .project-pct {
-  color: var(--muted);
+  color: var(--text-2);
   font-size: 14px;
 }
 
