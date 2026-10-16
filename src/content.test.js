@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import template from './demo-template.json'
 import content from './locales/content-en.json'
+import ui from './locales/en.json'
 import { guideFor } from './guide'
+import { MODULES } from './modules/index.js'
 
 const PHASES = [1, 2, 3, 4, 5, 6]
 
@@ -19,5 +21,10 @@ describe('contenido del curso en inglés', () => {
       return [g.why, g.ownerHint, ...g.tips, ...g.mistakes]
     })).filter((x) => x && !content[x])
     expect(missing).toEqual([])
+  })
+
+  it('módulos 0 a 4: título, pasos, listas, consejos y enlaces', () => {
+    const texts = MODULES.filter((m) => m.number <= 4).flatMap((m) => [m.title, m.subtitle, m.intro, ...m.steps.flatMap((s) => [s.title, s.why, ...(s.checklist ?? []), ...(s.tips ?? []), ...(s.links ?? []).map((l) => l.label)])])
+    expect(texts.filter((x) => x && !content[x] && !ui[x])).toEqual([])
   })
 })
