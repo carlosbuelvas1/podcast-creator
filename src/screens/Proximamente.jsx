@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { CAL_STATUS, KINDS, kindLabel } from '../trackers'
 import { useStore, useProject, useNav } from '../context'
 import { Segmented } from '../Sheet'
-import { PlusIcon, TrashIcon } from '../icons'
+import { CalendarIcon, PlusIcon, TrashIcon } from '../icons'
+import { EmptyState } from '../EmptyState'
 import { shortDate } from '../dates'
 import { getLang, t } from '../i18n'
 
@@ -49,7 +50,7 @@ export default function Proximamente() {
       </form>
       <Segmented name="Vista" value={view} onChange={setView} options={[{ value: 'month', label: t('Por mes') }, { value: 'list', label: t('Lista') }]} />
       {calendar.length === 0 ? (
-        <p className="muted empty">{t('Elijan un día fijo para publicar y tengan 3 episodios de reserva antes de lanzar.')}</p>
+        <EmptyState icon={CalendarIcon} text={t('Elijan un día fijo para publicar y tengan 3 episodios de reserva antes de lanzar.')} action={t('Agendar el primer episodio')} />
       ) : (
         groups.map(([label, list]) => (
           <section key={label || 'all'} className="month">

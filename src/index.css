@@ -3098,3 +3098,8 @@ button.chip {
   margin: 6px 0 0;
   padding-left: 20px;
 }
+
+.empty-icon {
+  color: var(--accent);
+  margin-bottom: 8px;
+}

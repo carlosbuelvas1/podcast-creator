@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useStore, useProject } from '../context'
 import { researchReference } from '../ai'
 import { LinkIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
+import { EmptyState } from '../EmptyState'
 import { getLang, t, tk } from '../i18n'
 
 const ROWS = [
@@ -235,7 +236,7 @@ export default function Referentes() {
           <PlusIcon width={18} height={18} /> Añadir referente
         </button>
       </form>
-      {references.length === 0 && <p className="muted empty">{t('Agreguen 3 a 5 podcasts que admiran.')}</p>}
+      {references.length === 0 && <EmptyState icon={LinkIcon} text={t('Agreguen 3 a 5 podcasts que admiran.')} action={t('Agregar el primer referente')} />}
       <ul className="tracker-list">
         {references.map((r) => {
           const researched = r.stats?.researched_at

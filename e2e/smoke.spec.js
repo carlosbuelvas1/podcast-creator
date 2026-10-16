@@ -177,3 +177,12 @@ test('Inicio explica por qué recomienda el paso', async ({ page }) => {
   await page.getByText('¿Por qué este paso?').click()
   await expect(page.getByText('Lo elegimos entre todos los pasos pendientes por estas razones:')).toBeVisible()
 })
+
+test('Favoritos vacío explica qué hacer y tiene un botón', async ({ page }) => {
+  await openDemo(page)
+  await tab(page, 'Módulos').click()
+  await page.getByRole('button', { name: /Laboratorio de contenido/ }).click()
+  await page.getByRole('button', { name: 'Abrir laboratorio' }).click()
+  await expect(page.getByText('Toca la estrella en cualquier resultado para guardarlo aquí.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Generar ideas arriba' })).toBeVisible()
+})
