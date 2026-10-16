@@ -3138,3 +3138,26 @@ button.chip {
   min-width: 0;
   scroll-snap-align: start;
 }
+
+.roadmap-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s2);
+}
+
+.roadmap-item {
+  padding: var(--s3);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  border-left: 3px solid var(--border-strong);
+}
+
+.roadmap-item.doing {
+  border-left-color: var(--warning);
+}
+
+.roadmap-item.done {
+  border-left-color: var(--success);
+}
