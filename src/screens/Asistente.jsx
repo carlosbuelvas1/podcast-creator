@@ -4,13 +4,14 @@ import { askAI, aiEnabled } from '../ai'
 import { recommend } from '../recommend'
 import { PEOPLE } from '../constants'
 import { SparkIcon } from '../icons'
+import { t, tk } from '../i18n'
 
-const QUICK = ['¿Qué hago ahora?', 'Dame 10 ideas de episodios', '3 títulos para nuestro próximo episodio', 'Texto para la miniatura', 'Notas del episodio', 'Explícame cómo subo a Apple']
+const QUICK = [tk('¿Qué hago ahora?'), tk('Dame 10 ideas de episodios'), tk('3 títulos para nuestro próximo episodio'), tk('Texto para la miniatura'), tk('Notas del episodio'), tk('Explícame cómo subo a Apple')]
 
-const ACTION_LABEL = { add_idea: 'Agregar idea', create_task: 'Crear tarea', add_guest: 'Agregar invitado', schedule_item: 'Agendar' }
+const ACTION_LABEL = { add_idea: tk('Agregar idea'), create_task: tk('Crear tarea'), add_guest: tk('Agregar invitado'), schedule_item: tk('Agendar') }
 
 export default function Asistente({ prompt = '' }) {
-  const { actions, me, notify } = useStore()
+  const { actions, me, notify, demo } = useStore()
   const { project, messages, phases, tasks, items } = useProject()
   const [text, setText] = useState(prompt)
   const [busy, setBusy] = useState(false)
@@ -59,17 +60,17 @@ export default function Asistente({ prompt = '' }) {
       actions.addTask({ project_id: project.id, phase_id: phase?.id, title: p.title, owner: p.owner ?? me, due_date: p.due_date ?? null, position })
     }
     setChips((c) => ({ ...c, [key]: c[key].map((x) => (x === a ? { ...x, used: true } : x)) }))
-    notify('Hecho.')
+    notify(t('Hecho.'))
   }
 
   if (!enabled || failed) {
     return (
       <>
         <div className="page-head">
-          <h1>Asistente</h1>
+          <h1>{t('Asistente')}</h1>
         </div>
         <section className="card">
-          <p className="muted">{enabled ? 'La IA no respondió ahora. Mientras tanto, esto es lo que recomendamos:' : 'La IA está apagada. Puedes activarla en Mi cuenta. Mientras tanto, esto es lo que recomendamos:'}</p>
+          <p className="muted">{enabled ? t('La IA no respondió ahora. Mientras tanto, esto es lo que recomendamos:') : t('La IA está apagada. Puedes activarla en Mi cuenta. Mientras tanto, esto es lo que recomendamos:')}</p>
           {fallback && (
             <p>
               <b>{fallback.task.title}</b>
@@ -77,7 +78,7 @@ export default function Asistente({ prompt = '' }) {
               <span className="muted small">{fallback.reasons.join(' · ')}</span>
             </p>
           )}
-          {enabled && <button className="btn ghost" onClick={() => setFailed(false)}>Intentar de nuevo</button>}
+          {enabled && <button className="btn ghost" onClick={() => setFailed(false)}>{t('Intentar de nuevo')}</button>}
         </section>
       </>
     )
@@ -86,11 +87,11 @@ export default function Asistente({ prompt = '' }) {
   return (
     <div className="chat">
       <div className="page-head">
-        <h1>Asistente</h1>
+        <h1>{t('Asistente')}</h1>
       </div>
-      <p className="hint">Tu co-productor. Conoce su brief, sus pasos, ideas, invitados y calendario.</p>
+      <p className="hint">{demo ? t('IA activada en la demo: responde con ejemplos y no guarda nada.') : t('Tu co-productor. Conoce su brief, sus pasos, ideas, invitados y calendario.')}</p>
       <div className="chat-log" aria-live="polite">
-        {shown.length === 0 && <p className="muted empty">Pregunta lo que quieras o toca una sugerencia.</p>}
+        {shown.length === 0 && <p className="muted empty">{t('Pregunta lo que quieras o toca una sugerencia.')}</p>}
         {shown.map((m) => (
           <div key={m.id} className={`bubble ${m.role}`}>
             {m.role === 'user' && <span className="bubble-author">{m.author}</span>}
@@ -100,23 +101,23 @@ export default function Asistente({ prompt = '' }) {
                 {chips[m.content].map((a) => (
                   <button key={`${a.type}-${a.payload?.title ?? a.payload?.name}`} className="chip action" disabled={a.used} onClick={() => runAction(a, m.content)}>
                     {a.used ? '✓ ' : '+ '}
-                    {ACTION_LABEL[a.type] ?? a.type}: {a.payload?.title ?? a.payload?.name}
+                    {t(ACTION_LABEL[a.type] ?? a.type)}: {a.payload?.title ?? a.payload?.name}
                   </button>
                 ))}
               </div>
             )}
           </div>
         ))}
-        {busy && <div className="bubble assistant typing">Pensando…</div>}
+        {busy && <div className="bubble assistant typing">{t('Pensando…')}</div>}
         <div ref={end} />
       </div>
       <div className="chips quick-prompts">
         {QUICK.map((q) => (
-          <button key={q} className="chip subtle" onClick={() => send(q)} disabled={busy}>{q}</button>
+          <button key={q} className="chip subtle" onClick={() => send(t(q))} disabled={busy}>{t(q)}</button>
         ))}
       </div>
       <form className="chat-input" onSubmit={(e) => { e.preventDefault(); send(text) }}>
-        <textarea rows={2} value={text} onChange={(e) => setText(e.target.value)} placeholder="Escribe aquí…" aria-label="Mensaje" onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send(text))} />
+        <textarea rows={2} value={text} onChange={(e) => setText(e.target.value)} placeholder={t('Escribe aquí…')} aria-label={t('Mensaje')} onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send(text))} />
         <button className="btn primary" disabled={busy || !text.trim()}>
           <SparkIcon width={18} height={18} /> Enviar
         </button>

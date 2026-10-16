@@ -4,7 +4,7 @@ import { DataProvider } from './store'
 import { useStore, useProject, NavContext } from './context'
 import Modulos from './screens/Modulos'
 import Asistente from './screens/Asistente'
-import { aiEnabled, setDemoMode } from './ai'
+import { aiEnabled, setAiUser, setDemoMode } from './ai'
 import { useCelebrations } from './celebrate'
 import Login from './screens/Login'
 import { DemoProvider } from './demo'
@@ -18,13 +18,14 @@ import { onboardingKey } from './skips'
 import { isProvisional, shortName } from './naming'
 import { BoardIcon, ChevronIcon, GridIcon, HomeIcon, SparkIcon, StepsIcon } from './icons'
 import { personClass } from './constants'
+import { t, tk, useLang } from './i18n'
 
 const TABS = [
-  { id: 'inicio', label: 'Inicio', Icon: HomeIcon, Screen: Inicio },
-  { id: 'fases', label: 'Fases', Icon: StepsIcon, Screen: Fases },
-  { id: 'tareas', label: 'Tareas', Icon: BoardIcon, Screen: Tareas },
-  { id: 'modulos', label: 'Módulos', Icon: GridIcon, Screen: Modulos },
-  { id: 'ia', label: 'IA', Icon: SparkIcon, Screen: Asistente, ai: true },
+  { id: 'inicio', label: tk('Inicio'), Icon: HomeIcon, Screen: Inicio },
+  { id: 'fases', label: tk('Fases'), Icon: StepsIcon, Screen: Fases },
+  { id: 'tareas', label: tk('Tareas'), Icon: BoardIcon, Screen: Tareas },
+  { id: 'modulos', label: tk('Módulos'), Icon: GridIcon, Screen: Modulos },
+  { id: 'ia', label: tk('IA'), Icon: SparkIcon, Screen: Asistente, ai: true },
 ]
 
 const tabFromHash = () => {
@@ -33,12 +34,17 @@ const tabFromHash = () => {
 }
 
 export default function App() {
+  useLang()
   const [session, setSession] = useState(undefined)
   const [demo, setDemo] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next))
+    const apply = (next) => {
+      setAiUser(next?.user.id)
+      setSession(next)
+    }
+    supabase.auth.getSession().then(({ data }) => apply(data.session))
+    const { data } = supabase.auth.onAuthStateChange((_event, next) => apply(next))
     return () => data.subscription.unsubscribe()
   }, [])
 
@@ -72,7 +78,7 @@ function Splash() {
 
 function Skeleton() {
   return (
-    <div className="shell" aria-busy="true" aria-label="Cargando">
+    <div className="shell" aria-busy="true" aria-label={t('Cargando')}>
       <header className="topbar">
         <div className="brand">
           <div className="logo" />
@@ -93,6 +99,7 @@ function Shell() {
   const { ready, me, session, project, notify } = useStore()
   const scoped = useProject()
   const [tab, setTab] = useState(tabFromHash)
+  const [visit, setVisit] = useState(0)
   const [focus, setFocus] = useState(null)
   const [account, setAccount] = useState(false)
   const [switcher, setSwitcher] = useState(false)
@@ -116,6 +123,7 @@ function Shell() {
     window.history.replaceState(null, '', `#${id}`)
     setFocus(phaseId)
     setTab(id)
+    setVisit((n) => n + 1)
     window.scrollTo({ top: 0 })
   }
 
@@ -129,8 +137,8 @@ function Shell() {
       <div className="center-page">
         <div className="card narrow">
           <div className="logo" />
-          <h1>Sin acceso</h1>
-          <p className="muted">La cuenta {session.user.email} no tiene acceso a Podcast Creator.</p>
+          <h1>{t('Sin acceso')}</h1>
+          <p className="muted">{t('La cuenta {email} no tiene acceso a Podcast Creator.', { email: session.user.email })}</p>
           <button className="btn primary full" onClick={() => supabase.auth.signOut()}>
             Salir
           </button>
@@ -149,9 +157,9 @@ function Shell() {
           <div className="logo" />
           <span className="brand-name">Podcast Creator</span>
           {project && (
-            <button className="switcher" onClick={() => setSwitcher(true)} aria-label="Cambiar de proyecto">
+            <button className="switcher" onClick={() => setSwitcher(true)} aria-label={t('Cambiar de proyecto')}>
               <span>{shortName(project)}</span>
-              {isProvisional(project) && <span className="badge-prov">Nombre provisional</span>}
+              {isProvisional(project) && <span className="badge-prov">{t('Nombre provisional')}</span>}
               <ChevronIcon width={16} height={16} />
             </button>
           )}
@@ -160,26 +168,26 @@ function Shell() {
           <nav className="tabs-top">
             {tabs.map(({ id, label }) => (
               <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
-                {label}
+                {t(label)}
               </button>
             ))}
           </nav>
         )}
-        <button className={`avatar ${personClass(me)}`} onClick={() => setAccount(true)} aria-label="Mi cuenta">
+        <button className={`avatar ${personClass(me)}`} onClick={() => setAccount(true)} aria-label={t('Mi cuenta')}>
           {me[0]}
         </button>
       </header>
 
       {project ? (
         <>
-          <main className="page" key={`${tab}-${project.id}-${tab === 'ia' || tab === 'modulos' ? focus : ''}`}>
+          <main className="page" key={`${tab}-${project.id}-${visit}`}>
             <Screen go={go} focus={focus} prompt={tab === 'ia' ? focus ?? '' : ''} />
           </main>
           <nav className="tabbar" style={{ '--tab-count': tabs.length }}>
             {tabs.map(({ id, label, Icon }) => (
               <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
                 <Icon />
-                <span>{label}</span>
+                <span>{t(label)}</span>
               </button>
             ))}
           </nav>

@@ -2,19 +2,20 @@ import { useState } from 'react'
 import { useStore, useProject } from '../context'
 import { researchReference } from '../ai'
 import { LinkIcon, PlusIcon, SparkIcon, TrashIcon } from '../icons'
+import { getLang, t, tk } from '../i18n'
 
 const ROWS = [
-  ['format', 'Formato', (b) => b.promise],
-  ['length', 'Duración', () => ''],
-  ['hook', 'Gancho del inicio', () => ''],
-  ['titles', 'Títulos', () => ''],
-  ['thumbnails', 'Miniaturas', (b) => b.palette],
-  ['cadence', 'Cada cuánto publican', () => ''],
-  ['guests', 'Invitados', () => ''],
-  ['shorts', 'Shorts', () => ''],
-  ['monetization', 'Cómo ganan dinero', () => ''],
-  ['branding', 'Marca', (b) => [b.tagline, b.palette].filter(Boolean).join(' · ')],
-  ['audience', 'A quién le hablan', (b) => [b.persona?.age, b.persona?.location, b.persona?.interests].filter(Boolean).join(', ')],
+  ['format', tk('Formato'), (b) => b.promise],
+  ['length', tk('Duración'), () => ''],
+  ['hook', tk('Gancho del inicio'), () => ''],
+  ['titles', tk('Títulos'), () => ''],
+  ['thumbnails', tk('Miniaturas'), (b) => b.palette],
+  ['cadence', tk('Cada cuánto publican'), () => ''],
+  ['guests', tk('Invitados'), () => ''],
+  ['shorts', tk('Shorts'), () => ''],
+  ['monetization', tk('Cómo ganan dinero'), () => ''],
+  ['branding', tk('Marca'), (b) => [b.tagline, b.palette].filter(Boolean).join(' · ')],
+  ['audience', tk('A quién le hablan'), (b) => [b.persona?.age, b.persona?.location, b.persona?.interests].filter(Boolean).join(', ')],
 ]
 
 const SOURCES = [
@@ -23,16 +24,16 @@ const SOURCES = [
   ['spotify', 'Spotify'],
 ]
 
-const compact = (n) => (n || n === 0 ? new Intl.NumberFormat('es', { notation: 'compact', maximumFractionDigits: 1 }).format(n) : '—')
-const days = (d) => (d ? (d < 1.5 ? 'A diario' : `Cada ${String(d).replace('.', ',')} días`) : '—')
+const compact = (n) => (n || n === 0 ? new Intl.NumberFormat(getLang(), { notation: 'compact', maximumFractionDigits: 1 }).format(n) : '—')
+const days = (d) => (d ? (d < 1.5 ? t('A diario') : `Cada ${String(d).replace('.', ',')} días`) : '—')
 const mins = (m) => (m ? `${Math.round(m)} min` : '—')
-const when = (iso) => new Date(iso).toLocaleDateString('es', { day: 'numeric', month: 'short' })
+const when = (iso) => new Date(iso).toLocaleDateString(getLang(), { day: 'numeric', month: 'short' })
 
 function Stat({ label, value }) {
   return (
     <div className="stat">
       <span className="stat-value">{value}</span>
-      <span className="stat-label">{label}</span>
+      <span className="stat-label">{t(label)}</span>
     </div>
   )
 }
@@ -41,11 +42,11 @@ function Picker({ found, onPick, busy }) {
   const [choice, setChoice] = useState(() => Object.fromEntries(SOURCES.map(([k]) => [k, found[k]?.[0]?.id ?? null])))
   return (
     <div className="guide-block picker">
-      <h4>¿Cuál es el que buscan?</h4>
-      <p className="muted small">Encontramos varios con ese nombre. Elijan el correcto en cada plataforma.</p>
+      <h4>{t('¿Cuál es el que buscan?')}</h4>
+      <p className="muted small">{t('Encontramos varios con ese nombre. Elijan el correcto en cada plataforma.')}</p>
       {SOURCES.filter(([k]) => found[k]?.length).map(([k, label]) => (
         <fieldset key={k} className="cand-group">
-          <legend>{label}</legend>
+          <legend>{t(label)}</legend>
           {found[k].map((c) => (
             <label key={c.id} className={`cand ${choice[k] === c.id ? 'on' : ''}`}>
               <input type="radio" name={k} checked={choice[k] === c.id} onChange={() => setChoice({ ...choice, [k]: c.id })} />
@@ -58,12 +59,12 @@ function Picker({ found, onPick, busy }) {
           ))}
           <label className={`cand ${choice[k] === null ? 'on' : ''}`}>
             <input type="radio" name={k} checked={choice[k] === null} onChange={() => setChoice({ ...choice, [k]: null })} />
-            <span className="muted">Ninguno de estos</span>
+            <span className="muted">{t('Ninguno de estos')}</span>
           </label>
         </fieldset>
       ))}
       <button className="btn primary" disabled={busy} onClick={() => onPick(choice)}>
-        {busy ? 'Investigando…' : 'Investigar este'}
+        {busy ? t('Investigando…') : t('Investigar este')}
       </button>
     </div>
   )
@@ -74,7 +75,7 @@ function Research({ stats }) {
   const nothing = !yt && !ap && !sp && !social
   return (
     <>
-      {nothing && <p className="muted small">No encontramos datos públicos con ese nombre. Prueben con el nombre exacto o agreguen el enlace de YouTube.</p>}
+      {nothing && <p className="muted small">{t('No encontramos datos públicos con ese nombre. Prueben con el nombre exacto o agreguen el enlace de YouTube.')}</p>}
       {yt && (
         <div className="guide-block">
           <h4>
@@ -84,12 +85,12 @@ function Research({ stats }) {
             </a>
           </h4>
           <div className="stat-grid">
-            <Stat label="Suscriptores" value={compact(yt.subscribers)} />
-            <Stat label="Vistas totales" value={compact(yt.views)} />
-            <Stat label="Videos" value={compact(yt.videos)} />
-            <Stat label="Publican" value={days(yt.every_days)} />
-            <Stat label="Duración promedio" value={mins(yt.avg_minutes)} />
-            <Stat label="Shorts / largos" value={`${yt.shorts} / ${yt.long}`} />
+            <Stat label={t('Suscriptores')} value={compact(yt.subscribers)} />
+            <Stat label={t('Vistas totales')} value={compact(yt.views)} />
+            <Stat label={t('Videos')} value={compact(yt.videos)} />
+            <Stat label={t('Publican')} value={days(yt.every_days)} />
+            <Stat label={t('Duración promedio')} value={mins(yt.avg_minutes)} />
+            <Stat label={t('Shorts / largos')} value={`${yt.shorts} / ${yt.long}`} />
           </div>
           {yt.recent?.length > 0 && (
             <>
@@ -101,7 +102,7 @@ function Research({ stats }) {
                 ))}
               </div>
               <details className="recent">
-                <summary>Últimos {yt.recent.length} videos</summary>
+                <summary>{t('Últimos {n} videos', { n: yt.recent.length })}</summary>
                 <ol>
                   {yt.recent.map((v) => (
                     <li key={v.url}>
@@ -117,18 +118,18 @@ function Research({ stats }) {
       )}
       {(ap || sp) && (
         <div className="guide-block">
-          <h4>Plataformas de podcast</h4>
+          <h4>{t('Plataformas de podcast')}</h4>
           <div className="stat-grid">
-            {ap && <Stat label="Categoría (Apple)" value={ap.category ?? '—'} />}
-            {ap && <Stat label="Episodios (Apple)" value={compact(ap.episodes)} />}
-            {ap && <Stat label="Publican" value={days(ap.every_days)} />}
-            {ap && <Stat label="Duración promedio" value={mins(ap.avg_minutes)} />}
-            {sp && <Stat label="Episodios (Spotify)" value={compact(sp.episodes)} />}
-            {sp && !ap && <Stat label="Publican" value={days(sp.every_days)} />}
+            {ap && <Stat label={t('Categoría (Apple)')} value={ap.category ?? '—'} />}
+            {ap && <Stat label={t('Episodios (Apple)')} value={compact(ap.episodes)} />}
+            {ap && <Stat label={t('Publican')} value={days(ap.every_days)} />}
+            {ap && <Stat label={t('Duración promedio')} value={mins(ap.avg_minutes)} />}
+            {sp && <Stat label={t('Episodios (Spotify)')} value={compact(sp.episodes)} />}
+            {sp && !ap && <Stat label={t('Publican')} value={days(sp.every_days)} />}
           </div>
           {(ap?.recent ?? sp?.recent ?? []).length > 0 && (
             <details className="recent">
-              <summary>Últimos episodios</summary>
+              <summary>{t('Últimos episodios')}</summary>
               <ol>
                 {(ap?.recent ?? sp.recent).map((e) => (
                   <li key={`${e.date}${e.title}`}>
@@ -142,7 +143,7 @@ function Research({ stats }) {
       )}
       {social && (social.instagram || social.tiktok || social.x || social.buzz?.length > 0) && (
         <div className="guide-block">
-          <h4>Redes y lo que se comenta</h4>
+          <h4>{t('Redes y lo que se comenta')}</h4>
           <div className="tool-row">
             {[['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['x', 'X']].filter(([k]) => social[k]).map(([k, label]) => (
               <a key={k} className="link-pill" href={social[k]} target="_blank" rel="noreferrer">
@@ -157,7 +158,7 @@ function Research({ stats }) {
               ))}
             </ul>
           )}
-          <p className="muted small">Encontrado con búsqueda web de la IA. Confirmen las cuentas antes de usarlas.</p>
+          <p className="muted small">{t('Encontrado con búsqueda web de la IA. Confirmen las cuentas antes de usarlas.')}</p>
         </div>
       )}
     </>
@@ -208,22 +209,22 @@ export default function Referentes() {
       const position = Math.max(0, ...tasks.filter((t) => t.phase_id === phase?.id).map((t) => t.position)) + 1
       actions.addTask({ project_id: project.id, phase_id: phase?.id, title: idea, position, owner: me })
     }
-    notify(kind === 'idea' ? 'Idea agregada.' : 'Tarea creada.')
+    notify(kind === 'idea' ? t('Idea agregada.') : t('Tarea creada.'))
   }
 
   return (
     <>
       <div className="page-head">
-        <h1>Referentes</h1>
+        <h1>{t('Referentes')}</h1>
       </div>
-      <p className="hint notice">Escriban el nombre de un podcast o creador y toquen “Investigar”. Juntamos sus datos públicos y la IA los analiza. Inspírense, no copien.</p>
+      <p className="hint notice">{t('Escriban el nombre de un podcast o creador y toquen “Investigar”. Juntamos sus datos públicos y la IA los analiza. Inspírense, no copien.')}</p>
       <form className="card quick-add" onSubmit={add}>
-        <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nombre del podcast o creador" aria-label="Nombre" />
+        <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t('Nombre del podcast o creador')} aria-label={t('Nombre')} />
         {more ? (
           <>
-            <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="Opcional: enlace de YouTube o Spotify" aria-label="Enlace" />
-            <textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Opcional: ¿qué les gusta de este show?" aria-label="Notas" />
-            <textarea rows={2} value={form.pasted} onChange={(e) => setForm({ ...form, pasted: e.target.value })} placeholder="Opcional: pega títulos recientes o la descripción" aria-label="Texto pegado" />
+            <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder={t('Opcional: enlace de YouTube o Spotify')} aria-label={t('Enlace')} />
+            <textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder={t('Opcional: ¿qué les gusta de este show?')} aria-label={t('Notas')} />
+            <textarea rows={2} value={form.pasted} onChange={(e) => setForm({ ...form, pasted: e.target.value })} placeholder={t('Opcional: pega títulos recientes o la descripción')} aria-label={t('Texto pegado')} />
           </>
         ) : (
           <button type="button" className="btn ghost small" onClick={() => setMore(true)}>
@@ -234,7 +235,7 @@ export default function Referentes() {
           <PlusIcon width={18} height={18} /> Añadir referente
         </button>
       </form>
-      {references.length === 0 && <p className="muted empty">Agreguen 3 a 5 podcasts que admiran.</p>}
+      {references.length === 0 && <p className="muted empty">{t('Agreguen 3 a 5 podcasts que admiran.')}</p>}
       <ul className="tracker-list">
         {references.map((r) => {
           const researched = r.stats?.researched_at
@@ -243,7 +244,7 @@ export default function Referentes() {
               <button className="tracker-main" onClick={() => setOpen(open === r.id ? null : r.id)} aria-expanded={open === r.id}>
                 <b>{r.name}</b>
                 <span className="muted small">
-                  {researched ? `Investigado el ${when(researched)}` : r.analysis ? 'Analizado' : 'Sin investigar'}
+                  {researched ? t('Investigado el {date}', { date: when(researched) }) : r.analysis ? t('Analizado') : t('Sin investigar')}
                   {r.stats?.subscribers ? ` · ${compact(r.stats.subscribers)} suscriptores` : ''}
                 </span>
               </button>
@@ -259,21 +260,21 @@ export default function Referentes() {
                     <Picker found={found[r.id]} busy={busy === r.id} onPick={(pick) => research(r, { pick })} />
                   ) : (
                     <button className="btn primary" disabled={busy === r.id} onClick={() => research(r, { refresh: Boolean(researched) })}>
-                      <SparkIcon width={16} height={16} /> {busy === r.id ? 'Investigando… (hasta 1 minuto)' : researched ? 'Actualizar' : 'Investigar'}
+                      <SparkIcon width={16} height={16} /> {busy === r.id ? t('Investigando… (hasta 1 minuto)') : researched ? t('Actualizar') : t('Investigar')}
                     </button>
                   )}
                   {researched && <Research stats={r.stats} />}
                   {r.analysis && (
                     <>
-                      <div className="compare" role="table" aria-label="Comparación">
+                      <div className="compare" role="table" aria-label={t('Comparación')}>
                         <div className="compare-row head" role="row">
                           <span role="columnheader" />
                           <span role="columnheader">{r.name}</span>
-                          <span role="columnheader">Nosotros</span>
+                          <span role="columnheader">{t('Nosotros')}</span>
                         </div>
                         {ROWS.map(([k, label, ours]) => (
                           <div key={k} className="compare-row" role="row">
-                            <b role="rowheader">{label}</b>
+                            <b role="rowheader">{t(label)}</b>
                             <span role="cell">{r.analysis[k] ?? '—'}</span>
                             <span role="cell" className="muted">{ours(brief) || '—'}</span>
                           </div>
@@ -281,20 +282,20 @@ export default function Referentes() {
                       </div>
                       {r.analysis.compare && (
                         <div className="guide-block">
-                          <h4>Comparado con nuestra marca</h4>
+                          <h4>{t('Comparado con nuestra marca')}</h4>
                           <p>{r.analysis.compare}</p>
                         </div>
                       )}
                       {(r.analysis.steal ?? []).length > 0 && (
                         <div className="guide-block">
-                          <h4>Ideas para robar</h4>
+                          <h4>{t('Ideas para robar')}</h4>
                           <ul className="steal">
                             {r.analysis.steal.map((s) => (
                               <li key={s}>
                                 <span>{s}</span>
                                 <span className="tool-row">
-                                  <button className="btn small ghost" onClick={() => steal(s, 'idea')}>A Ideas</button>
-                                  <button className="btn small ghost" onClick={() => steal(s, 'task')}>Crear tarea</button>
+                                  <button className="btn small ghost" onClick={() => steal(s, 'idea')}>{t('A Ideas')}</button>
+                                  <button className="btn small ghost" onClick={() => steal(s, 'task')}>{t('Crear tarea')}</button>
                                 </span>
                               </li>
                             ))}
@@ -305,7 +306,7 @@ export default function Referentes() {
                   )}
                   {r.stats?.sources?.length > 0 && (
                     <div className="guide-block">
-                      <h4>Fuentes</h4>
+                      <h4>{t('Fuentes')}</h4>
                       <div className="tool-row">
                         {r.stats.sources.map((s) => (
                           <a key={s.url} className="link-pill" href={s.url} target="_blank" rel="noreferrer">

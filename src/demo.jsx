@@ -3,6 +3,7 @@ import { DataContext } from './context'
 import { onboardingKey } from './skips'
 import { DEMO_MESSAGE } from './ai'
 import template from './demo-template.json'
+import { t } from './i18n'
 
 const P = 'demo'
 const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10)
@@ -116,7 +117,7 @@ export function DemoProvider({ onExit, children }) {
         {
           get: (_, name) => (a, fields) => {
             guardAt.current = Date.now()
-            show(DEMO_MESSAGE)
+            show(t(DEMO_MESSAGE))
             return name === 'add' ? { id: 'demo-new', ...fields } : null
           },
         },
@@ -129,8 +130,8 @@ export function DemoProvider({ onExit, children }) {
   return (
     <DataContext.Provider value={value}>
       <div className="demo-banner" role="note">
-        <span>Demo de solo lectura</span>
-        <button type="button" onClick={onExit}>Salir de la demo</button>
+        <span>{t('Demo de solo lectura')}</span>
+        <button type="button" onClick={onExit}>{t('Salir de la demo')}</button>
       </div>
       {children}
       <div className={`toast ${toast ? 'show' : ''}`} role="status">

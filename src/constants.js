@@ -1,9 +1,10 @@
+import { tk } from './i18n'
 export const PEOPLE = ['Carlos', 'Michelle']
 
 export const COLUMNS = [
-  { id: 'todo', label: 'Por hacer' },
-  { id: 'doing', label: 'En progreso' },
-  { id: 'done', label: 'Hecho' },
+  { id: 'todo', label: tk('Por hacer') },
+  { id: 'doing', label: tk('En progreso') },
+  { id: 'done', label: tk('Hecho') },
 ]
 
 export const personClass = (name) => (name === 'Michelle' ? 'michelle' : name === 'Carlos' ? 'carlos' : 'nobody')

@@ -13,15 +13,16 @@ import Ideas from './Ideas'
 import Proximamente from './Proximamente'
 import Laboratorio from './Laboratorio'
 import Referentes from './Referentes'
+import { t, tk } from '../i18n'
 
 const TOOLS = {
-  concepto: { label: 'Abrir Brief de marca', view: 'brief' },
-  branding: { label: 'Completar marca en el Brief', view: 'brief' },
-  invitados: { label: 'Abrir lista de invitados', view: 'invitados' },
-  ideas: { label: 'Abrir banco de ideas', view: 'ideas' },
-  proximamente: { label: 'Abrir calendario', view: 'proximamente' },
-  laboratorio: { label: 'Abrir laboratorio', view: 'laboratorio' },
-  referentes: { label: 'Abrir referentes', view: 'referentes' },
+  concepto: { label: tk('Abrir Brief de marca'), view: 'brief' },
+  branding: { label: tk('Completar marca en el Brief'), view: 'brief' },
+  invitados: { label: tk('Abrir lista de invitados'), view: 'invitados' },
+  ideas: { label: tk('Abrir banco de ideas'), view: 'ideas' },
+  proximamente: { label: tk('Abrir calendario'), view: 'proximamente' },
+  laboratorio: { label: tk('Abrir laboratorio'), view: 'laboratorio' },
+  referentes: { label: tk('Abrir referentes'), view: 'referentes' },
 }
 
 const VIEWS = { brief: Brief, invitados: Invitados, ideas: Ideas, proximamente: Proximamente, laboratorio: Laboratorio, referentes: Referentes }
@@ -60,7 +61,7 @@ export default function Modulos({ focus }) {
         </button>
         <div className="page-head">
           <div>
-            <p className="eyebrow-muted">Módulo {current.number}</p>
+            <p className="eyebrow-muted">{t('Módulo {n}', { n: current.number })}</p>
             <h1>{current.title}</h1>
           </div>
         </div>
@@ -68,11 +69,11 @@ export default function Modulos({ focus }) {
         <div className="bar thin">
           <div className="bar-fill" style={{ width: `${p.pct}%` }} />
         </div>
-        <p className="muted small">{p.done} de {p.total} pasos</p>
+        <p className="muted small">{t('{done} de {total} pasos', { done: p.done, total: p.total })}</p>
         <div className="tool-row">
           {tool && (
             <button className="btn primary" onClick={() => setView(tool.view)}>
-              {tool.label}
+              {t(tool.label)}
             </button>
           )}
           {current.key === 'asistente' && aiEnabled() && (
@@ -111,16 +112,16 @@ export default function Modulos({ focus }) {
   return (
     <>
       <div className="page-head">
-        <h1>Módulos</h1>
+        <h1>{t('Módulos')}</h1>
       </div>
-      <p className="hint">Guías paso a paso y herramientas para cada parte del podcast. Van a su ritmo, sin orden fijo.</p>
+      <p className="hint">{t('Guías paso a paso y herramientas para cada parte del podcast. Van a su ritmo, sin orden fijo.')}</p>
       <div className="module-grid">
         {progress.map(({ module: m, done, total, pct }) => (
           <button key={m.key} className={`card module-card ${pct === 100 ? 'complete' : ''}`} onClick={() => setModuleKey(m.key)}>
             <span className="module-num">{pct === 100 ? <CheckIcon width={16} height={16} /> : m.number}</span>
             <b>{m.title}</b>
             <span className="muted small">
-              {done} de {total} pasos
+              {t('{done} de {total} pasos', { done, total })}
             </span>
             <span className="bar thin">
               <span className="bar-fill" style={{ width: `${pct}%` }} />
@@ -155,17 +156,17 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
   }
 
   return (
-    <Sheet title={`${module.title} · Paso ${step.code}`} onClose={onClose} full>
+    <Sheet title={`${module.title} · ${t('Paso {code}', { code: step.code })}`} onClose={onClose} full>
       <div className="guide">
         <div className="guide-top">
           <span className="chip">⏱ {formatMinutes(step.minutes)}</span>
-          {done && <span className="chip done-chip">Hecho</span>}
+          {done && <span className="chip done-chip">{t('Hecho')}</span>}
         </div>
         <h3 className="step-title">{step.title}</h3>
-        {module.key === 'legal' && <p className="alert warning">Esto es una guía, no asesoría legal. Para dudas, consulta a un abogado o contador.</p>}
+        {module.key === 'legal' && <p className="alert warning">{t('Esto es una guía, no asesoría legal. Para dudas, consulta a un abogado o contador.')}</p>}
         {step.why && (
           <section className="guide-block">
-            <h4>Por qué importa</h4>
+            <h4>{t('Por qué importa')}</h4>
             <p>{step.why}</p>
           </section>
         )}
@@ -173,7 +174,7 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
         {step.code === '0.2' && module.key === 'concepto' && <NameCheck />}
         <section className="guide-block">
           <h4>
-            Lista para marcar <span className="muted">· {doneItems.length} de {step.checklist.length}</span>
+            {t('Lista para marcar')} <span className="muted">· {t('{done} de {total}', { done: doneItems.length, total: step.checklist.length })}</span>
           </h4>
           <ul className="checklist">
             {step.checklist.map((text, i) => (
@@ -190,7 +191,7 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
         </section>
         {step.tips.length > 0 && (
           <section className="guide-block">
-            <h4>Consejos</h4>
+            <h4>{t('Consejos')}</h4>
             <ul className="bullets good">
               {step.tips.map((t) => (
                 <li key={t}>{t}</li>
@@ -200,7 +201,7 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
         )}
         {step.links.length > 0 && (
           <section className="guide-block">
-            <h4>Enlaces</h4>
+            <h4>{t('Enlaces')}</h4>
             <div className="links">
               {step.links.map((l) => (
                 <a key={l.url} className="link-pill" href={l.url} target="_blank" rel="noreferrer">
@@ -213,17 +214,17 @@ export function ModuleStepSheet({ module, step, onClose, onTool }) {
         <div className="tool-row">
           {tool && (
             <button className="btn ghost" onClick={() => onTool?.(tool.view)}>
-              {tool.label}
+              {t(tool.label)}
             </button>
           )}
           {aiEnabled() && (
-            <button className="btn ghost" onClick={() => ask(`Ayúdame con el paso "${step.title}" del módulo ${module.title}.${brief.name ? ` Nuestro podcast se llama ${brief.name}.` : ''}`)}>
+            <button className="btn ghost" onClick={() => ask(t('Ayúdame con el paso "{step}" del módulo {module}.', { step: step.title, module: module.title }) + (brief.name ? t(' Nuestro podcast se llama {name}.', { name: brief.name }) : ''))}>
               <SparkIcon width={18} height={18} /> Pedir ayuda a la IA
             </button>
           )}
         </div>
         <button className={`btn ${done ? 'ghost' : 'primary'} full sticky-cta`} onClick={complete}>
-          <CheckIcon width={18} height={18} /> {done ? 'Marcar como pendiente' : 'Marcar como hecho'}
+          <CheckIcon width={18} height={18} /> {done ? t('Marcar como pendiente') : t('Marcar como hecho')}
         </button>
       </div>
     </Sheet>

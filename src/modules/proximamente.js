@@ -1,5 +1,5 @@
 export default {
-  ...{"key": "proximamente", "number": 5, "title": "Próximamente", "subtitle": "", "intro": "Tracker: título, tipo (episodio / short / vlog), fecha, estado (Planeado / Grabado / Editado / Programado / Publicado), invitado, idea de origen."},
+  ...{"key": "proximamente", "number": 5, "title": "Próximamente", "subtitle": "", "intro": ""},
   steps: [
   {
     "code": "5.1",

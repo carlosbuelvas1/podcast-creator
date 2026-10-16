@@ -2994,3 +2994,33 @@ button.chip {
   font: inherit;
   cursor: pointer;
 }
+
+.lang-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-1);
+}
+
+.lang-toggle button {
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.lang-toggle button.on {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.login .lang-toggle {
+  align-self: center;
+}

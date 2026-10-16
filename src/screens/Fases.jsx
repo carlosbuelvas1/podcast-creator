@@ -6,6 +6,7 @@ import { dueLabel, daysUntil } from '../dates'
 import { personClass, progressOf } from '../constants'
 import { buildIndex, lockReason, lockState, phaseProgress } from '../recommend'
 import { LockIcon } from '../icons'
+import { t } from '../i18n'
 
 export default function Fases({ focus }) {
   const { phases, tasks, items } = useProject()
@@ -31,9 +32,9 @@ export default function Fases({ focus }) {
   return (
     <>
       <div className="page-head">
-        <h1>Fases</h1>
+        <h1>{t('Fases')}</h1>
       </div>
-      <p className="hint">Sigan las fases en orden. Toquen un paso para ver qué hacer y marcar su lista.</p>
+      <p className="hint">{t('Sigan las fases en orden. Toquen un paso para ver qué hacer y marcar su lista.')}</p>
 
       <div className="phases">
         {phases.map((ph) => {
@@ -47,7 +48,7 @@ export default function Fases({ focus }) {
                 <span className="phase-text">
                   <b>{ph.title}</b>
                   <span className="muted small">
-                    {done} de {total} pasos · {pct}%
+                    {t('{done} de {total} pasos', { done, total })} · {pct}%
                   </span>
                 </span>
                 <ChevronIcon className={`chev ${isOpen ? 'up' : ''}`} />
@@ -58,7 +59,7 @@ export default function Fases({ focus }) {
               {isOpen && (
                 <div className="phase-body">
                   {ph.summary && <p className="phase-summary">{ph.summary}</p>}
-                  {phaseTasks.length === 0 && <p className="muted empty">Esta fase no tiene pasos. Añadan el primero.</p>}
+                  {phaseTasks.length === 0 && <p className="muted empty">{t('Esta fase no tiene pasos. Añadan el primero.')}</p>}
                   <ul className="steps">
                     {phaseTasks.map((t) => (
                       <StepRow key={t.id} task={t} lock={lockReason(lockOf(t))} items={items.filter((i) => i.task_id === t.id)} onOpen={() => setEditing(t)} />
@@ -90,7 +91,7 @@ function StepRow({ task, items, onOpen, lock }) {
       <button
         className={`check ${done ? 'on' : ''}`}
         onClick={() => actions.updateTask(task.id, { status: done ? 'todo' : 'done' })}
-        aria-label={done ? `Marcar "${task.title}" como pendiente` : `Marcar "${task.title}" como hecho`}
+        aria-label={done ? t('Marcar "{title}" como pendiente', { title: task.title }) : t('Marcar "{title}" como hecho', { title: task.title })}
       >
         <CheckIcon width={14} height={14} />
       </button>
@@ -102,8 +103,8 @@ function StepRow({ task, items, onOpen, lock }) {
           </span>
         )}
         <span className="step-meta">
-          <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? 'Sin asignar'}</span>
-          {task.status === 'doing' && <span className="tag doing">En progreso</span>}
+          <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? t('Sin asignar')}</span>
+          {task.status === 'doing' && <span className="tag doing">{t('En progreso')}</span>}
           {items.length > 0 && (
             <span className="muted small">
               {checked}/{items.length}

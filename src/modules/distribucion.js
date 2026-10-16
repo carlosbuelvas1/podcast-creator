@@ -1,5 +1,5 @@
 export default {
-  ...{"key": "distribucion", "number": 6, "title": "Distribución y crecimiento", "subtitle": "", "intro": "YouTube"},
+  ...{"key": "distribucion", "number": 6, "title": "Distribución y crecimiento", "subtitle": "", "intro": ""},
   steps: [
   {
     "code": "6.1",

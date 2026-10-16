@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { supabase } from '../supabase'
 import { useStore } from '../context'
 import Sheet from '../Sheet'
-import { aiEnabled, setAiEnabled } from '../ai'
+import { DEMO_MESSAGE, aiEnabled, setAiEnabled } from '../ai'
+import { t } from '../i18n'
+import LangToggle from '../LangToggle'
 
 export default function Account({ onClose }) {
-  const { me, session, notify } = useStore()
+  const { me, session, notify, demo } = useStore()
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [ai, setAi] = useState(aiEnabled)
@@ -18,51 +20,59 @@ export default function Account({ onClose }) {
 
   const changePassword = async (e) => {
     e.preventDefault()
+    if (demo) {
+      notify(t(DEMO_MESSAGE))
+      return
+    }
     if (password.length < 6) {
-      notify('La contraseña debe tener al menos 6 caracteres.')
+      notify(t('La contraseña debe tener al menos 6 caracteres.'))
       return
     }
     setBusy(true)
     const { error } = await supabase.auth.updateUser({ password })
     setBusy(false)
     if (error) {
-      notify('No se pudo cambiar la contraseña. Prueba con otra.')
+      notify(t('No se pudo cambiar la contraseña. Prueba con otra.'))
       return
     }
     setPassword('')
-    notify('Listo, contraseña cambiada.')
+    notify(t('Listo, contraseña cambiada.'))
   }
 
   return (
-    <Sheet title="Mi cuenta" onClose={onClose}>
+    <Sheet title={t('Mi cuenta')} onClose={onClose}>
       <div className="account">
         <p className="account-name">{me}</p>
         <p className="muted">{session.user.email}</p>
       </div>
       <form onSubmit={changePassword}>
         <label className="field">
-          <span>Nueva contraseña</span>
+          <span>{t('Nueva contraseña')}</span>
           <input
             type="password"
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Mínimo 6 caracteres"
+            placeholder={t('Mínimo 6 caracteres')}
           />
         </label>
         <button className="btn full" disabled={busy || !password}>
-          Cambiar contraseña
+          {t('Cambiar contraseña')}
         </button>
       </form>
       <div className="sheet-section">
         <label className="toggle">
           <input type="checkbox" checked={ai} onChange={(e) => toggleAi(e.target.checked)} />
-          <span>IA activada</span>
+          <span>{t('IA activada')}</span>
         </label>
-        <p className="muted small">Si la apagas, se ocultan los botones de IA y la app sigue recomendando pasos sola.</p>
+        <p className="muted small">{t('Si la apagas, se ocultan los botones de IA y la app sigue recomendando pasos sola.')}</p>
+      </div>
+      <div className="sheet-section">
+        <p className="muted small">{t('Idioma')}</p>
+        <LangToggle />
       </div>
       <button className="btn danger-ghost full" onClick={() => supabase.auth.signOut()}>
-        Cerrar sesión
+        {t('Cerrar sesión')}
       </button>
     </Sheet>
   )

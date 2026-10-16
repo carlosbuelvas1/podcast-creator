@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { CloseIcon } from './icons'
+import { t } from './i18n'
 
 export default function Sheet({ title, onClose, children, full = false, actions = null }) {
   const closeRef = useRef(onClose)
@@ -51,7 +52,7 @@ export default function Sheet({ title, onClose, children, full = false, actions 
           <h2>{title}</h2>
           <div className="sheet-head-actions">
             {actions}
-            <button className="icon-btn" onClick={onClose} aria-label="Cerrar">
+            <button className="icon-btn" onClick={onClose} aria-label={t('Cerrar')}>
               <CloseIcon />
             </button>
           </div>
@@ -74,7 +75,7 @@ export function Segmented({ options, value, onChange, name }) {
           className={`${value === o.value ? 'on' : ''} ${o.className ?? ''}`}
           onClick={() => onChange(o.value)}
         >
-          {o.label}
+          {t(o.label)}
         </button>
       ))}
     </div>

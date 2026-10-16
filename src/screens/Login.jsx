@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../supabase'
+import { t } from '../i18n'
+import LangToggle from '../LangToggle'
 
 export default function Login({ onDemo }) {
   const [email, setEmail] = useState('')
@@ -16,8 +18,8 @@ export default function Login({ onDemo }) {
     if (error) {
       setError(
         error.status === 400 || /invalid/i.test(error.message)
-          ? 'El correo o la contraseña no son correctos.'
-          : 'No pudimos entrar. Revisa tu conexión e intenta de nuevo.',
+          ? t('El correo o la contraseña no son correctos.')
+          : t('No pudimos entrar. Revisa tu conexión e intenta de nuevo.'),
       )
     }
   }
@@ -27,10 +29,10 @@ export default function Login({ onDemo }) {
       <form className="card narrow" onSubmit={submit}>
         <div className="logo big" />
         <h1>Podcast Creator</h1>
-        <p className="muted">Su sistema paso a paso para crear un podcast, de la idea al lanzamiento.</p>
+        <p className="muted">{t('Su sistema paso a paso para crear un podcast, de la idea al lanzamiento.')}</p>
 
         <label className="field">
-          <span>Correo</span>
+          <span>{t('Correo')}</span>
           <input
             type="email"
             autoComplete="email"
@@ -38,12 +40,12 @@ export default function Login({ onDemo }) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="tu@correo.com"
+            placeholder={t('tu@correo.com')}
           />
         </label>
 
         <label className="field">
-          <span>Contraseña</span>
+          <span>{t('Contraseña')}</span>
           <input
             type="password"
             autoComplete="current-password"
@@ -56,14 +58,15 @@ export default function Login({ onDemo }) {
         {error && <p className="error">{error}</p>}
 
         <button className="btn primary full" disabled={busy}>
-          {busy ? 'Entrando…' : 'Entrar'}
+          {busy ? t('Entrando…') : t('Entrar')}
         </button>
         {onDemo && (
           <button type="button" className="btn ghost full" onClick={onDemo}>
-            Ver demo
+            {t('Ver demo')}
           </button>
         )}
-        <p className="muted small center">¿Olvidaste tu contraseña? Avísale a Carlos y él te ayuda.</p>
+        <p className="muted small center">{t('¿Olvidaste tu contraseña? Avísale a Carlos y él te ayuda.')}</p>
+        <LangToggle />
       </form>
     </div>
   )

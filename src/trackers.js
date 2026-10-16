@@ -1,3 +1,4 @@
+import { t, tk } from './i18n'
 export const slug = (s) => (s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')
 
 export const nameLinks = (name, handle) => {
@@ -11,33 +12,33 @@ export const nameLinks = (name, handle) => {
     { key: 'x', label: 'X', url: `https://x.com/${h}` },
     { key: 'tiktok', label: 'TikTok', url: `https://www.tiktok.com/@${h}` },
     { key: 'youtube', label: 'YouTube', url: `https://www.youtube.com/@${h}` },
-    { key: 'uspto', label: 'Marcas (USPTO)', url: 'https://tmsearch.uspto.gov/search/search-information' },
-    { key: 'sunbiz', label: 'Empresas en Florida', url: 'https://search.sunbiz.org/Inquiry/CorporationSearch/ByName' },
+    { key: 'uspto', label: t('Marcas (USPTO)'), url: 'https://tmsearch.uspto.gov/search/search-information' },
+    { key: 'sunbiz', label: t('Empresas en Florida'), url: 'https://search.sunbiz.org/Inquiry/CorporationSearch/ByName' },
   ]
 }
 
 export const KINDS = [
-  { id: 'episode', label: 'Episodio' },
-  { id: 'short', label: 'Short' },
-  { id: 'vlog', label: 'Vlog' },
+  { id: 'episode', label: tk('Episodio') },
+  { id: 'short', label: tk('Short') },
+  { id: 'vlog', label: tk('Vlog') },
 ]
 
-export const kindLabel = (k) => KINDS.find((x) => x.id === k)?.label ?? k
+export const kindLabel = (k) => t(KINDS.find((x) => x.id === k)?.label ?? k)
 
 export const GUEST_STATUS = [
-  { id: 'idea', label: 'Idea' },
-  { id: 'contacted', label: 'Contactado' },
-  { id: 'confirmed', label: 'Confirmado' },
-  { id: 'recorded', label: 'Grabado' },
-  { id: 'published', label: 'Publicado' },
+  { id: 'idea', label: tk('Idea') },
+  { id: 'contacted', label: tk('Contactado') },
+  { id: 'confirmed', label: tk('Confirmado') },
+  { id: 'recorded', label: tk('Grabado') },
+  { id: 'published', label: tk('Publicado') },
 ]
 
 export const CAL_STATUS = [
-  { id: 'planned', label: 'Planeado' },
-  { id: 'recorded', label: 'Grabado' },
-  { id: 'edited', label: 'Editado' },
-  { id: 'scheduled', label: 'Programado' },
-  { id: 'published', label: 'Publicado' },
+  { id: 'planned', label: tk('Planeado') },
+  { id: 'recorded', label: tk('Grabado') },
+  { id: 'edited', label: tk('Editado') },
+  { id: 'scheduled', label: tk('Programado') },
+  { id: 'published', label: tk('Publicado') },
 ]
 
 export const today = () => new Date().toISOString().slice(0, 10)

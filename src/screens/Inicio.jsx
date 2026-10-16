@@ -12,14 +12,15 @@ import { autoAssign, ownerBalance, phaseProgress, recommend } from '../recommend
 import { CalendarIcon, CheckIcon, EditIcon } from '../icons'
 import { byDueDate, daysUntil, dueLabel, longDate } from '../dates'
 import { PEOPLE, personClass, progressOf } from '../constants'
+import { t } from '../i18n'
 
 function countdown(date) {
   const days = daysUntil(date)
   if (days === null) return null
-  if (days > 1) return `Faltan ${days} días`
-  if (days === 1) return '¡Es mañana!'
-  if (days === 0) return '¡Hoy es el lanzamiento!'
-  return `Lanzado hace ${-days} ${days === -1 ? 'día' : 'días'}`
+  if (days > 1) return t('Faltan {n} días', { n: days })
+  if (days === 1) return t('¡Es mañana!')
+  if (days === 0) return t('¡Hoy es el lanzamiento!')
+  return t(days === -1 ? 'Lanzado hace {n} día' : 'Lanzado hace {n} días', { n: -days })
 }
 
 function Ring({ value }) {
@@ -33,7 +34,7 @@ function Ring({ value }) {
       </svg>
       <div className="ring-label">
         <b>{value}%</b>
-        <span>listo</span>
+        <span>{t('listo')}</span>
       </div>
     </div>
   )
@@ -66,14 +67,14 @@ export default function Inicio({ go }) {
   const phaseName = Object.fromEntries(phases.map((p) => [p.id, p.title]))
 
   const alerts = []
-  if (overdue.length) alerts.push({ tone: 'danger', text: `${overdue.length} ${overdue.length === 1 ? 'paso vencido' : 'pasos vencidos'}. Pónganse al día o cambien la fecha.`, action: ['Ver tareas', () => go('tareas')] })
+  if (overdue.length) alerts.push({ tone: 'danger', text: t(overdue.length === 1 ? '{n} paso vencido. Pónganse al día o cambien la fecha.' : '{n} pasos vencidos. Pónganse al día o cambien la fecha.', { n: overdue.length }), action: [t('Ver tareas'), () => go('tareas')] })
   if (balance.unbalanced) {
     const [heavy] = Object.entries(balance.counts).sort((a, b) => b[1] - a[1])
-    alerts.push({ tone: 'warning', text: `${heavy[0]} tiene ${balance.gap} pasos más que su pareja.`, action: ['Repartir parejo', () => autoAssign(tasks, PEOPLE, phases).forEach((c) => actions.updateTask(c.id, { owner: c.owner }))] })
+    alerts.push({ tone: 'warning', text: t('{name} tiene {n} pasos más que su pareja.', { name: heavy[0], n: balance.gap }), action: [t('Repartir parejo'), () => autoAssign(tasks, PEOPLE, phases).forEach((c) => actions.updateTask(c.id, { owner: c.owner }))] })
   } else if (unassigned.length) {
-    alerts.push({ tone: 'info', text: `${unassigned.length} ${unassigned.length === 1 ? 'paso sin responsable' : 'pasos sin responsable'}.`, action: ['Repartir', () => autoAssign(tasks, PEOPLE, phases).forEach((c) => actions.updateTask(c.id, { owner: c.owner }))] })
+    alerts.push({ tone: 'info', text: t(unassigned.length === 1 ? '{n} paso sin responsable.' : '{n} pasos sin responsable.', { n: unassigned.length }), action: [t('Repartir'), () => autoAssign(tasks, PEOPLE, phases).forEach((c) => actions.updateTask(c.id, { owner: c.owner }))] })
   }
-  if (!project.launch_date) alerts.push({ tone: 'info', text: 'Todavía no tienen fecha de lanzamiento.', action: ['Elegir fecha', () => setEditing(true)] })
+  if (!project.launch_date) alerts.push({ tone: 'info', text: t('Todavía no tienen fecha de lanzamiento.'), action: [t('Elegir fecha'), () => setEditing(true)] })
 
   return (
     <>
@@ -81,18 +82,18 @@ export default function Inicio({ go }) {
         <div>
           <p className="eyebrow-muted">
             {project.name}
-            {provisional && <span className="badge-prov">Nombre provisional</span>}
+            {provisional && <span className="badge-prov">{t('Nombre provisional')}</span>}
           </p>
-          <h1 className="greeting">Hola, {me}</h1>
+          <h1 className="greeting">{t('Hola, {name}', { name: me })}</h1>
         </div>
-        <button className="icon-btn" onClick={() => setEditing(true)} aria-label="Editar proyecto">
+        <button className="icon-btn" onClick={() => setEditing(true)} aria-label={t('Editar proyecto')}>
           <EditIcon width={18} height={18} />
         </button>
       </div>
 
       {nameRec ? (
         <section className="hero rec">
-          <span className="eyebrow">Siguiente paso recomendado</span>
+          <span className="eyebrow">{t('Siguiente paso recomendado')}</span>
           <h2 className="hero-goal">{nameRec.step.title}</h2>
           <p className="hero-sub">{nameRec.step.why}</p>
           <div className="chips">
@@ -102,28 +103,28 @@ export default function Inicio({ go }) {
             ))}
           </div>
           <div className="hero-actions">
-            <button className="btn on-hero" onClick={() => go('modulos', NAME_FOCUS)}>{aiEnabled() ? 'Crear nombre con IA' : 'Empezar'}</button>
+            <button className="btn on-hero" onClick={() => go('modulos', NAME_FOCUS)}>{aiEnabled() ? t('Crear nombre con IA') : t('Empezar')}</button>
           </div>
         </section>
       ) : top ? (
         <RecommendCard rec={top} onOpen={() => setOpen(top.task)} onSkip={() => skip(top.task.id)} onStart={() => { actions.updateTask(top.task.id, { status: 'doing', owner: top.task.owner ?? me }); setOpen({ ...top.task, status: 'doing' }) }} />
       ) : (
         <section className="hero rec">
-          <span className="eyebrow">Siguiente paso recomendado</span>
-          <h2 className="hero-goal">{overall.total && overall.done === overall.total ? '¡Terminaron todos los pasos!' : 'Nada disponible para ti ahora'}</h2>
-          <p className="hero-sub">{overall.done === overall.total ? 'Celebren y sigan publicando con constancia.' : 'Revisa las fases o ayuda a tu pareja con lo suyo.'}</p>
-          <button className="btn on-hero" onClick={() => go('fases')}>Ver fases</button>
+          <span className="eyebrow">{t('Siguiente paso recomendado')}</span>
+          <h2 className="hero-goal">{overall.total && overall.done === overall.total ? t('¡Terminaron todos los pasos!') : t('Nada disponible para ti ahora')}</h2>
+          <p className="hero-sub">{overall.done === overall.total ? t('Celebren y sigan publicando con constancia.') : t('Revisa las fases o ayuda a tu pareja con lo suyo.')}</p>
+          <button className="btn on-hero" onClick={() => go('fases')}>{t('Ver fases')}</button>
         </section>
       )}
 
       {(alternatives.length > 0 || partnerTop) && (
         <section className="card">
-          <h3 className="card-title">También pueden</h3>
+          <h3 className="card-title">{t('También pueden')}</h3>
           <ul className="mini-list">
             {alternatives.map((r) => (
-              <MiniRow key={r.task.id} rec={r} label="Alternativa" phase={phaseName[r.task.phase_id]} onOpen={() => setOpen(r.task)} />
+              <MiniRow key={r.task.id} rec={r} label={t('Alternativa')} phase={phaseName[r.task.phase_id]} onOpen={() => setOpen(r.task)} />
             ))}
-            {partnerTop && <MiniRow rec={partnerTop} label={`Lo siguiente de ${partner}`} phase={phaseName[partnerTop.task.phase_id]} onOpen={() => setOpen(partnerTop.task)} person={partner} />}
+            {partnerTop && <MiniRow rec={partnerTop} label={t('Lo siguiente de {name}', { name: partner })} phase={phaseName[partnerTop.task.phase_id]} onOpen={() => setOpen(partnerTop.task)} person={partner} />}
           </ul>
         </section>
       )}
@@ -132,11 +133,11 @@ export default function Inicio({ go }) {
         const [m] = moduleRecommendations(modules, 1)
         return m && !nameRec && !overdue.length ? (
           <section className="card">
-            <h3 className="card-title">Módulo sugerido</h3>
+            <h3 className="card-title">{t('Módulo sugerido')}</h3>
             <ul className="mini-list">
               <li>
                 <button className="mini" onClick={() => go('modulos', m.module.key)}>
-                  <span className="mini-label">{m.module.title}</span>
+                  <span className="mini-label">{t('Módulo {n}', { n: m.module.number })} · {m.module.title}</span>
                   <span className="mini-title">{m.step.title}</span>
                   <span className="mini-meta">{m.reasons.join(' · ')}</span>
                 </button>
@@ -161,11 +162,11 @@ export default function Inicio({ go }) {
         <div className="progress-top">
           <Ring value={overall.pct} />
           <div>
-            <h3 className="card-title">Progreso general</h3>
-            <p className="muted small">{overall.done} de {overall.total} pasos hechos</p>
+            <h3 className="card-title">{t('Progreso general')}</h3>
+            <p className="muted small">{t('{done} de {total} pasos hechos', { done: overall.done, total: overall.total })}</p>
             <p className="muted small date-line">
               <CalendarIcon width={14} height={14} />
-              {project.launch_date ? `${longDate(project.launch_date)} · ${countdown(project.launch_date)}` : 'Sin fecha de lanzamiento'}
+              {project.launch_date ? `${longDate(project.launch_date)} · ${countdown(project.launch_date)}` : t('Sin fecha de lanzamiento')}
             </p>
           </div>
         </div>
@@ -182,22 +183,22 @@ export default function Inicio({ go }) {
       <BriefCard onOpen={() => go('modulos', 'brief')} />
 
       <section className="card">
-        <h3 className="card-title">Esta semana</h3>
+        <h3 className="card-title">{t('Esta semana')}</h3>
         {week.length === 0 ? (
-          <p className="muted empty">Nada vence esta semana. Usen el paso recomendado para avanzar.</p>
+          <p className="muted empty">{t('Nada vence esta semana. Usen el paso recomendado para avanzar.')}</p>
         ) : (
           <ul className="next-list">
-            {week.map((t) => (
-              <li key={t.id}>
-                <button className="check" onClick={() => actions.updateTask(t.id, { status: 'done' })} aria-label={`Marcar "${t.title}" como hecho`}>
+            {week.map((task) => (
+              <li key={task.id}>
+                <button className="check" onClick={() => actions.updateTask(task.id, { status: 'done' })} aria-label={t('Marcar "{title}" como hecho', { title: task.title })}>
                   <CheckIcon width={14} height={14} />
                 </button>
-                <button className="next-title plain" onClick={() => setOpen(t)}>
-                  {t.title}
-                  <small>{phaseName[t.phase_id]}</small>
+                <button className="next-title plain" onClick={() => setOpen(task)}>
+                  {task.title}
+                  <small>{phaseName[task.phase_id]}</small>
                 </button>
-                <span className={`owner ${personClass(t.owner)}`}>{t.owner ?? 'Nadie'}</span>
-                <span className={`due ${daysUntil(t.due_date) < 0 ? 'late' : ''}`}>{dueLabel(t.due_date)}</span>
+                <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? t('Nadie')}</span>
+                <span className={`due ${daysUntil(task.due_date) < 0 ? 'late' : ''}`}>{dueLabel(task.due_date)}</span>
               </li>
             ))}
           </ul>
@@ -214,7 +215,7 @@ function RecommendCard({ rec, onOpen, onSkip, onStart }) {
   const guide = guideFor(rec.code)
   return (
     <section className="hero rec">
-      <span className="eyebrow">Siguiente paso recomendado</span>
+      <span className="eyebrow">{t('Siguiente paso recomendado')}</span>
       <h2 className="hero-goal">{rec.task.title}</h2>
       {(guide.why || rec.task.explanation) && <p className="hero-sub">{guide.why || rec.task.explanation}</p>}
       <div className="chips">
@@ -224,9 +225,9 @@ function RecommendCard({ rec, onOpen, onSkip, onStart }) {
         ))}
       </div>
       <div className="hero-actions">
-        <button className="btn on-hero" onClick={onStart}>{rec.task.status === 'doing' ? 'Seguir' : 'Empezar'}</button>
-        <button className="btn ghost-hero" onClick={onOpen}>Ver guía</button>
-        <button className="btn text-hero" onClick={onSkip}>Saltar por ahora</button>
+        <button className="btn on-hero" onClick={onStart}>{rec.task.status === 'doing' ? t('Seguir') : t('Empezar')}</button>
+        <button className="btn ghost-hero" onClick={onOpen}>{t('Ver guía')}</button>
+        <button className="btn text-hero" onClick={onSkip}>{t('Saltar por ahora')}</button>
       </div>
     </section>
   )

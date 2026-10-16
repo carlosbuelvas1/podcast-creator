@@ -5,8 +5,9 @@ import { CheckIcon, LinkIcon, SparkIcon } from '../icons'
 import { isProvisional, useChooseName } from '../naming'
 import NameLab from './NameLab'
 import { nameLinks, slug } from '../trackers'
+import { t, tk } from '../i18n'
 
-const NAME_PROMPT = 'Dame 10 opciones de nombre para nuestro podcast, cortas y fáciles de decir, con una frase de por qué funciona cada una.'
+const NAME_PROMPT = tk('Dame 10 opciones de nombre para nuestro podcast, cortas y fáciles de decir, con una frase de por qué funciona cada una.')
 
 function useBrief() {
   const { actions } = useStore()
@@ -27,24 +28,24 @@ export function NamePicker() {
   }
   return (
     <section className="guide-block name-picker">
-      <h4>Nombre del podcast</h4>
+      <h4>{t('Nombre del podcast')}</h4>
       <p className="muted small">
         Ahora: <b>{project.name}</b>
-        {provisional && <span className="badge-prov">Nombre provisional</span>}
+        {provisional && <span className="badge-prov">{t('Nombre provisional')}</span>}
       </p>
       <NameLab />
       <form onSubmit={submit} className="name-form">
         <label className="field">
-          <span>¿Ya tienen uno? Escríbanlo aquí</span>
-          <input value={name} onChange={(e) => { setName(e.target.value); setChosen(false) }} placeholder="Ej. Entre Nos" />
+          <span>{t('¿Ya tienen uno? Escríbanlo aquí')}</span>
+          <input value={name} onChange={(e) => { setName(e.target.value); setChosen(false) }} placeholder={t('Ej. Entre Nos')} />
         </label>
         <button className="btn primary full" disabled={!name.trim() || name.trim() === project.name}>
-          Usar este nombre
+          {t('Usar este nombre')}
         </button>
       </form>
       {chosen && (
         <p className="alert success" role="status">
-          <CheckIcon width={16} height={16} /> ¡Listo! Ahora su podcast se llama {name.trim()} en toda la app.
+          <CheckIcon width={16} height={16} /> {t('¡Listo! Ahora su podcast se llama {name} en toda la app.', { name: name.trim() })}
         </p>
       )}
     </section>
@@ -60,10 +61,10 @@ export function NameCheck() {
   const mark = (key, value) => save({ name: name || brief.name, availability: { ...availability, [key]: availability[key] === value ? null : value } })
   return (
     <section className="guide-block">
-      <h4>¿Está libre?</h4>
+      <h4>{t('¿Está libre?')}</h4>
       <label className="field">
-        <span>Nombre a revisar</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => name !== brief.name && save({ name })} placeholder="Ej. Entre Nos Pod" />
+        <span>{t('Nombre a revisar')}</span>
+        <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => name !== brief.name && save({ name })} placeholder={t('Ej. Entre Nos Pod')} />
       </label>
       {name.trim() ? (
         <ul className="name-check">
@@ -73,14 +74,14 @@ export function NameCheck() {
                 <LinkIcon width={14} height={14} /> {l.label}
               </a>
               <span className="pair">
-                <button className={`pill-toggle ${availability[l.key] === 'libre' ? 'ok' : ''}`} onClick={() => mark(l.key, 'libre')}>Libre</button>
-                <button className={`pill-toggle ${availability[l.key] === 'ocupado' ? 'bad' : ''}`} onClick={() => mark(l.key, 'ocupado')}>Ocupado</button>
+                <button className={`pill-toggle ${availability[l.key] === 'libre' ? 'ok' : ''}`} onClick={() => mark(l.key, 'libre')}>{t('Libre')}</button>
+                <button className={`pill-toggle ${availability[l.key] === 'ocupado' ? 'bad' : ''}`} onClick={() => mark(l.key, 'ocupado')}>{t('Ocupado')}</button>
               </span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="muted small">Escribe un nombre y te damos los enlaces de búsqueda ya listos.</p>
+        <p className="muted small">{t('Escribe un nombre y te damos los enlaces de búsqueda ya listos.')}</p>
       )}
       {name.trim() && name.trim() !== project.name && (
         <button type="button" className="btn ghost full" onClick={() => choose(name)}>
@@ -92,26 +93,26 @@ export function NameCheck() {
 }
 
 const PERSONA = [
-  ['age', 'Edad', 'Ej. 25 a 35 años'],
-  ['location', 'Dónde vive', 'Ej. Miami, Latinoamérica'],
-  ['language', 'Idioma', 'Español / spanglish'],
-  ['interests', 'Intereses', 'Ej. comedia, cultura, relaciones'],
-  ['pains', 'Problemas o deseos', '¿Qué le preocupa o qué quiere?'],
-  ['channels', 'Dónde consume contenido', 'YouTube, Spotify, TikTok, en el carro…'],
+  ['age', tk('Edad'), tk('Ej. 25 a 35 años')],
+  ['location', tk('Dónde vive'), tk('Ej. Miami, Latinoamérica')],
+  ['language', tk('Idioma'), tk('Español / spanglish')],
+  ['interests', tk('Intereses'), tk('Ej. comedia, cultura, relaciones')],
+  ['pains', tk('Problemas o deseos'), tk('¿Qué le preocupa o qué quiere?')],
+  ['channels', tk('Dónde consume contenido'), tk('YouTube, Spotify, TikTok, en el carro…')],
 ]
 
 const VALUE = [
-  ['benefits', 'Lo que gana quien escucha', '3 cosas: reír, aprender, sentirse acompañado…'],
-  ['promise', 'Promesa', 'Cada semana, una conversación honesta sobre…'],
-  ['tagline', 'Eslogan', '3 a 6 palabras'],
-  ['logline', 'Logline', 'Una frase con quién, qué y por qué'],
-  ['differentiation', 'Qué nos hace diferentes', 'Nosotros somos los únicos que…'],
+  ['benefits', tk('Lo que gana quien escucha'), tk('3 cosas: reír, aprender, sentirse acompañado…')],
+  ['promise', tk('Promesa'), tk('Cada semana, una conversación honesta sobre…')],
+  ['tagline', tk('Eslogan'), tk('3 a 6 palabras')],
+  ['logline', tk('Logline'), tk('Una frase con quién, qué y por qué')],
+  ['differentiation', tk('Qué nos hace diferentes'), tk('Nosotros somos los únicos que…')],
 ]
 
 const BRAND = [
-  ['palette', 'Paleta de colores', 'Ej. #7C3AED, #F472B6, #0F0B1A'],
-  ['fonts', 'Fuentes', 'Ej. Plus Jakarta Sans y Inter'],
-  ['kit', 'Enlace al kit de marca', 'https://drive.google.com/…'],
+  ['palette', tk('Paleta de colores'), tk('Ej. #7C3AED, #F472B6, #0F0B1A')],
+  ['fonts', tk('Fuentes'), tk('Ej. Plus Jakarta Sans y Inter')],
+  ['kit', tk('Enlace al kit de marca'), 'https://drive.google.com/…'],
 ]
 
 export default function Brief() {
@@ -138,7 +139,7 @@ export default function Brief() {
 
   const field = ([k, label, ph], value, onChange, long) => (
     <label className="field" key={k}>
-      <span>{label}</span>
+      <span>{t(label)}</span>
       {long ? <textarea rows={2} value={value ?? ''} onChange={(e) => onChange(k, e.target.value)} placeholder={ph} /> : <input value={value ?? ''} onChange={(e) => onChange(k, e.target.value)} placeholder={ph} />}
     </label>
   )
@@ -146,33 +147,33 @@ export default function Brief() {
   return (
     <form onSubmit={submit} className="brief-form">
       <div className="page-head">
-        <h1>Brief de marca</h1>
+        <h1>{t('Brief de marca')}</h1>
       </div>
-      <p className="hint">Todo lo que define su show en un solo lugar. La IA lo usa para darles ideas a su medida.</p>
+      <p className="hint">{t('Todo lo que define su show en un solo lugar. La IA lo usa para darles ideas a su medida.')}</p>
       <section className="card">
-        <h3 className="card-title">Nombre</h3>
-        {field(['name', 'Nombre del podcast', 'Ej. Entre Nos'], draft.name, set)}
-        {field(['handle', '@ en redes', 'Ej. entrenospod'], draft.handle, set)}
-        {field(['domain', 'Dominio', 'Ej. entrenos.com'], draft.domain, set)}
+        <h3 className="card-title">{t('Nombre')}</h3>
+        {field(['name', t('Nombre del podcast'), t('Ej. Entre Nos')], draft.name, set)}
+        {field(['handle', '@ en redes', t('Ej. entrenospod')], draft.handle, set)}
+        {field(['domain', t('Dominio'), t('Ej. entrenos.com')], draft.domain, set)}
         {aiEnabled() && (
-          <button type="button" className="btn ghost" onClick={() => ask(NAME_PROMPT)}>
+          <button type="button" className="btn ghost" onClick={() => ask(t(NAME_PROMPT))}>
             <SparkIcon width={18} height={18} /> Pedir 10 nombres a la IA
           </button>
         )}
       </section>
       <section className="card">
-        <h3 className="card-title">Nuestro oyente</h3>
+        <h3 className="card-title">{t('Nuestro oyente')}</h3>
         {PERSONA.map((f) => field(f, draft.persona?.[f[0]], setPersona, f[0] === 'pains' || f[0] === 'interests'))}
       </section>
       <section className="card">
-        <h3 className="card-title">Propuesta de valor</h3>
+        <h3 className="card-title">{t('Propuesta de valor')}</h3>
         {VALUE.map((f) => field(f, draft[f[0]], set, f[0] !== 'tagline'))}
       </section>
       <section className="card">
-        <h3 className="card-title">Identidad visual</h3>
+        <h3 className="card-title">{t('Identidad visual')}</h3>
         {BRAND.map((f) => field(f, draft[f[0]], set))}
       </section>
-      <button className="btn primary full sticky-cta">{saved ? 'Guardado ✓' : 'Guardar brief'}</button>
+      <button className="btn primary full sticky-cta">{saved ? t('Guardado ✓') : t('Guardar brief')}</button>
     </form>
   )
 }
@@ -183,8 +184,8 @@ export function BriefCard({ onOpen }) {
   return (
     <section className="card brief-card">
       <div className="brief-top">
-        <h3 className="card-title">Brief de marca</h3>
-        <button className="link" onClick={onOpen}>{filled ? 'Editar' : 'Completar'}</button>
+        <h3 className="card-title">{t('Brief de marca')}</h3>
+        <button className="link" onClick={onOpen}>{filled ? t('Editar') : t('Completar')}</button>
       </div>
       {filled ? (
         <>
@@ -200,7 +201,7 @@ export function BriefCard({ onOpen }) {
           )}
         </>
       ) : (
-        <p className="muted empty">Definan nombre, oyente y promesa. Les toma 15 minutos y ordena todo lo demás.</p>
+        <p className="muted empty">{t('Definan nombre, oyente y promesa. Les toma 15 minutos y ordena todo lo demás.')}</p>
       )}
     </section>
   )

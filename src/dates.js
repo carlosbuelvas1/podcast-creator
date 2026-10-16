@@ -1,3 +1,4 @@
+import { getLang, t } from './i18n'
 export function parseDate(value) {
   if (!value) return null
   const [y, m, d] = value.split('-').map(Number)
@@ -18,21 +19,21 @@ export function daysUntil(value) {
 export function shortDate(value) {
   const date = parseDate(value)
   if (!date) return ''
-  return date.toLocaleDateString('es', { day: 'numeric', month: 'short' }).replace('.', '')
+  return date.toLocaleDateString(getLang(), { day: 'numeric', month: 'short' }).replace('.', '')
 }
 
 export function longDate(value) {
   const date = parseDate(value)
   if (!date) return ''
-  return date.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  return date.toLocaleDateString(getLang(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 export function dueLabel(value) {
   const days = daysUntil(value)
   if (days === null) return ''
-  if (days === 0) return 'Hoy'
-  if (days === 1) return 'Mañana'
-  if (days === -1) return 'Ayer'
+  if (days === 0) return t('Hoy')
+  if (days === 1) return t('Mañana')
+  if (days === -1) return t('Ayer')
   return shortDate(value)
 }
 

@@ -5,6 +5,7 @@ import { Segmented } from '../Sheet'
 import { aiEnabled } from '../ai'
 import { PlusIcon, SparkIcon, TrashIcon } from '../icons'
 import { shortDate } from '../dates'
+import { t } from '../i18n'
 
 
 export default function Invitados() {
@@ -28,13 +29,13 @@ export default function Invitados() {
   return (
     <>
       <div className="page-head">
-        <h1>Invitados</h1>
+        <h1>{t('Invitados')}</h1>
       </div>
       <form className="card quick-add" onSubmit={add}>
-        <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nombre del invitado" aria-label="Nombre" />
+        <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t('Nombre del invitado')} aria-label={t('Nombre')} />
         <div className="two">
-          <input value={form.handle} onChange={(e) => setForm({ ...form, handle: e.target.value })} placeholder="@ en redes" aria-label="Usuario" />
-          <input value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} placeholder="Tema" aria-label="Tema" />
+          <input value={form.handle} onChange={(e) => setForm({ ...form, handle: e.target.value })} placeholder={t('@ en redes')} aria-label={t('Usuario')} />
+          <input value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} placeholder={t('Tema')} aria-label={t('Tema')} />
         </div>
         <button className="btn primary" disabled={!form.name.trim()}>
           <PlusIcon width={18} height={18} /> Añadir
@@ -45,11 +46,11 @@ export default function Invitados() {
           name="Filtrar por estado"
           value={filter}
           onChange={setFilter}
-          options={[{ value: 'all', label: `Todos · ${guests.length}` }, ...GUEST_STATUS.map((s) => ({ value: s.id, label: `${s.label} · ${guests.filter((g) => g.status === s.id).length}` }))]}
+          options={[{ value: 'all', label: `Todos · ${guests.length}` }, ...GUEST_STATUS.map((s) => ({ value: s.id, label: `${t(s.label)} · ${guests.filter((g) => g.status === s.id).length}` }))]}
         />
       </div>
       {visible.length === 0 ? (
-        <p className="muted empty">{guests.length ? 'Nadie en este estado.' : 'Hagan una lista de 10 personas con quienes les encantaría hablar.'}</p>
+        <p className="muted empty">{guests.length ? t('Nadie en este estado.') : t('Hagan una lista de 10 personas con quienes les encantaría hablar.')}</p>
       ) : (
         <ul className="tracker-list">
           {visible.map((g) => (
@@ -60,24 +61,24 @@ export default function Invitados() {
                   {[g.handle && `@${g.handle.replace(/^@/, '')}`, g.topic, g.contacted_on && `Contactado ${shortDate(g.contacted_on)}`].filter(Boolean).join(' · ')}
                 </span>
               </button>
-              <select className={`status-chip s-${g.status}`} value={g.status} onChange={(e) => setStatus(g, e.target.value)} aria-label="Estado">
+              <select className={`status-chip s-${g.status}`} value={g.status} onChange={(e) => setStatus(g, e.target.value)} aria-label={t('Estado')}>
                 {GUEST_STATUS.map((s) => (
-                  <option key={s.id} value={s.id}>{s.label}</option>
+                  <option key={s.id} value={s.id}>{t(s.label)}</option>
                 ))}
               </select>
               {open === g.id && (
                 <div className="tracker-extra">
                   <label className="field">
-                    <span>Fecha de contacto</span>
+                    <span>{t('Fecha de contacto')}</span>
                     <input type="date" value={g.contacted_on ?? ''} onChange={(e) => actions.update('guests', g.id, { contacted_on: e.target.value || null })} />
                   </label>
                   <label className="field">
-                    <span>Notas</span>
+                    <span>{t('Notas')}</span>
                     <textarea rows={2} defaultValue={g.notes ?? ''} onBlur={(e) => e.target.value !== (g.notes ?? '') && actions.update('guests', g.id, { notes: e.target.value })} />
                   </label>
                   <div className="tool-row">
                     {aiEnabled() && (
-                      <button className="btn ghost" onClick={() => ask(`Escribe un mensaje corto y personal para invitar a ${g.name}${g.handle ? ` (@${g.handle.replace(/^@/, '')})` : ''} a nuestro podcast${g.topic ? ` para hablar de ${g.topic}` : ''}.`)}>
+                      <button className="btn ghost" onClick={() => ask(t('Escribe un mensaje corto y personal para invitar a {name}{handle} a nuestro podcast{topic}.', { name: g.name, handle: g.handle ? ` (@${g.handle.replace(/^@/, '')})` : '', topic: g.topic ? t(' para hablar de {topic}', { topic: g.topic }) : '' }))}>
                         <SparkIcon width={18} height={18} /> Pedir ayuda a la IA
                       </button>
                     )}
