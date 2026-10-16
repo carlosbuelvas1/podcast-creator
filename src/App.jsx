@@ -1,20 +1,30 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { DataProvider } from './store'
-import { useStore } from './context'
+import { useStore, useProject, NavContext } from './context'
+import Modulos from './screens/Modulos'
+import Asistente from './screens/Asistente'
+import { aiEnabled, setDemoMode } from './ai'
+import { useCelebrations } from './celebrate'
 import Login from './screens/Login'
+import { DemoProvider } from './demo'
 import Inicio from './screens/Inicio'
 import Fases from './screens/Fases'
 import Tareas from './screens/Tareas'
 import Account from './screens/Account'
 import { ProjectSwitcher, Welcome } from './screens/Projects'
-import { BoardIcon, ChevronIcon, HomeIcon, StepsIcon } from './icons'
+import Onboarding from './screens/Onboarding'
+import { onboardingKey } from './skips'
+import { isProvisional, shortName } from './naming'
+import { BoardIcon, ChevronIcon, GridIcon, HomeIcon, SparkIcon, StepsIcon } from './icons'
 import { personClass } from './constants'
 
 const TABS = [
   { id: 'inicio', label: 'Inicio', Icon: HomeIcon, Screen: Inicio },
   { id: 'fases', label: 'Fases', Icon: StepsIcon, Screen: Fases },
   { id: 'tareas', label: 'Tareas', Icon: BoardIcon, Screen: Tareas },
+  { id: 'modulos', label: 'Módulos', Icon: GridIcon, Screen: Modulos },
+  { id: 'ia', label: 'IA', Icon: SparkIcon, Screen: Asistente, ai: true },
 ]
 
 const tabFromHash = () => {
@@ -24,6 +34,7 @@ const tabFromHash = () => {
 
 export default function App() {
   const [session, setSession] = useState(undefined)
+  const [demo, setDemo] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
@@ -32,7 +43,17 @@ export default function App() {
   }, [])
 
   if (session === undefined) return <Splash />
-  if (!session) return <Login />
+  const demoMode = (on) => {
+    setDemoMode(on)
+    setDemo(on)
+  }
+  if (!session && demo)
+    return (
+      <DemoProvider onExit={() => demoMode(false)}>
+        <Shell />
+      </DemoProvider>
+    )
+  if (!session) return <Login onDemo={() => demoMode(true)} />
 
   return (
     <DataProvider key={session.user.id} session={session}>
@@ -49,12 +70,41 @@ function Splash() {
   )
 }
 
+function Skeleton() {
+  return (
+    <div className="shell" aria-busy="true" aria-label="Cargando">
+      <header className="topbar">
+        <div className="brand">
+          <div className="logo" />
+          <span className="brand-name">Podcast Creator</span>
+        </div>
+      </header>
+      <main className="page skeleton-page">
+        <div className="skeleton" style={{ height: 28, width: '50%' }} />
+        <div className="skeleton" style={{ height: 210, borderRadius: 24 }} />
+        <div className="skeleton" style={{ height: 120 }} />
+        <div className="skeleton" style={{ height: 160 }} />
+      </main>
+    </div>
+  )
+}
+
 function Shell() {
-  const { ready, me, session, project } = useStore()
+  const { ready, me, session, project, notify } = useStore()
+  const scoped = useProject()
   const [tab, setTab] = useState(tabFromHash)
   const [focus, setFocus] = useState(null)
   const [account, setAccount] = useState(false)
   const [switcher, setSwitcher] = useState(false)
+  const [onboarded, setOnboarded] = useState(0)
+  useCelebrations(project, scoped.phases, scoped.tasks, notify)
+  const [ai, setAi] = useState(aiEnabled)
+
+  useEffect(() => {
+    const onToggle = () => setAi(aiEnabled())
+    window.addEventListener('ai-toggle', onToggle)
+    return () => window.removeEventListener('ai-toggle', onToggle)
+  }, [])
 
   useEffect(() => {
     const onHash = () => setTab(tabFromHash())
@@ -69,7 +119,10 @@ function Shell() {
     window.scrollTo({ top: 0 })
   }
 
-  if (!ready) return <Splash />
+  const ask = (prompt) => go('ia', prompt)
+  const tabs = TABS.filter((t) => !t.ai || ai)
+
+  if (!ready) return <Skeleton />
 
   if (!me) {
     return (
@@ -86,9 +139,10 @@ function Shell() {
     )
   }
 
-  const { Screen } = TABS.find((t) => t.id === tab)
+  const { Screen } = tabs.find((t) => t.id === tab) ?? tabs[0]
 
   return (
+    <NavContext.Provider value={{ go, ask }}>
     <div className="shell">
       <header className="topbar">
         <div className="brand">
@@ -96,14 +150,15 @@ function Shell() {
           <span className="brand-name">Podcast Creator</span>
           {project && (
             <button className="switcher" onClick={() => setSwitcher(true)} aria-label="Cambiar de proyecto">
-              <span>{project.name}</span>
+              <span>{shortName(project)}</span>
+              {isProvisional(project) && <span className="badge-prov">Nombre provisional</span>}
               <ChevronIcon width={16} height={16} />
             </button>
           )}
         </div>
         {project && (
           <nav className="tabs-top">
-            {TABS.map(({ id, label }) => (
+            {tabs.map(({ id, label }) => (
               <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
                 {label}
               </button>
@@ -117,11 +172,11 @@ function Shell() {
 
       {project ? (
         <>
-          <main className="page" key={`${tab}-${project.id}`}>
-            <Screen go={go} focus={focus} />
+          <main className="page" key={`${tab}-${project.id}-${tab === 'ia' || tab === 'modulos' ? focus : ''}`}>
+            <Screen go={go} focus={focus} prompt={tab === 'ia' ? focus ?? '' : ''} />
           </main>
-          <nav className="tabbar">
-            {TABS.map(({ id, label, Icon }) => (
+          <nav className="tabbar" style={{ '--tab-count': tabs.length }}>
+            {tabs.map(({ id, label, Icon }) => (
               <button key={id} className={tab === id ? 'on' : ''} onClick={() => go(id)}>
                 <Icon />
                 <span>{label}</span>
@@ -135,8 +190,10 @@ function Shell() {
         </main>
       )}
 
+      {project && !localStorage.getItem(onboardingKey(project.id)) && <Onboarding key={`${project.id}-${onboarded}`} onClose={() => setOnboarded((n) => n + 1)} />}
       {account && <Account onClose={() => setAccount(false)} />}
       {switcher && <ProjectSwitcher onClose={() => setSwitcher(false)} onPick={() => go('inicio')} />}
     </div>
+    </NavContext.Provider>
   )
 }

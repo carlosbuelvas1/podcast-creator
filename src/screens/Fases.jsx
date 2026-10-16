@@ -4,12 +4,17 @@ import StepSheet from './StepSheet'
 import { CheckIcon, ChevronIcon, PlusIcon } from '../icons'
 import { dueLabel, daysUntil } from '../dates'
 import { personClass, progressOf } from '../constants'
+import { buildIndex, lockReason, lockState, phaseProgress } from '../recommend'
+import { LockIcon } from '../icons'
 
 export default function Fases({ focus }) {
   const { phases, tasks, items } = useProject()
   const current = phases.find((ph) => progressOf(tasks.filter((t) => t.phase_id === ph.id)).pct < 100)
   const [open, setOpen] = useState(() => new Set([focus ?? current?.id].filter(Boolean)))
   const [editing, setEditing] = useState(null)
+  const index = buildIndex(phases, tasks)
+  const progress = phaseProgress(phases, tasks)
+  const lockOf = (t) => (t.status === 'done' ? [] : lockState(t, phases, tasks, index, progress))
 
   useEffect(() => {
     if (focus) document.getElementById(`fase-${focus}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -53,9 +58,10 @@ export default function Fases({ focus }) {
               {isOpen && (
                 <div className="phase-body">
                   {ph.summary && <p className="phase-summary">{ph.summary}</p>}
+                  {phaseTasks.length === 0 && <p className="muted empty">Esta fase no tiene pasos. Añadan el primero.</p>}
                   <ul className="steps">
                     {phaseTasks.map((t) => (
-                      <StepRow key={t.id} task={t} items={items.filter((i) => i.task_id === t.id)} onOpen={() => setEditing(t)} />
+                      <StepRow key={t.id} task={t} lock={lockReason(lockOf(t))} items={items.filter((i) => i.task_id === t.id)} onOpen={() => setEditing(t)} />
                     ))}
                   </ul>
                   <button className="btn ghost full" onClick={() => setEditing({ phase_id: ph.id, status: 'todo' })}>
@@ -73,14 +79,14 @@ export default function Fases({ focus }) {
   )
 }
 
-function StepRow({ task, items, onOpen }) {
+function StepRow({ task, items, onOpen, lock }) {
   const { actions } = useStore()
   const done = task.status === 'done'
   const late = !done && daysUntil(task.due_date) < 0
   const checked = items.filter((i) => i.done).length
 
   return (
-    <li className={`step ${done ? 'done' : ''}`}>
+    <li className={`step ${done ? 'done' : ''} ${lock ? 'locked' : ''}`}>
       <button
         className={`check ${done ? 'on' : ''}`}
         onClick={() => actions.updateTask(task.id, { status: done ? 'todo' : 'done' })}
@@ -90,6 +96,11 @@ function StepRow({ task, items, onOpen }) {
       </button>
       <button className="step-main" onClick={onOpen}>
         <span className="step-name">{task.title}</span>
+        {lock && (
+          <span className="lock-note">
+            <LockIcon width={12} height={12} /> {lock}
+          </span>
+        )}
         <span className="step-meta">
           <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? 'Sin asignar'}</span>
           {task.status === 'doing' && <span className="tag doing">En progreso</span>}

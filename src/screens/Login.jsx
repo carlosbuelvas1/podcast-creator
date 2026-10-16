@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../supabase'
 
-export default function Login() {
+export default function Login({ onDemo }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -58,6 +58,11 @@ export default function Login() {
         <button className="btn primary full" disabled={busy}>
           {busy ? 'Entrando…' : 'Entrar'}
         </button>
+        {onDemo && (
+          <button type="button" className="btn ghost full" onClick={onDemo}>
+            Ver demo
+          </button>
+        )}
         <p className="muted small center">¿Olvidaste tu contraseña? Avísale a Carlos y él te ayuda.</p>
       </form>
     </div>

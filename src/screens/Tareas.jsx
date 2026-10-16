@@ -16,6 +16,8 @@ import { Segmented } from '../Sheet'
 import { PlusIcon } from '../icons'
 import { byDueDate, daysUntil, dueLabel } from '../dates'
 import { COLUMNS, PEOPLE, personClass, progressOf } from '../constants'
+import { buildIndex, lockReason, lockState, phaseProgress } from '../recommend'
+import { LockIcon } from '../icons'
 
 export default function Tareas() {
   const { actions, me } = useStore()
@@ -28,6 +30,10 @@ export default function Tareas() {
   const [filter, setFilter] = useState('all')
   const [activeId, setActiveId] = useState(null)
   const [editing, setEditing] = useState(null)
+  const [column, setColumn] = useState('todo')
+  const index = buildIndex(phases, tasks)
+  const progress = phaseProgress(phases, tasks)
+  const lockOf = (t) => (t.status === 'done' ? '' : lockReason(lockState(t, phases, tasks, index, progress)))
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
@@ -58,7 +64,42 @@ export default function Tareas() {
         onChange={setFilter}
         options={[{ value: 'all', label: 'Todas' }, ...PEOPLE.map((p) => ({ value: p, label: p }))]}
       />
-      <p className="hint">Mantén presionada una tarea y arrástrala a otra columna.</p>
+      <p className="hint desktop-only">Arrastra una tarea a otra columna para cambiar su estado.</p>
+
+      <div className="mobile-list">
+        <Segmented
+          name="Columna"
+          value={column}
+          onChange={setColumn}
+          options={COLUMNS.map((c) => ({ value: c.id, label: `${c.label} · ${visible.filter((t) => t.status === c.id).length}` }))}
+        />
+        <div className="list-body">
+          {visible
+            .filter((t) => t.status === column)
+            .sort(byPlan)
+            .map((t) => (
+              <div key={t.id} className="list-row">
+                <TaskCard task={t} phase={phaseName[t.phase_id]} lock={lockOf(t)} onClick={() => setEditing(t)} />
+                <label className="move">
+                  <span className="sr-only">Mover a…</span>
+                  <select value="" onChange={(e) => e.target.value && actions.updateTask(t.id, { status: e.target.value })}>
+                    <option value="">Mover a…</option>
+                    {COLUMNS.filter((c) => c.id !== t.status).map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            ))}
+          {visible.filter((t) => t.status === column).length === 0 && (
+            <p className="muted empty">
+              {column === 'done' ? 'Todavía no hay pasos hechos. ¡El primero es el más difícil!' : column === 'doing' ? 'Nada en progreso. Empiecen el paso recomendado desde Inicio.' : 'No hay pasos por hacer aquí.'}
+            </p>
+          )}
+        </div>
+      </div>
 
       <DndContext
         sensors={sensors}
@@ -67,7 +108,7 @@ export default function Tareas() {
         onDragEnd={onDragEnd}
         onDragCancel={() => setActiveId(null)}
       >
-        <div className="board">
+        <div className="board desktop-only">
           {COLUMNS.map((col) => (
             <Column
               key={col.id}
@@ -75,6 +116,7 @@ export default function Tareas() {
               tasks={visible.filter((t) => t.status === col.id).sort(byPlan)}
               onOpen={setEditing}
               phaseName={phaseName}
+              lockOf={lockOf}
               onAdd={() => setEditing({ status: col.id, owner: filter === 'all' ? me : filter, phase_id: current?.id })}
             />
           ))}
@@ -87,7 +129,7 @@ export default function Tareas() {
   )
 }
 
-function Column({ column, tasks, onOpen, onAdd, phaseName }) {
+function Column({ column, tasks, onOpen, onAdd, phaseName, lockOf }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id })
   return (
     <section ref={setNodeRef} className={`column ${column.id} ${isOver ? 'over' : ''}`}>
@@ -100,33 +142,40 @@ function Column({ column, tasks, onOpen, onAdd, phaseName }) {
       </div>
       <div className="column-body">
         {tasks.map((t) => (
-          <DraggableTask key={t.id} task={t} onOpen={onOpen} phase={phaseName[t.phase_id]} />
+          <DraggableTask key={t.id} task={t} onOpen={onOpen} phase={phaseName[t.phase_id]} lock={lockOf(t)} />
         ))}
-        {tasks.length === 0 && <p className="drop-empty">Suelta una tarea aquí</p>}
+        {tasks.length === 0 && <p className="drop-empty">Suelta un paso aquí</p>}
       </div>
     </section>
   )
 }
 
-function DraggableTask({ task, onOpen, phase }) {
+function DraggableTask({ task, onOpen, phase, lock }) {
   const { setNodeRef, attributes, listeners, isDragging } = useDraggable({ id: task.id })
   return (
     <div ref={setNodeRef} {...attributes} {...listeners} className={`drag ${isDragging ? 'ghost' : ''}`}>
-      <TaskCard task={task} phase={phase} onClick={() => onOpen(task)} />
+      <TaskCard task={task} phase={phase} lock={lock} onClick={() => onOpen(task)} />
     </div>
   )
 }
 
-function TaskCard({ task, onClick, overlay, phase }) {
+function TaskCard({ task, onClick, overlay, phase, lock }) {
   const late = task.status !== 'done' && daysUntil(task.due_date) < 0
   return (
     <div
-      className={`task ${task.status} ${overlay ? 'overlay-card' : ''}`}
+      className={`task ${task.status} ${overlay ? 'overlay-card' : ''} ${lock ? 'locked' : ''}`}
+      role="button"
+      tabIndex={0}
       onClick={onClick}
       onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
     >
       {phase && <p className="task-phase">{phase}</p>}
       <p className="task-title">{task.title}</p>
+      {lock && (
+        <p className="lock-note">
+          <LockIcon width={12} height={12} /> {lock}
+        </p>
+      )}
       <div className="task-meta">
         <span className={`owner ${personClass(task.owner)}`}>{task.owner ?? 'Sin asignar'}</span>
         {task.due_date && <span className={`due ${late ? 'late' : ''}`}>{dueLabel(task.due_date)}</span>}
