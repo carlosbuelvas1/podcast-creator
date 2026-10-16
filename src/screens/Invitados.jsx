@@ -79,11 +79,16 @@ export default function Invitados() {
                   <div className="tool-row">
                     {aiEnabled() && (
                       <button className="btn ghost" onClick={() => ask(t('Escribe un mensaje corto y personal para invitar a {name}{handle} a nuestro podcast{topic}.', { name: g.name, handle: g.handle ? ` (@${g.handle.replace(/^@/, '')})` : '', topic: g.topic ? t(' para hablar de {topic}', { topic: g.topic }) : '' }))}>
-                        <SparkIcon width={18} height={18} /> Pedir ayuda a la IA
+                        <SparkIcon width={18} height={18} /> {t('Pedir ayuda a la IA')}
                       </button>
                     )}
-                    <button className="btn danger-ghost" onClick={() => window.confirm(`¿Borrar a ${g.name}?`) && actions.remove('guests', g.id)}>
-                      <TrashIcon width={16} height={16} /> Borrar
+                    {aiEnabled() && (
+                      <button className="btn ghost" onClick={() => ask(t('Escribe una ficha de una página para {name}: quiénes somos, de qué trata el podcast, el tema que hablaríamos, fecha, duración, lugar o enlace y cómo prepararse.', { name: g.name }))}>
+                        <SparkIcon width={18} height={18} /> {t('Ficha de una página')}
+                      </button>
+                    )}
+                    <button className="btn danger-ghost" onClick={() => window.confirm(t('¿Borrar a {name}?', { name: g.name })) && actions.remove('guests', g.id)}>
+                      <TrashIcon width={16} height={16} /> {t('Borrar')}
                     </button>
                   </div>
                 </div>

@@ -149,3 +149,14 @@ test('el laboratorio arma la hoja del día de grabación en la demo', async ({ p
   await expect(page.getByText('Hoja del día de grabación')).toBeVisible()
   await expect(page.getByText('Prueba de sonido de 5 minutos')).toBeVisible()
 })
+
+test('la ficha de una página para un invitado en la demo', async ({ page }) => {
+  await openDemo(page)
+  await tab(page, 'Módulos').click()
+  await page.getByRole('button', { name: /Invitados/ }).first().click()
+  await page.getByRole('button', { name: 'Abrir lista de invitados' }).click()
+  await page.getByRole('button', { name: /Laura Gómez/ }).click()
+  await page.getByRole('button', { name: 'Ficha de una página' }).click()
+  await page.getByRole('button', { name: 'Enviar' }).click()
+  await expect(page.getByText(/Ficha para Laura Gómez/)).toBeVisible()
+})

@@ -6,6 +6,7 @@ const IDEAS = [
 ]
 
 const REPLIES = [
+  [/ficha|one-pager|one-page/i, tk('Ficha para Laura Gómez — No Hay Break: dos amigos, cero pausas, conversaciones honestas sobre emprender en Miami. Tema: cómo lanzar un negocio sin dinero. Grabación de 60 minutos en nuestro estudio o por enlace. Para prepararte: trae una historia de tu primer año y un consejo concreto.'), []],
   [/idea|episodio|episode/i, tk('Aquí van dos ideas que encajan con su brief: "Lo que aprendimos en nuestro primer año" como episodio y "Mitos de emprender en Miami" como short.'), IDEAS],
   [/título|title/i, tk('Prueben: "Lo que nadie te dice de emprender a los 25", "Renunciamos y esto pasó" y "3 errores que casi nos cuestan el podcast".'), []],
   [/miniatura|thumbnail/i, tk('Texto corto y grande: "CERO PAUSAS". Los dos riéndose a la izquierda, fondo morado y el logo abajo a la derecha.'), []],
