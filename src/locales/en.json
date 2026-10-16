@@ -535,5 +535,6 @@
   "¡Llegaron al {n}% del camino!": "You're {n}% of the way there!",
   "¡Fase completa!": "Phase complete!",
   "Lo que viene: {title}": "Up next: {title}",
-  "¡Terminaron todas las fases! Es hora de lanzar.": "You finished every phase! Time to launch."
+  "¡Terminaron todas las fases! Es hora de lanzar.": "You finished every phase! Time to launch.",
+  "Columnas: deslicen o usen las flechas para cambiar": "Columns: swipe or use the arrow keys to switch"
 }

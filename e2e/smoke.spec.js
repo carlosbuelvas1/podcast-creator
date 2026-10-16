@@ -196,3 +196,18 @@ test('un paso bloqueado lleva al paso que falta', async ({ page }) => {
   await page.getByRole('button', { name: 'Ir al paso que falta' }).click()
   await expect(title).not.toHaveText(before)
 })
+
+test('Tareas en móvil: deslizar y flechas cambian de columna', async ({ page }) => {
+  test.skip(page.viewportSize().width > 700, 'solo móvil')
+  await openDemo(page)
+  await tab(page, 'Tareas').click()
+  const cols = page.locator('.swipe-cols')
+  await cols.evaluate((el) => el.scrollTo({ left: el.clientWidth }))
+  await expect(page.getByRole('radiogroup', { name: 'Columna' }).getByRole('radio', { checked: true })).toContainText('En progreso')
+  await cols.focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByRole('radiogroup', { name: 'Columna' }).getByRole('radio', { checked: true })).toContainText('Hecho')
+  await page.keyboard.press('ArrowLeft')
+  await page.keyboard.press('ArrowLeft')
+  await expect(page.getByRole('radiogroup', { name: 'Columna' }).getByRole('radio', { checked: true })).toContainText('Por hacer')
+})

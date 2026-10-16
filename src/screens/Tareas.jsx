@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -32,6 +32,23 @@ export default function Tareas() {
   const [activeId, setActiveId] = useState(null)
   const [editing, setEditing] = useState(null)
   const [column, setColumn] = useState('todo')
+  const track = useRef(null)
+  const pick = (id) => {
+    setColumn(id)
+    const i = COLUMNS.findIndex((c) => c.id === id)
+    track.current?.scrollTo({ left: i * track.current.clientWidth })
+  }
+  const onSwipe = (e) => {
+    const id = COLUMNS[Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth)]?.id
+    if (id && id !== column) setColumn(id)
+  }
+  const onKeys = (e) => {
+    const i = COLUMNS.findIndex((c) => c.id === column)
+    const next = COLUMNS[e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1]
+    if (e.target !== e.currentTarget || !next) return
+    e.preventDefault()
+    pick(next.id)
+  }
   const index = buildIndex(phases, tasks)
   const progress = phaseProgress(phases, tasks)
   const lockOf = (t) => (t.status === 'done' ? '' : lockReason(lockState(t, phases, tasks, index, progress)))
@@ -71,34 +88,38 @@ export default function Tareas() {
         <Segmented
           name="Columna"
           value={column}
-          onChange={setColumn}
+          onChange={pick}
           options={COLUMNS.map((c) => ({ value: c.id, label: `${t(c.label)} · ${visible.filter((t) => t.status === c.id).length}` }))}
         />
-        <div className="list-body">
-          {visible
-            .filter((t) => t.status === column)
-            .sort(byPlan)
-            .map((task) => (
-              <div key={task.id} className="list-row">
-                <TaskCard task={task} phase={phaseName[task.phase_id]} lock={lockOf(task)} onClick={() => setEditing(task)} />
-                <label className="move">
-                  <span className="sr-only">{t('Mover a…')}</span>
-                  <select value="" onChange={(e) => e.target.value && actions.updateTask(task.id, { status: e.target.value })}>
-                    <option value="">{t('Mover a…')}</option>
-                    {COLUMNS.filter((c) => c.id !== task.status).map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {t(c.label)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+        <div ref={track} className="swipe-cols" tabIndex={0} aria-label={t('Columnas: deslicen o usen las flechas para cambiar')} onScroll={onSwipe} onKeyDown={onKeys}>
+          {COLUMNS.map((c) => {
+            const list = visible.filter((task) => task.status === c.id).sort(byPlan)
+            return (
+              <div key={c.id} className="list-body swipe-col" inert={c.id !== column} data-column={c.id}>
+                {list.map((task) => (
+                  <div key={task.id} className="list-row">
+                    <TaskCard task={task} phase={phaseName[task.phase_id]} lock={lockOf(task)} onClick={() => setEditing(task)} />
+                    <label className="move">
+                      <span className="sr-only">{t('Mover a…')}</span>
+                      <select value="" onChange={(e) => e.target.value && actions.updateTask(task.id, { status: e.target.value })}>
+                        <option value="">{t('Mover a…')}</option>
+                        {COLUMNS.filter((col) => col.id !== task.status).map((col) => (
+                          <option key={col.id} value={col.id}>
+                            {t(col.label)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                ))}
+                {list.length === 0 && (
+                  <p className="muted empty">
+                    {c.id === 'done' ? t('Todavía no hay pasos hechos. ¡El primero es el más difícil!') : c.id === 'doing' ? t('Nada en progreso. Empiecen el paso recomendado desde Inicio.') : t('No hay pasos por hacer aquí.')}
+                  </p>
+                )}
               </div>
-            ))}
-          {visible.filter((t) => t.status === column).length === 0 && (
-            <p className="muted empty">
-              {column === 'done' ? t('Todavía no hay pasos hechos. ¡El primero es el más difícil!') : column === 'doing' ? t('Nada en progreso. Empiecen el paso recomendado desde Inicio.') : t('No hay pasos por hacer aquí.')}
-            </p>
-          )}
+            )
+          })}
         </div>
       </div>
 
