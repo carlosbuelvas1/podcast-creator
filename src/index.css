@@ -2962,3 +2962,29 @@ button.chip {
 .picker .btn.primary {
   margin-top: 12px;
 }
+
+.demo-banner {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px calc(8px);
+  padding-top: calc(8px + env(safe-area-inset-top));
+  background: var(--primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.demo-banner button {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border: 0;
+  border-radius: 99px;
+  padding: 4px 12px;
+  font: inherit;
+  cursor: pointer;
+}

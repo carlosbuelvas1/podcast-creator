@@ -4,9 +4,10 @@ import { DataProvider } from './store'
 import { useStore, useProject, NavContext } from './context'
 import Modulos from './screens/Modulos'
 import Asistente from './screens/Asistente'
-import { aiEnabled } from './ai'
+import { aiEnabled, setDemoMode } from './ai'
 import { useCelebrations } from './celebrate'
 import Login from './screens/Login'
+import { DemoProvider } from './demo'
 import Inicio from './screens/Inicio'
 import Fases from './screens/Fases'
 import Tareas from './screens/Tareas'
@@ -33,6 +34,7 @@ const tabFromHash = () => {
 
 export default function App() {
   const [session, setSession] = useState(undefined)
+  const [demo, setDemo] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
@@ -41,7 +43,17 @@ export default function App() {
   }, [])
 
   if (session === undefined) return <Splash />
-  if (!session) return <Login />
+  const demoMode = (on) => {
+    setDemoMode(on)
+    setDemo(on)
+  }
+  if (!session && demo)
+    return (
+      <DemoProvider onExit={() => demoMode(false)}>
+        <Shell />
+      </DemoProvider>
+    )
+  if (!session) return <Login onDemo={() => demoMode(true)} />
 
   return (
     <DataProvider key={session.user.id} session={session}>

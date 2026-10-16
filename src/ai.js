@@ -2,7 +2,12 @@ import { supabase } from './supabase'
 
 const KEY = 'podcast-creator-ai'
 
-export const aiEnabled = () => localStorage.getItem(KEY) !== 'off'
+let demoMode = false
+export const setDemoMode = (on) => {
+  demoMode = on
+}
+
+export const aiEnabled = () => !demoMode && localStorage.getItem(KEY) !== 'off'
 export const setAiEnabled = (on) => localStorage.setItem(KEY, on ? 'on' : 'off')
 
 export async function askAI({ projectId, message, mode = 'chat', context = null, author }) {
