@@ -19,7 +19,7 @@ export const test = base.extend({
 export { expect }
 
 export async function openDemo(page) {
-  await page.goto('./')
+  await page.goto('app/')
   await page.getByRole('button', { name: 'Ver demo' }).click()
   await expect(page.getByText('Demo de solo lectura')).toBeVisible()
 }
