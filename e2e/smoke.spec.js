@@ -96,3 +96,16 @@ test('los módulos finales también salen en inglés', async ({ page }) => {
   await page.getByRole('button', { name: /Content lab/ }).click()
   await expect(page.getByText('Thumbnails with AI', { exact: false })).toBeVisible()
 })
+
+test('la demo y su IA salen en inglés', async ({ page }) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: 'English' }).click()
+  await page.getByRole('button', { name: 'View demo' }).click()
+  await tab(page, 'AI').click()
+  await page.getByRole('button', { name: 'Give me 10 episode ideas' }).click()
+  await expect(page.getByText(/Here are two ideas/)).toBeVisible()
+  await tab(page, 'Modules').click()
+  await page.getByRole('button', { name: /Guests/ }).first().click()
+  await page.getByRole('button', { name: 'Open guest list' }).click()
+  await expect(page.getByText(/Mental health for creators/)).toBeVisible()
+})
